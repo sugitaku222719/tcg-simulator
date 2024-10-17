@@ -12,10 +12,12 @@ function CardRegistrationForm() {
   const cardRegistrationButton = async () => {
     const db = firebase.firestore();
     await db
-    .collection("cards")
+    .collection("cardsDataBase")
+    .doc(auth.currentUser.uid)
+    .collection("userCardList")
     .add({
       cardName: cardName,
-      userID: auth.currentUser.uid
+      cardImage: cardImage.name
     });
     const storageRef = ref(storage, "image/" + auth.currentUser.uid + "/" + cardImage.name);
     uploadBytes(storageRef, cardImage).then((snapshot) => {
