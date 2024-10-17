@@ -2,15 +2,15 @@ import SignIn from '@/components/SignIn'
 import { auth } from '@/lib/Firebase';
 import { useAuthState } from "react-firebase-hooks/auth";
 import React from 'react'
-import Entrance from '@/components/Entrance';
+import CardRegistration from '@/components/CardRegistration';
 
-function index() {
+function cardRegistration() {
   const [user] = useAuthState(auth);
   return (
     <div>
-      {user ? <Entrance /> : <SignIn />}
+      {user ? <CardRegistration /> : <SignIn />}
     </div>
   )
 }
 
-export default index
+export default cardRegistration
