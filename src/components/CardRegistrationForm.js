@@ -1,20 +1,17 @@
 import React, { useState } from 'react'
-import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-import { auth, storage } from '@/lib/Firebase';
+import { auth, db, storage } from '@/lib/Firebase';
 import { ref, uploadBytes } from "firebase/storage";
 
 function CardRegistrationForm() {
   const [cardName, setCardName] = useState("");
-  const [cardImage, setCardImage] = useState([]);
+  const [cardImage, setCardImage] = useState(null);
 
   const cardRegistrationButton = async () => {
-    if (!cardName || !cardImage.length) {
+    if (!cardName || !cardImage) {
       alert("Card NameとCard Imageは入力してください");
       return;
     }
-
-    const db = firebase.firestore();
     await db
     .collection("cardsDataBase")
     .doc(auth.currentUser.uid)
