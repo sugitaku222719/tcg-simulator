@@ -12,7 +12,7 @@ function SignOut() {
       サインアウト
       </Button>
       <h3>
-        {auth.currentUser.displayName}
+        USER：{auth.currentUser.displayName}
       </h3>
     </div>
   )
