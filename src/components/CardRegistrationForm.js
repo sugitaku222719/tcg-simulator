@@ -12,17 +12,18 @@ function CardRegistrationForm() {
       alert("Card NameとCard Imageは入力してください");
       return;
     }
-    await db
-    .collection("cardsDataBase")
-    .doc(auth.currentUser.uid)
-    .collection("userCardList")
-    .add({
-      cardName: cardName,
-      cardImage: cardImage.name
-    });
     const storageRef = ref(storage, "image/" + auth.currentUser.uid + "/" + cardImage.name);
-    uploadBytes(storageRef, cardImage).then((snapshot) => {
-      console.log(cardImage);
+    uploadBytes(storageRef, cardImage).then( async () => {
+      
+
+      await db
+      .collection("cardsDataBase")
+      .doc(auth.currentUser.uid)
+      .collection("userCardList")
+      .add({
+        cardName: cardName,
+        cardImage: cardImage.name
+      });
     });
   }
   return (
