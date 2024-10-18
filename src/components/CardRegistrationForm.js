@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { auth, storage } from '@/lib/Firebase';
-import { ref, uploadBytes } from "firebase/storage"
+import { ref, uploadBytes } from "firebase/storage";
 
 function CardRegistrationForm() {
-  const [cards, setCards] = useState([]);
   const [cardName, setCardName] = useState("");
   const [cardImage, setCardImage] = useState([]);
 
