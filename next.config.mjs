@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_APIKEY: process.env.NEXT_PUBLIC_APIKEY,
