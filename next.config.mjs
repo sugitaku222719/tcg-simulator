@@ -8,6 +8,13 @@ const nextConfig = {
     NEXT_PUBLIC_STORAGEBUCKET: process.env.NEXT_PUBLIC_STORAGEBUCKET,
     NEXT_PUBLIC_MESSAGINGSENDERID: process.env.NEXT_PUBLIC_MESSAGINGSENDERID,
     NEXT_PUBLIC_APPID: process.env.NEXT_PUBLIC_APPID
+  },
+  exportPathMap: async function (defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
+    return {
+      '/': { page: '/' },
+      '/cardRegistration': { page: '/cardRegistration' },
+      // 他の静的ページを追加
+    }
   }
 };
 
