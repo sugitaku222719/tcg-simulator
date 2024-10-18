@@ -9,6 +9,11 @@ function CardRegistrationForm() {
   const [cardImage, setCardImage] = useState([]);
 
   const cardRegistrationButton = async () => {
+    if (!cardName || !cardImage.length) {
+      alert("Card NameとCard Imageは入力してください");
+      return;
+    }
+
     const db = firebase.firestore();
     await db
     .collection("cardsDataBase")
