@@ -1,130 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/PlayRoom.module.css';
-import { useDrag, useDrop } from 'react-dnd';
-
-const CARD_TYPE = 'CARD';
-
-// カードコンポーネント（手札と場のカードを表示）
-const Card = ({ id, content, index, moveCard }) => {
-  const [, drag] = useDrag(() => ({
-    type: CARD_TYPE,
-    item: { id, index },
-  }));
-
-  return (
-    <div ref={drag} className={styles.card}>
-      {content}
-    </div>
-  );
-};
-
-// フィールドスロット（場のカードが配置される場所）
-const FieldSlot = ({ index, card, moveCard }) => {
-  const [, drop] = useDrop({
-    accept: CARD_TYPE,
-    drop: (item) => {
-      moveCard(item.index, index);
-    },
-  });
-
-  return (
-    <div ref={drop} className={styles.fieldSlot}>
-      {card ? <Card id={card.id} content={card.content} index={index} moveCard={moveCard} /> : null}
-    </div>
-  );
-};
-
-// フィールド（場全体を管理）
-const Field = ({ cards, moveCard }) => {
-  return (
-    <div className={styles.field}>
-      {cards.map((card, index) => (
-        <FieldSlot key={index} index={index} card={card} moveCard={moveCard} />
-      ))}
-    </div>
-  );
-};
-
-// 手札コンポーネント（手札のカードを管理）
-const Hand = ({ cards, moveCard }) => {
-  return (
-    <div className={styles.hand}>
-      {cards.map((card, index) => (
-        card && <Card key={index} id={card.id} content={card.content} index={index} moveCard={moveCard} />
-      ))}
-    </div>
-  );
-};
 
 const PlayRoom = () => {
-  const initialPlayerHand = [
-    { id: 1, content: 'Player Hand Card 1' },
-    { id: 2, content: 'Player Hand Card 2' },
-    { id: 3, content: 'Player Hand Card 3' },
-  ];
+  const [myField, setMyField] = useState(Array(10).fill().map(() => Array(50).fill(null)));
+  const [opponentField, setOpponentField] = useState(Array(10).fill().map(() => Array(50).fill(null)));
+  const [hand, setHand] = useState([]);
+  const [playZone, setPlayZone] = useState([]);
 
-  const initialOpponentHand = [
-    { id: 4, content: 'Opponent Hand Card 1' },
-    { id: 5, content: 'Opponent Hand Card 2' },
-    { id: 6, content: 'Opponent Hand Card 3' },
-  ];
+  useEffect(() => {
+    // 初期カードの設定
+    setHand([
+      { id: 1, name: 'カード1' },
+      { id: 2, name: 'カード2' },
+      { id: 3, name: 'カード3' },
+    ]);
+    setPlayZone([
+      { id: 4, name: 'カード4', position: { row: 0, col: 0 } },
+      { id: 5, name: 'カード5', position: { row: 1, col: 1 } },
+      { id: 6, name: 'カード6', position: { row: 2, col: 2 } },
+    ]);
+  }, []);
 
-  const initialFieldCards = [null, null, null]; // 場は初期では空
-
-  const [playerField, setPlayerField] = useState([...initialFieldCards]);
-  const [opponentField, setOpponentField] = useState([...initialFieldCards]);
-  const [playerHand, setPlayerHand] = useState([...initialPlayerHand]);
-  const [opponentHand, setOpponentHand] = useState([...initialOpponentHand]);
-
-  // プレイヤーの手札から場にカードを移動
-  const moveCardToPlayerField = (fromIndex, toIndex) => {
-    setPlayerHand((prevHand) => {
-      const updatedHand = [...prevHand];
-      const movedCard = updatedHand[fromIndex];
-
-      setPlayerField((prevField) => {
-        const updatedField = [...prevField];
-        updatedField[toIndex] = movedCard;
-        return updatedField;
-      });
-
-      updatedHand[fromIndex] = null;
-      return updatedHand;
-    });
+  const handleDragStart = (e, card) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify(card));
   };
 
-  // 相手の手札から場にカードを移動
-  const moveCardToOpponentField = (fromIndex, toIndex) => {
-    setOpponentHand((prevHand) => {
-      const updatedHand = [...prevHand];
-      const movedCard = updatedHand[fromIndex];
-
-      setOpponentField((prevField) => {
-        const updatedField = [...prevField];
-        updatedField[toIndex] = movedCard;
-        return updatedField;
-      });
-
-      updatedHand[fromIndex] = null;
-      return updatedHand;
-    });
+  const handleDrop = (e, rowIndex, colIndex) => {
+    e.preventDefault();
+    const card = JSON.parse(e.dataTransfer.getData('text/plain'));
+    const newPlayZone = playZone.map(c => 
+      c.id === card.id ? { ...c, position: { row: rowIndex, col: colIndex } } : c
+    );
+    setPlayZone(newPlayZone);
   };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const renderField = (field, isOpponent) => (
+    <div className={`${styles.field} ${isOpponent ? styles.opponentField : ''}`}>
+      <div className={styles.playZone}>
+        {field.map((row, rowIndex) => (
+          <div key={rowIndex} className={styles.row}>
+            {row.map((_, colIndex) => {
+              const card = playZone.find(c => c.position.row === rowIndex && c.position.col === colIndex);
+              return (
+                <div
+                  key={colIndex}
+                  className={styles.cell}
+                  onDrop={(e) => handleDrop(e, rowIndex, colIndex)}
+                  onDragOver={handleDragOver}
+                >
+                  {card && (
+                    <div
+                      className={styles.card}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, card)}
+                    >
+                      {card.name}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      {!isOpponent && (
+        <>
+          <div className={styles.hand}>
+            {hand.map((card) => (
+              <div key={card.id} className={styles.card}>{card.name}</div>
+            ))}
+          </div>
+          <div className={styles.deck}>デッキ1</div>
+        </>
+      )}
+    </div>
+  );
 
   return (
     <div className={styles.playRoom}>
-      {/* 相手のフィールド */}
-      <div className={styles.opponentField}>
-        <Field cards={opponentField} moveCard={moveCardToOpponentField} />
-        <Hand cards={opponentHand} moveCard={moveCardToOpponentField} />
-        <div className={styles.opponentDeck}>Opponent Deck</div>
-      </div>
-
-      {/* プレイヤーのフィールド */}
-      <div className={styles.playerField}>
-        <Field cards={playerField} moveCard={moveCardToPlayerField} />
-        <Hand cards={playerHand} moveCard={moveCardToPlayerField} />
-        <div className={styles.playerDeck}>Player Deck</div>
-      </div>
+      {renderField(opponentField, true)}
+      {renderField(myField, false)}
     </div>
   );
 };
