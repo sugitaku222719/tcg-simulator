@@ -20,12 +20,22 @@
   background-color: lightgray;
 }
 
-.card {
+.fieldSlot {
   width: 100px;
   height: 150px;
   background-color: white;
   border: 1px solid black;
   margin: 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 100px;
+  height: 150px;
+  background-color: white;
+  border: 1px solid black;
   display: flex;
   justify-content: center;
   align-items: center;
