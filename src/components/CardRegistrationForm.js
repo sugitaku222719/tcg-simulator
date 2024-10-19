@@ -49,7 +49,7 @@ function CardRegistrationForm() {
         onChange={(event) => {
           const file = event.target.files[0]
           setCardImage(file)
-          }}
+        }}
       />
       <button onClick={cardRegistrationButton}>追加</button>
     </div>

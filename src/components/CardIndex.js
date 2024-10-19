@@ -35,7 +35,7 @@ function CardIndex() {
               src={card.cardImageUrl || ""}
               alt={card.cardName}
               width="100"
-              height="160"
+              height="140"
             />
           </li>
         </ul>
