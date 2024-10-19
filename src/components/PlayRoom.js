@@ -20,7 +20,7 @@ const Card = ({ id, content, index, moveCard }) => {
 const FieldSlot = ({ index, card, moveCard }) => {
   const [, drop] = useDrop({
     accept: CARD_TYPE,
-    drop: (item, monitor) => {
+    drop: (item) => {
       moveCard(item.index, index);
     },
   });
@@ -55,17 +55,19 @@ const PlayRoom = () => {
     { id: 6, content: 'Opponent Card 3' },
   ];
 
-  const [playerField, setPlayerField] = useState([initialPlayerCards[0], initialPlayerCards[1], initialPlayerCards[2]]);
-  const [opponentField, setOpponentField] = useState([initialOpponentCards[0], initialOpponentCards[1], initialOpponentCards[2]]);
+  const [playerField, setPlayerField] = useState([...initialPlayerCards]);
+  const [opponentField, setOpponentField] = useState([...initialOpponentCards]);
 
   const moveCard = (fromIndex, toIndex) => {
     setPlayerField((prevField) => {
       const updatedField = [...prevField];
-      const movedCard = updatedField[fromIndex];
 
-      // 元の位置を空にして、新しい位置にカードを配置
-      updatedField[fromIndex] = null;
-      updatedField[toIndex] = movedCard;
+      // fromIndex と toIndex のカードを入れ替える
+      const fromCard = updatedField[fromIndex];
+      const toCard = updatedField[toIndex];
+
+      updatedField[fromIndex] = toCard; // ドロップ先のカードを元の位置に
+      updatedField[toIndex] = fromCard; // ドロップされたカードを新しい位置に
 
       return updatedField;
     });
@@ -77,7 +79,7 @@ const PlayRoom = () => {
         <Field cards={opponentField} moveCard={moveCard} />
         <div className={styles.opponentHand}>
           {opponentField.map((card, index) => (
-            <Card key={index} id={card.id} content={card.content} index={index} moveCard={moveCard} />
+            card && <Card key={index} id={card.id} content={card.content} index={index} moveCard={moveCard} />
           ))}
         </div>
         <div className={styles.opponentDeck}>Opponent Deck</div>
@@ -87,7 +89,7 @@ const PlayRoom = () => {
         <Field cards={playerField} moveCard={moveCard} />
         <div className={styles.playerHand}>
           {playerField.map((card, index) => (
-            <Card key={index} id={card.id} content={card.content} index={index} moveCard={moveCard} />
+            card && <Card key={index} id={card.id} content={card.content} index={index} moveCard={moveCard} />
           ))}
         </div>
         <div className={styles.playerDeck}>Player Deck</div>
