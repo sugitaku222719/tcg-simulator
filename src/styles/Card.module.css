@@ -1,0 +1,46 @@
+.card {
+  width: 100px;
+  height: 140px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 5px;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-name {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  text-align: center;
+}
+
+.card-image {
+  width: 100%;
+  height: 60px;
+  object-fit: cover;
+  margin-bottom: 5px;
+}
+
+.card-description {
+  flex-grow: 1;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-attack,
+.card-defense {
+  margin: 2px 0;
+  text-align: right;
+}
