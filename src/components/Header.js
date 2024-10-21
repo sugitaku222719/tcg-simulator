@@ -13,7 +13,7 @@ function Header() {
       </div>
       <Link href="/" style={{fontSize:'30px'}}>エントランス</Link>
       <Link href="/cardRegistration" style={{fontSize:'30px'}}>カード登録画面</Link>
-      <Link href="/" style={{fontSize:'30px'}}>デッキ登録画面</Link>
+      <Link href="/deckRegistration" style={{fontSize:'30px'}}>デッキ登録画面</Link>
       <Link href="/" style={{fontSize:'30px'}}>対戦部屋</Link>
       <SignOut />
     </div>
