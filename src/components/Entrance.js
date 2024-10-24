@@ -1,10 +1,10 @@
 import React from 'react'
-import Header from './Header'
+import _Header from './_Header'
 
 function Entrance() {
   return (
     <div>
-      <Header />
+      <_Header />
     </div>
   )
 }

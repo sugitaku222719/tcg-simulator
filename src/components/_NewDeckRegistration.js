@@ -1,8 +1,8 @@
 import { auth, db } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
-import DeckRegistrationForm from './DeckRegistrationForm';
+import _NewDeckRegistrationForm from './_NewDeckRegistrationForm';
 
-function DeckRegistrationCardIndex() {
+function _NewDeckRegistration() {
   const [allCards, setAllCards] = useState([]);
   const [deckCards, setDeckCards] = useState([]);
 
@@ -35,7 +35,7 @@ function DeckRegistrationCardIndex() {
 
   return (
     <div>
-      <DeckRegistrationForm deckCards={deckCards} />
+      <_NewDeckRegistrationForm deckCards={deckCards} />
       <div style={{ display: 'flex' }}>
         {/* 左側：デッキの中身 */}
         <div style={{ flex: 1, marginRight: '20px' }}>
@@ -93,4 +93,4 @@ function DeckRegistrationCardIndex() {
   );
 }
 
-export default DeckRegistrationCardIndex;
+export default _NewDeckRegistration;

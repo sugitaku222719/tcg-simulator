@@ -1,7 +1,7 @@
 import { auth, db } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 
-function CardIndex() {
+function _CardRegistration() {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
@@ -50,4 +50,4 @@ function CardIndex() {
   );
 }
 
-export default CardIndex;
+export default _CardRegistration;

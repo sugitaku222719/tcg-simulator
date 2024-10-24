@@ -1,13 +1,13 @@
 import React from 'react'
-import Header from './Header'
-import DeckRegistrationCardIndex from './DeckRegistrationCardIndex'
+import _Header from './_Header'
+import _DeckRegistration from './_DeckRegistration'
 
 function DeckRegistration() {
   return (
     <div>
-      <Header />
+      <_Header />
       <h1>デッキ登録画面</h1>
-      <DeckRegistrationCardIndex />
+      <_DeckRegistration />
     </div>
   )
 }

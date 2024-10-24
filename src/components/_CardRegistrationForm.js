@@ -3,7 +3,7 @@ import 'firebase/compat/firestore';
 import { auth, db, storage } from '@/lib/Firebase';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-function CardRegistrationForm() {
+function _CardRegistrationForm() {
   const [cardName, setCardName] = useState("");
   const [cardImage, setCardImage] = useState(null);
 
@@ -56,4 +56,4 @@ function CardRegistrationForm() {
   )
 }
 
-export default CardRegistrationForm
+export default _CardRegistrationForm

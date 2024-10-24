@@ -1,12 +1,14 @@
-import { useRouter } from 'next/router'
+import SignIn from '@/components/SignIn'
+import { auth } from '@/lib/Firebase';
+import { useAuthState } from "react-firebase-hooks/auth";
 import React from 'react'
+import DeckRegistration from '@/components/DeckRegistration';
 
 function deckNamePage() {
-  const router = useRouter()
-  const { deckName } = router.query
+  const [user] = useAuthState(auth);
   return (
     <div>
-      <h1>{ deckName }</h1>
+      {user ? <DeckRegistration /> : <SignIn />}
     </div>
   )
 }

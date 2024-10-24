@@ -2,7 +2,7 @@ import { auth, db } from '@/lib/Firebase';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
-function DeckRegistrationForm({ deckCards }) {
+function _NewDeckRegistrationForm({ deckCards }) {
   const [deckName, setDeckName] = useState("");
   const router = useRouter();
 
@@ -60,4 +60,4 @@ function DeckRegistrationForm({ deckCards }) {
   );
 }
 
-export default DeckRegistrationForm;
+export default _NewDeckRegistrationForm;

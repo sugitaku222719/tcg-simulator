@@ -1,16 +1,16 @@
 import React from 'react'
-import CardRegistrationForm from './CardRegistrationForm'
-import CardIndex from './CardIndex'
-import Header from './Header'
+import _CardRegistrationForm from './_CardRegistrationForm'
+import _CardRegistration from './_CardRegistration'
+import _Header from './_Header'
 
 
 function CardRegistration() {
   return (
     <div>
-      <Header />
+      <_Header />
       <h1>カード登録画面</h1>
-      <CardRegistrationForm/>
-      <CardIndex/>
+      <_CardRegistrationForm/>
+      <_CardRegistration/>
     </div>
   )
 }

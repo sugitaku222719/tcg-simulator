@@ -2,15 +2,15 @@ import SignIn from '@/components/SignIn'
 import { auth } from '@/lib/Firebase';
 import { useAuthState } from "react-firebase-hooks/auth";
 import React from 'react'
-import DeckRegistration from '@/components/DeckRegistration';
+import NewDeckRegistration from '@/components/NewDeckRegistration';
 
-function deckRegistration() {
+function newDeck() {
   const [user] = useAuthState(auth);
   return (
     <div>
-      {user ? <DeckRegistration /> : <SignIn />}
+      {user ? <NewDeckRegistration /> : <SignIn />}
     </div>
   )
 }
 
-export default deckRegistration
+export default newDeck
