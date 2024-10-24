@@ -1,6 +1,7 @@
 import { auth, db } from '@/lib/Firebase';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 function _NewDeckRegistrationForm({ deckCards }) {
   const [deckName, setDeckName] = useState("");
@@ -29,8 +30,8 @@ function _NewDeckRegistrationForm({ deckCards }) {
       });
 
       const batch = db.batch();
-      deckCards.forEach((card, index) => {
-        const cardRef = deckRef.collection('cards').doc(`${card.cardId}-${index}`);
+      deckCards.forEach((card) => {
+        const cardRef = deckRef.collection('cards').doc(uuidv4());
         batch.set(cardRef, {
           cardId: card.cardId,
           cardName: card.cardName,
