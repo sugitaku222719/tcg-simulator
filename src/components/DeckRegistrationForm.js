@@ -1,8 +1,10 @@
 import { auth, db } from '@/lib/Firebase';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 function DeckRegistrationForm({ deckCards }) {
   const [deckName, setDeckName] = useState("");
+  const router = useRouter();
 
   const deckRegistrationButton = async () => {
     if (!deckName) {
@@ -38,6 +40,7 @@ function DeckRegistrationForm({ deckCards }) {
 
       await batch.commit();
       alert("デッキが保存されました");
+      router.push(`/deckRegistration/${deckName}`);
     } catch (error) {
       console.error('エラーが発生しました: ', error);
     }
