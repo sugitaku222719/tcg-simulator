@@ -34,7 +34,8 @@ function _DeckEdit() {
         .doc(auth.currentUser.uid)
         .collection('userDeckList')
         .doc(deckName)
-        .collection('cards');
+        .collection('cards')
+        .orderBy("cardName", "asc");
 
       const unsubscribe = deckCardsRef.onSnapshot(async (querySnapshot) => {
         const _cards = querySnapshot.docs.map((doc) => ({
