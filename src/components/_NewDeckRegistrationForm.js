@@ -31,11 +31,13 @@ function _NewDeckRegistrationForm({ deckCards }) {
 
       const batch = db.batch();
       deckCards.forEach((card) => {
-        const cardRef = deckRef.collection('cards').doc(uuidv4());
+        const cardDocId = uuidv4();
+        const cardRef = deckRef.collection('cards').doc(cardDocId);
         batch.set(cardRef, {
           cardId: card.cardId,
           cardName: card.cardName,
           cardImageUrl: card.cardImageUrl,
+          uuid: cardDocId,
         });
       });
 
