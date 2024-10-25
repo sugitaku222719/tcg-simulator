@@ -5,10 +5,10 @@ import { v4 as uuidv4 } from 'uuid'; // UUID生成ライブラリ
 
 function _DeckEditButton({ deckCards }) {
   const router = useRouter();
-  const { deckName } = router.query;
+  const { deckDocID } = router.query;
 
   const deckEditButton = async () => {
-    if (!deckName) {
+    if (!deckDocID) {
       alert("デッキ名が指定されていません");
       return;
     }
@@ -23,11 +23,10 @@ function _DeckEditButton({ deckCards }) {
         .collection('cardsDataBase')
         .doc(auth.currentUser.uid)
         .collection('userDeckList')
-        .doc(deckName);
+        .doc(deckDocID);
 
       // デッキの基本情報を更新（名前と更新日時）
       await deckRef.set({
-        name: deckName,
         updatedAt: new Date(),
       }, { merge: true });
 

@@ -18,11 +18,12 @@ function _NewDeckRegistrationForm({ deckCards }) {
     }
 
     try {
+      const deckDocId = uuidv4()
       const deckRef = db
         .collection('cardsDataBase')
         .doc(auth.currentUser.uid)
         .collection('userDeckList')
-        .doc(deckName);
+        .doc(deckDocId);
 
       await deckRef.set({
         name: deckName,
@@ -43,7 +44,7 @@ function _NewDeckRegistrationForm({ deckCards }) {
 
       await batch.commit();
       alert("デッキが保存されました");
-      router.push(`/deckRegistration/${deckName}`);
+      router.push(`/deckRegistration/${deckDocId}`);
     } catch (error) {
       console.error('エラーが発生しました: ', error);
     }

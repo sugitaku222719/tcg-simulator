@@ -7,13 +7,14 @@ function _DeckEdit() {
   const [allCards, setAllCards] = useState([]);
   const [deckCards, setDeckCards] = useState([]);
   const router = useRouter()
-  const { deckName } = router.query
+  const { deckDocId } = router.query
 
   useEffect(() => {
     const cardsRef = db
       .collection('cardsDataBase')
       .doc(auth.currentUser.uid)
-      .collection('userCardList');
+      .collection('userCardList')
+      .orderBy("cardName", "asc");
 
     const unsubscribe = cardsRef.onSnapshot(async (querySnapshot) => {
       const _cards = querySnapshot.docs.map((doc) => ({
@@ -33,7 +34,7 @@ function _DeckEdit() {
         .collection('cardsDataBase')
         .doc(auth.currentUser.uid)
         .collection('userDeckList')
-        .doc(deckName)
+        .doc(deckDocId)
         .collection('cards')
         .orderBy("cardName", "asc");
 

@@ -10,7 +10,8 @@ function _NewDeckRegistration() {
     const cardsRef = db
       .collection('cardsDataBase')
       .doc(auth.currentUser.uid)
-      .collection('userCardList');
+      .collection('userCardList')
+      .orderBy("cardName", "asc");
 
     const unsubscribe = cardsRef.onSnapshot(async (querySnapshot) => {
       const _cards = querySnapshot.docs.map((doc) => ({

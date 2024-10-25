@@ -9,7 +9,8 @@ function _DeckIndex() {
     const cardsRef = db
       .collection('cardsDataBase')
       .doc(auth.currentUser.uid)
-      .collection('userDeckList');
+      .collection('userDeckList')
+      .orderBy("name", "asc");;
 
     const unsubscribe = cardsRef.onSnapshot(async (querySnapshot) => {
       const _decks = querySnapshot.docs.map((doc) => {
@@ -30,7 +31,7 @@ function _DeckIndex() {
       <li key={deck.deckId}>
         <ul>
           <li>
-            <Link href = {`/deckRegistration/${deck.name}`} >Name: {deck.name}</Link>
+            <Link href = {`/deckRegistration/${deck.deckId}`} >Name: {deck.name}</Link>
           </li>
         </ul>
       </li>
