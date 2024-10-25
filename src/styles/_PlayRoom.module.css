@@ -1,0 +1,40 @@
+.playRoom {
+  display: flex;
+  flex-direction: column;
+}
+
+.topSection,
+.bottomSection {
+  display: flex;
+}
+
+.deckHost,
+.deckGuest,
+.handHost,
+.handGuest,
+.mainHost,
+.mainGuest {
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.deckHost,
+.deckGuest {
+  background-color: orange;
+}
+
+.handHost,
+.handGuest {
+  background-color: yellow;
+}
+
+.mainHost,
+.mainGuest {
+  background-color: green;
+}
+
+.card {
+  width: auto;
+  height: auto;
+  margin-bottom: 5px;
+}
