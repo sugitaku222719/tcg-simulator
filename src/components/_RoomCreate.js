@@ -6,6 +6,8 @@ function _RoomCreate() {
     <div>
       <div>あなたのuid　:　{auth.currentUser.uid}</div>
       <div>あなたが使用するデッキ名と対戦相手のuidを入力してください</div>
+      <div></div>
+      <div></div>
     </div>
   )
 }
