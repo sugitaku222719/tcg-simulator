@@ -32,6 +32,7 @@ function _RoomCreate() {
         hostUserId: auth.currentUser.uid,
         gestUserId: gestUid,
         hostDeckId: deckDocId,
+        createdAt: new Date(),
       });
 
       const roomDeckRef = db
@@ -88,6 +89,7 @@ function _RoomCreate() {
         gestUserId: auth.currentUser.uid,
         hostUserId: gestUid,
         gestDeckId: deckDocId,
+        enteredAt: new Date(),
       });
 
       const roomDeckRef = db
