@@ -1,7 +1,7 @@
-import SignIn from '@/components/SignIn'
+import SignIn from '@/components/SignIn';
 import { auth, db } from '@/lib/Firebase';
 import { useAuthState } from "react-firebase-hooks/auth";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import PlayRoom from '@/components/PlayRoom';
 import { useRouter } from 'next/router';
 
@@ -9,8 +9,9 @@ function PlayRoomPage() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
   const { roomId } = router.query;
-  const [isAuthorizedPlayer, setIsAuthorizedPlayer] = useState(false)
-  const [roomData, setRoomData] = useState("")
+  const [isAuthorizedPlayer, setIsAuthorizedPlayer] = useState(false);
+  const [roomData, setRoomData] = useState("");
+  const [authorizationChecked, setAuthorizationChecked] = useState(false);
 
   useEffect(() => {
     const checkAuthorization = async () => {
@@ -21,7 +22,7 @@ function PlayRoomPage() {
 
           if (roomDoc.exists) {
             const _roomData = roomDoc.data();
-            setRoomData(_roomData)
+            setRoomData(_roomData);
             const isHost = _roomData.hostUserId === user.uid;
             const isGuest = _roomData.guestUserId === user.uid;
 
@@ -37,14 +38,18 @@ function PlayRoomPage() {
         } catch (error) {
           console.error('Error checking authorization:', error);
           router.push('/');
+        } finally {
+          setAuthorizationChecked(true);
         }
+      } else if (!loading) {
+        setAuthorizationChecked(true);
       }
     };
 
     checkAuthorization();
-  }, [user, roomId, router]);
+  }, [user, roomId, router, loading]);
 
-  if (loading) {
+  if (loading || (user && !authorizationChecked)) {
     return <div>Loading...</div>;
   }
 
@@ -56,10 +61,12 @@ function PlayRoomPage() {
     return <div>Checking authorization...</div>;
   }
 
-  return <PlayRoom 
-    roomId={roomId}
-    roomData={roomData}
-  />;
+  return (
+    <PlayRoom
+      roomId={roomId}
+      roomData={roomData}
+    />
+  );
 }
 
 export default PlayRoomPage;
