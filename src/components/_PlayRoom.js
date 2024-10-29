@@ -77,7 +77,7 @@ function _PlayRoom({roomId, roomData}) {
     if (cardData) {
       const card = JSON.parse(cardData);
       const updatedCards = cards.map(c =>
-        c.id === card.id ? { ...c, position: { row: rowIndex, col: colIndex } } : c
+        c.uuid === card.uuid ? { ...c, position: { row: rowIndex, col: colIndex } } : c
       );
       await setCards(updatedCards);
       hostFieldRef.set({ cards: updatedCards });
@@ -96,10 +96,10 @@ function _PlayRoom({roomId, roomData}) {
   const returnDeckCard = async (card) => {
     const updatedDeckCards = [...deckCards, card];
     await setDeckCards(updatedDeckCards);
-    await setCards(cards.filter((c) => c.id !== card.id));
+    await setCards(cards.filter((c) => c.uuid !== card.uuid));
   
     hostDeckRef.set({ cards: updatedDeckCards });
-    hostFieldRef.set({ cards: cards.filter((c) => c.id !== card.id) });
+    hostFieldRef.set({ cards: cards.filter((c) => c.uuid !== card.uuid) });
   };
 
   const onDragOver = (e) => {
@@ -107,23 +107,30 @@ function _PlayRoom({roomId, roomData}) {
   };
 
   const resetDeckAndField = async () => {
-    const initialDeck = [
-      { id: 1, name: 'カード1', position: { row: 10, col: 10 } },
-      { id: 2, name: 'カード2', position: { row: 11, col: 11 } },
-      { id: 3, name: 'カード3', position: { row: 12, col: 12 } },
-      { id: 4, name: 'カード4', position: { row: 3, col: 10 } },
-      { id: 5, name: 'カード5', position: { row: 3, col: 11 } },
-      { id: 6, name: 'カード6', position: { row: 3, col: 12 } },
-      { id: 7, name: 'カード7', position: { row: 3, col: 13 } },
-      { id: 8, name: 'カード8', position: { row: 3, col: 14 } },
-      { id: 9, name: 'カード9', position: { row: 3, col: 15 } },
-    ];
+    const hostDecDocId = roomData.hostDeckDocId
+    const deckRef = db
+      .collection('cardsDataBase')
+      .doc(hostUserUid)
+      .collection('userDeckList')
+      .doc(hostDecDocId)
+      .collection("cards");
+    const snapshot = await deckRef.get();
+    const _cards = snapshot.docs.map((doc) => ({
+      cardDocId: doc.id,
+      ...doc.data(),
+    }));
+    const initialDeck = _cards.map(card => {
+      return{
+        ...card,
+        position: {row: 3, col: 3}
+      };
+    });
 
     await setDeckCards(initialDeck);
     await setCards([]);
     
-    db.collection('decks').doc('myDeck').set({ cards: initialDeck });
-    db.collection('fields').doc('myField').set({ cards: [] });
+    hostDeckRef.set({ cards: initialDeck });
+    hostFieldRef.set({ cards: [] });
   }
 
   const renderField = () => (

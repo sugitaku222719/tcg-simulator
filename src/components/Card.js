@@ -14,7 +14,15 @@ const Card = ({ card, onDragStart, onRightClick }) => {
       onDragStart={(e) => onDragStart(e, card)}
       onContextMenu={handleContextMenu} // 右クリック時のイベント
     >
-      {card.name}
+      <div>{card.cardName}</div>
+      <div>
+        <img
+          src={card.cardImageUrl || ""}
+          alt={card.cardName}
+          width="100"
+          height="120"
+        />
+      </div>
     </div>
   );
 };
