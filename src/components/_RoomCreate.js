@@ -1,15 +1,17 @@
 import { auth, db } from '@/lib/Firebase'
+import roomCreate from '@/pages/playRoom/roomCreate';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 
 function _RoomCreate() {
   const [deckDocId, setDeckDocId] = useState("");
-  const [gestUid, setGestUid] = useState("");
+  const [guestUid, setGuestUid] = useState("");
   const [hostUid, setHostUid] = useState("");
   const [deckCards, setDeckCards] = useState([]);
   const router = useRouter();
 
-  const roomCreateButton = async () => {
+  const roomCreateFunction = async (hostUid,guestUid) => {
+    const roomId = `${hostUid}-${guestUid}`
     try {
       const deckRef = db
         .collection('cardsDataBase')
@@ -22,104 +24,41 @@ function _RoomCreate() {
         cardDocId: doc.id,
         ...doc.data(),
       }));
-
-      const roomID = `${auth.currentUser.uid}-${gestUid}`
-
       const roomRef = db
       .collection("roomsDataBase")
-      .doc(roomID)
+      .doc(roomId)
       await roomRef.set({
-        hostUserId: auth.currentUser.uid,
-        gestUserId: gestUid,
-        hostDeckId: deckDocId,
+        hostUserId: hostUid,
+        guestUserId: guestUid,
         createdAt: new Date(),
       });
-
       const roomDeckRef = db
         .collection("roomsDataBase")
-        .doc(roomID)
-        .collection("Users")
-        .doc(auth.currentUser.uid)
-        .collection("playDeck")
-
-      const batch = db.batch();
-      _cards.forEach((card, index) => {
-        batch.set(roomDeckRef.doc(card.cardDocId), {
-          cardId: card.cardId,
-          cardName: card.cardName,
-          cardImageUrl: card.cardImageUrl,
-          uuid: card.cardDocId,
-          index: index,
-        });
+        .doc(roomId)
+        .collection(auth.currentUser.uid)
+        .doc("deck");
+      const deck = _cards.map(card => {
+        return{
+          ...card,
+          position: {row: 3, col: 3}
+        };
       });
-
-      await batch.commit();
+      await roomDeckRef.set({cards: deck});
       alert("部屋が作成されました");
-      
-      // 成功後の処理（例：ページ遷移）
-      router.push(`/playRoom/${roomID}`);
+      router.push(`/playRoom/${roomId}`);
     } catch (error) {
       alert("エラーが発生しました");
       console.error('エラーが発生しました: ', error);
-      
-    }
-  };
-  const roomEnteringButton = async () => {
-    try {
-      const deckRef = db
-        .collection('cardsDataBase')
-        .doc(auth.currentUser.uid)
-        .collection('userDeckList')
-        .doc(deckDocId)
-        .collection("cards"); 
-
-      const snapshot = await deckRef.get();
-
-      const _cards = snapshot.docs.map((doc) => ({
-        cardDocId: doc.id,
-        ...doc.data(),
-      }));
-
-      const roomID = `${auth.currentUser.uid}-${gestUid}`
-
-      const roomRef = db
-      .collection("roomsDataBase")
-      .doc(roomID)
-      await roomRef.set({
-        gestUserId: auth.currentUser.uid,
-        hostUserId: gestUid,
-        gestDeckId: deckDocId,
-        enteredAt: new Date(),
-      });
-
-      const roomDeckRef = db
-        .collection("roomsDataBase")
-        .doc(roomID)
-        .collection("Users")
-        .doc(auth.currentUser.uid)
-        .collection("playDeck")
-
-      const batch = db.batch();
-      _cards.forEach((card, index) => {
-        batch.set(roomDeckRef.doc(card.cardDocId), {
-          cardId: card.cardId,
-          cardName: card.cardName,
-          cardImageUrl: card.cardImageUrl,
-          uuid: card.cardDocId,
-          index: index,
-        });
-      });
-
-      await batch.commit();
-      console.log('バッチ書き込みが成功しました。');
-      
-      // 成功後の処理（例：ページ遷移）
-      router.push(`/playRoom/${roomID}`);
-    } catch (error) {
-      console.error('エラーが発生しました: ', error);
-    }
+    };
   };
 
+  const roomCreateButton = () => {
+    roomCreateFunction(auth.currentUser.uid, guestUid)
+  }
+
+  const roomEnteringButton = () => {
+    roomCreateFunction(hostUid, auth.currentUser.uid)
+  }
 
   return (
     <div>
@@ -127,12 +66,12 @@ function _RoomCreate() {
       <h3>あなたがホストの場合</h3>
       <div>あなたが使用するデッキのIDと対戦相手のuidを入力してください</div>
       <div>
-        <label htmlFor="gestUid">ゲストのuid:</label>
+        <label htmlFor="guestUid">ゲストのuid:</label>
         <input
           type="text"
-          id="gestUid"
-          value={gestUid}
-          onChange={(event) => setGestUid(event.target.value)}
+          id="guestUid"
+          value={guestUid}
+          onChange={(event) => setGuestUid(event.target.value)}
         />
       </div>
       <div>
