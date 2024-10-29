@@ -1,0 +1,51 @@
+.playRoom {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.playZone {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+}
+
+.deck {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 100px;
+  height: 140px;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  
+}
+
+.handZone{
+  position: absolute;
+  top: 10px;
+  left: 130px;
+  width: 70%;
+  height: 160px;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2adb33;
+  opacity: 0.5;
+  font-size: 80px;
+}
