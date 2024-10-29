@@ -31,7 +31,10 @@ function _DeckIndex() {
       <li key={deck.deckId}>
         <ul>
           <li>
-            <Link href = {`/deckRegistration/${deck.deckId}`} >Name: {deck.name}</Link>
+            <Link href = {`/deckRegistration/${deck.deckId}`} >
+              <p>Name: {deck.name}</p>
+            </Link>
+            <p>Deck ID: {deck.deckId}</p>
           </li>
         </ul>
       </li>
@@ -40,7 +43,7 @@ function _DeckIndex() {
 
   return (
     <div>
-      <Link href = "/deckRegistration/newDeck" >New deck</Link>
+      <h4>デッキリスト</h4>
       <ul>{deckListItems}</ul>
     </div>
   );

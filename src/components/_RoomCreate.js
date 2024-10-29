@@ -2,17 +2,35 @@ import { auth, db } from '@/lib/Firebase'
 import roomCreate from '@/pages/playRoom/roomCreate';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
+import _DeckIndex from './_DeckIndex';
 
 function _RoomCreate() {
   const [deckDocId, setDeckDocId] = useState("");
-  const [guestUid, setGuestUid] = useState("");
-  const [hostUid, setHostUid] = useState("");
-  const [deckCards, setDeckCards] = useState([]);
   const router = useRouter();
+  const [opponentUid, setOpponentUid] = useState("");
 
-  const roomCreateFunction = async (hostUid,guestUid) => {
+  const roomCreateFunction = async (hostUid,guestUid,isHost) => {
     const roomId = `${hostUid}-${guestUid}`
     try {
+      const roomRef = db
+      .collection("roomsDataBase")
+      .doc(roomId)
+      if (isHost){
+        await roomRef.set({
+          hostUserId: hostUid,
+          guestUserId: guestUid,
+          hostDeckDocId: deckDocId,
+          createdAt: new Date(),
+        }, { merge: true });
+      }else{
+        await roomRef.set({
+          hostUserId: hostUid,
+          guestUserId: guestUid,
+          guestDeckDocId: deckDocId,
+          createdAt: new Date(),
+        }, { merge: true });
+      }
+
       const deckRef = db
         .collection('cardsDataBase')
         .doc(auth.currentUser.uid)
@@ -24,26 +42,19 @@ function _RoomCreate() {
         cardDocId: doc.id,
         ...doc.data(),
       }));
-      const roomRef = db
-      .collection("roomsDataBase")
-      .doc(roomId)
-      await roomRef.set({
-        hostUserId: hostUid,
-        guestUserId: guestUid,
-        createdAt: new Date(),
-      });
-      const roomDeckRef = db
-        .collection("roomsDataBase")
-        .doc(roomId)
-        .collection(auth.currentUser.uid)
-        .doc("deck");
       const deck = _cards.map(card => {
         return{
           ...card,
           position: {row: 3, col: 3}
         };
       });
+      const roomDeckRef = db
+        .collection("roomsDataBase")
+        .doc(roomId)
+        .collection(auth.currentUser.uid)
+        .doc("deck");
       await roomDeckRef.set({cards: deck});
+
       alert("部屋が作成されました");
       router.push(`/playRoom/${roomId}`);
     } catch (error) {
@@ -53,60 +64,39 @@ function _RoomCreate() {
   };
 
   const roomCreateButton = () => {
-    roomCreateFunction(auth.currentUser.uid, guestUid)
+    roomCreateFunction(auth.currentUser.uid, opponentUid, true)
   }
 
   const roomEnteringButton = () => {
-    roomCreateFunction(hostUid, auth.currentUser.uid)
+    roomCreateFunction(opponentUid, auth.currentUser.uid, false)
   }
 
   return (
     <div>
       <h2>あなたのuid　:　{auth.currentUser.uid}</h2>
-      <h3>あなたがホストの場合</h3>
-      <div>あなたが使用するデッキのIDと対戦相手のuidを入力してください</div>
       <div>
-        <label htmlFor="guestUid">ゲストのuid:</label>
+        <label htmlFor="opponentUid">対戦相手のuid:</label>
         <input
           type="text"
-          id="guestUid"
-          value={guestUid}
-          onChange={(event) => setGuestUid(event.target.value)}
+          id="opponentUid"
+          value={opponentUid}
+          onChange={(event) => setOpponentUid(event.target.value)}
         />
       </div>
       <div>
-      <label htmlFor="deckDocId">deckId:</label>
-        <input
-          type="text"
-          id="deckDocId"
-          value={deckDocId}
-          onChange={(event) => setDeckDocId(event.target.value)}
-        />
+        <label htmlFor="deckDocId">Deck ID:</label>
+          <input
+            type="text"
+            id="deckDocId"
+            value={deckDocId}
+            onChange={(event) => setDeckDocId(event.target.value)}
+          />
+        </div>
         <button onClick={roomCreateButton}>部屋作成</button>
-      </div>
-      <h3>あなたがゲストの場合</h3>
-      <div>あなたが使用するデッキのIDと対戦相手のuidを入力してください</div>
-      <div>
-        <label htmlFor="hostUid">ホストのuid:</label>
-        <input
-          type="text"
-          id="hostUid"
-          value={hostUid}
-          onChange={(event) => setHostUid(event.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="deckDocId">deckId:</label>
-        <input
-          type="text"
-          id="deckDocId"
-          value={deckDocId}
-          onChange={(event) => setDeckDocId(event.target.value)}
-        />
         <button onClick={roomEnteringButton}>部屋入室</button>
-      </div>
+      <_DeckIndex />
     </div>
-  )
-}
+  );
+};
 
 export default _RoomCreate

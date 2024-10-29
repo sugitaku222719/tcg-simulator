@@ -9,7 +9,8 @@ function PlayRoomPage() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
   const { roomId } = router.query;
-  const [isAuthorizedPlayer, setIsAuthorizedPlayer] = useState(false);
+  const [isAuthorizedPlayer, setIsAuthorizedPlayer] = useState(false)
+  const [roomData, setRoomData] = useState("")
 
   useEffect(() => {
     const checkAuthorization = async () => {
@@ -19,9 +20,10 @@ function PlayRoomPage() {
           const roomDoc = await roomRef.get();
 
           if (roomDoc.exists) {
-            const roomData = roomDoc.data();
-            const isHost = roomData.hostUserId === user.uid;
-            const isGuest = roomData.gestUserId === user.uid;
+            const _roomData = roomDoc.data();
+            setRoomData(_roomData)
+            const isHost = _roomData.hostUserId === user.uid;
+            const isGuest = _roomData.guestUserId === user.uid;
 
             if (isHost || isGuest) {
               setIsAuthorizedPlayer(true);
@@ -54,7 +56,10 @@ function PlayRoomPage() {
     return <div>Checking authorization...</div>;
   }
 
-  return <PlayRoom roomId={roomId} />;
+  return <PlayRoom 
+    roomId={roomId}
+    roomData={roomData}
+  />;
 }
 
 export default PlayRoomPage;
