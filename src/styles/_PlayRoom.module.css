@@ -1,24 +1,28 @@
 .playRoom {
   display: flex;
   flex-direction: column;
-  min-width: 1200px; /* 最小幅を設定 */
+  min-width: 1200px;
+  overflow: hidden;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  overflow-x: scroll;
+  overflow-x: auto; /* 横スクロールを可能にする */
+  white-space: nowrap;	
+  width: 100%; /* 幅を100%に設定 */
 }
 
 .playZone {
-  overflow: auto;
+  overflow: visible; /* コンテンツがはみ出ても表示する */
   display: flex;
   flex-direction: column;
 }
 
 .row {
   display: flex;
-  flex-wrap: nowrap; /* 行が折り返さないようにする */
+  flex-wrap: nowrap;
+  min-width: 1200px; /* 最小幅を設定 */
 }
 
 .deck {
@@ -32,7 +36,7 @@
   justify-content: center;
   align-items: center;
   background-color: #f0f0f0;
-  flex-shrink: 0; /* サイズが縮小しないようにする */
+  flex-shrink: 0;
 }
 
 .handZone {
