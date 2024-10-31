@@ -22,13 +22,16 @@
 .row {
   display: flex;
   flex-wrap: nowrap;
-  min-width: 1200px; /* 最小幅を設定 */
+  justify-content: center;
+}
+
+.deckAndHand{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .deck {
-  position: relative;
-  top: 0px;
-  left: 70%;
   width: 100px;
   height: 140px;
   border: 1px solid #000;
@@ -40,10 +43,7 @@
 }
 
 .handZone {
-  position: absolute;
-  top: 10px;
-  left: 130px;
-  width: 70%;
+  width: calc(100% - 150px);
   height: 160px;
   border: 1px solid #000;
   display: flex;
