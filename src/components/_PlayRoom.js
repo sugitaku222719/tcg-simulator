@@ -226,10 +226,10 @@ function _PlayRoom({roomId, roomData}) {
 
   return (
     <div>
-      <div className={styles.playRoom}>
+      <div className={styles.opponentPlayRoom}>
         {renderField(opponentField, opponentCards, opponentHandCards, opponentDeckCards, true)}
       </div>
-      <div className={styles.playRoom}>
+      <div className={styles.myPlayRoom}>
         {renderField(myField, myCards, myHandCards, myDeckCards, false)}
       </div>
     </div>

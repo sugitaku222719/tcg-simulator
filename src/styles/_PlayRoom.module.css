@@ -1,8 +1,18 @@
-.playRoom {
+.myPlayRoom {
   display: flex;
   flex-direction: column;
   min-width: 1200px;
   overflow: hidden;
+  background-color: bisque;
+}
+
+.opponentPlayRoom {
+  display: flex;
+  flex-direction: column;
+  min-width: 1200px;
+  overflow: hidden;
+  transform:rotate(180deg);
+  background-color: #e0b338e1;
 }
 
 .field {
@@ -50,7 +60,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #2adb33;
   opacity: 0.5;
   font-size: 80px;
+
 }
