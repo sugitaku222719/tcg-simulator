@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from "@/styles/HandCard.module.css";
 
-const HandCard = ({ card, addFieldCard, onRightClick }) => {
+const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
   const handleContextMenu = (e) => {
     e.preventDefault();
     if (onRightClick) {
@@ -17,20 +17,26 @@ const HandCard = ({ card, addFieldCard, onRightClick }) => {
 
   return (
     <div
-      className={styles.card}
-      draggable={addFieldCard ? true : false}
-      onClick={handleClick}
-      onContextMenu={handleContextMenu}
+      className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
+      draggable={!isOpponent}
+      onClick={isOpponent ? null : handleClick}
+      onContextMenu={isOpponent ? null : handleContextMenu}
     >
-      <div>{card.cardName}</div>
-      <div>
-        <img
-          src={card.cardImageUrl || ""}
-          alt={card.cardName}
-          width="100"
-          height="120"
-        />
-      </div>
+      {isOpponent ? (
+        <div className={styles.cardBack}></div>
+      ) : (
+        <>
+          <div>{card.cardName}</div>
+          <div>
+            <img
+              src={card.cardImageUrl || ""}
+              alt={card.cardName}
+              width="100"
+              height="120"
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };

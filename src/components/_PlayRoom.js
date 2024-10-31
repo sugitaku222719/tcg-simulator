@@ -205,6 +205,7 @@ function _PlayRoom({roomId, roomData}) {
               card={card}
               addFieldCard={isOpponent ? null : addFieldCard}
               onRightClick={isOpponent ? null : returnDeckCard}
+              isOpponent={isOpponent}
             />
           ))}
         </div>
