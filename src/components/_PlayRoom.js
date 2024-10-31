@@ -75,7 +75,6 @@ function _PlayRoom({roomId, roomData}) {
     };
   }, []);
 
-  // 以下の関数は、myCardsとmyDeckCardsを操作するように変更
   const shuffleDeck = async () => {
     let deck = [...myDeckCards];
     for (let i = deck.length - 1; i > 0; i--) {
@@ -191,8 +190,8 @@ function _PlayRoom({roomId, roomData}) {
                 card={card}
                 onDrop={isOpponent ? null : onDrop}
                 onDragOver={isOpponent ? null : onDragOver}
-                onDragStart={isOpponent ? null : onDragStart} 
-                onRightClick={isOpponent ? null : returnDeckCard} 
+                onDragStart={isOpponent ? null : onDragStart}
+                onRightClick={isOpponent ? null : returnDeckCard}
               />
             );
           })}
@@ -212,7 +211,7 @@ function _PlayRoom({roomId, roomData}) {
         <div 
           className={styles.deck} 
           onClick={isOpponent ? null : addHandCard}
-          onDrop={isOpponent ? null : (e) => deckOnDrop(e)}
+          onDrop={isOpponent ? null : deckOnDrop}
           onDragOver={isOpponent ? null : onDragOver}
         >デッキ{deckCards.length}</div>
       </div>
