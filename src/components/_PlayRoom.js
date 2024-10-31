@@ -130,17 +130,35 @@ function _PlayRoom({roomId, roomData}) {
     const cardData = e.dataTransfer.getData('application/json');
     if (cardData) {
       const newDeckCard = JSON.parse(cardData);
-      returnDeckCard(newDeckCard)
+      returnToDeckFromField(newDeckCard)
     }
   }
 
-  const returnDeckCard = async (card) => {
+  const returnToDeckFromField = async (card) => {
     const updatedDeckCards = [...myDeckCards, card];
     await setMyDeckCards(updatedDeckCards);
     await setMyCards(myCards.filter((c) => c.uuid !== card.uuid));
   
     myDeckRef.set({ cards: updatedDeckCards });
     myFieldRef.set({ cards: myCards.filter((c) => c.uuid !== card.uuid) });
+  };
+
+  const returnToHand = async (card) => {
+    const updatedHandCards = [...myHandCards, card];
+    await setMyHandCards(updatedHandCards);
+    await setMyCards(myCards.filter((c) => c.uuid !== card.uuid));
+  
+    myHandRef.set({ cards: updatedHandCards });
+    myFieldRef.set({ cards: myCards.filter((c) => c.uuid !== card.uuid) });
+  };
+
+  const returnToDeck = async (card) => {
+    const updatedDeckCards = [...myDeckCards, card];
+    await setMyDeckCards(updatedDeckCards);
+    await setMyHandCards(myHandCards.filter((c) => c.uuid !== card.uuid));
+  
+    myDeckRef.set({ cards: updatedDeckCards });
+    myHandRef.set({ cards: myHandCards.filter((c) => c.uuid !== card.uuid) });
   };
 
   const onDragOver = (e) => {
@@ -191,7 +209,7 @@ function _PlayRoom({roomId, roomData}) {
                 onDrop={isOpponent ? null : onDrop}
                 onDragOver={isOpponent ? null : onDragOver}
                 onDragStart={isOpponent ? null : onDragStart}
-                onRightClick={isOpponent ? null : returnDeckCard}
+                onRightClick={isOpponent ? null : returnToHand}
               />
             );
           })}
@@ -204,7 +222,7 @@ function _PlayRoom({roomId, roomData}) {
               key={card.uuid}
               card={card}
               addFieldCard={isOpponent ? null : addFieldCard}
-              onRightClick={isOpponent ? null : returnDeckCard}
+              onRightClick={isOpponent ? null : returnToDeck}
               isOpponent={isOpponent}
             />
           ))}

@@ -13,7 +13,7 @@ const Cell = ({ rowIndex, colIndex, card, onDrop, onDragOver, onDragStart, onRig
         <Card
           card={card}
           onDragStart={onDragStart}
-          onRightClick={onRightClick} // 右クリック用のプロップを追加
+          onRightClick={onRightClick}
         />
       )}
     </div>
