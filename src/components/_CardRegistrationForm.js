@@ -5,6 +5,9 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function _CardRegistrationForm() {
   const [cardName, setCardName] = useState("");
+  const [cardText, setCardText] = useState("");
+  const [cardType, setCardType] = useState("");
+  const [cardStats, setCardStats] = useState("");
   const [cardImage, setCardImage] = useState(null);
 
   const cardRegistrationButton = async () => {
@@ -22,12 +25,20 @@ function _CardRegistrationForm() {
         .collection('userCardList')
         .add({
           cardName: cardName,
+          cardText: cardText,
+          cardType: cardType,
+          cardStats: cardStats,
           cardImage: cardImage.name,
           cardImageUrl: url  // 解決されたURLを保存
         });
-
-        console.log('カードが正常に登録されました');
+        alert("カードが登録されました");
+        setCardName("");
+        setCardText("");
+        setCardType("");
+        setCardStats("");
+        setCardImage(null);
     } catch (error) {
+      alert('エラーが発生しました');
       console.error('エラーが発生しました: ', error);
     }
   };
@@ -40,6 +51,27 @@ function _CardRegistrationForm() {
         id="cardName"
         value={cardName}
         onChange={(event) => {setCardName(event.target.value)}}
+      />
+      <label htmlFor="cardText" >cardText:</label>
+      <input
+        type="text"
+        id="cardText"
+        value={cardText}
+        onChange={(event) => {setCardText(event.target.value)}}
+      />
+      <label htmlFor="cardType" >cardType:</label>
+      <input
+        type="text"
+        id="cardType"
+        value={cardType}
+        onChange={(event) => {setCardType(event.target.value)}}
+      />
+      <label htmlFor="cardStats" >cardStats:</label>
+      <input
+        type="text"
+        id="cardStats"
+        value={cardStats}
+        onChange={(event) => {setCardStats(event.target.value)}}
       />
       <label htmlFor="cardImage" >cardImage:</label>
       <input

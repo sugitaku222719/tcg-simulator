@@ -31,6 +31,9 @@ function _CardRegistration() {
         <ul>
           <li>ID: {card.cardId}</li>
           <li>Name: {card.cardName}</li>
+          <li>Text: {card.cardText}</li>
+          <li>Type: {card.cardType}</li>
+          <li>Stats: {card.cardStats}</li>
           <li>
             <img
               src={card.cardImageUrl || ""}
@@ -40,6 +43,8 @@ function _CardRegistration() {
             />
           </li>
         </ul>
+        <button>編集</button>
+        <button>削除</button>
       </li>
     );
   });
