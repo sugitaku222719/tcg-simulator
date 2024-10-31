@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from "../styles/_PlayRoom.module.css"
 import Cell from './Cell';
 import { auth, db } from '../lib/Firebase';
+import HandCard from './HandCard';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -17,20 +18,28 @@ function _PlayRoom({roomId, roomData}) {
     const unsubscribeDeck = hostDeckRef.onSnapshot((doc) => {
         if (doc.exists) {
           setDeckCards(doc.data().cards || []);
-          console.log("Deck data updated:", doc.data().cards);
+          // console.log("Deck data updated:", doc.data().cards);
         }
       });
 
     const unsubscribeField = hostFieldRef.onSnapshot((doc) => {
         if (doc.exists) {
           setCards(doc.data().cards || []);
-          console.log("Field data updated:", doc.data().cards);
+          // console.log("Field data updated:", doc.data().cards);
+        }
+      });
+
+      const unsubscribeHand = hostHandRef.onSnapshot((doc) => {
+        if (doc.exists) {
+          setHandCards(doc.data().cards || []);
+          // console.log("Hand data updated:", doc.data().cards);
         }
       });
 
     return () => {
       unsubscribeDeck();
       unsubscribeField();
+      unsubscribeHand();
     };
   }, []);
 
@@ -44,15 +53,15 @@ function _PlayRoom({roomId, roomData}) {
     hostDeckRef.set({ cards: deck });
   };
 
-  const addFieldCard = async () => {
-    if (!deckCards || deckCards.length === 0) return;
+  const addFieldCard = async (card) => {
+    if (!handCards || handCards.length === 0) return;
 
-    const newCard = deckCards[0];
-    const updatedCards = [...cards, newCard];
-    await setCards(updatedCards);
-    await setDeckCards(deckCards.slice(1));
     
-    hostDeckRef.set({ cards: deckCards.slice(1) });
+    const updatedCards = [...cards, card];
+    await setCards(updatedCards);
+    await setHandCards(handCards.filter((c) => c.uuid !== card.uuid));
+    
+    hostHandRef.set({ cards: handCards.filter((c) => c.uuid !== card.uuid) });
     hostFieldRef.set({ cards: updatedCards });
   };
 
@@ -107,7 +116,7 @@ function _PlayRoom({roomId, roomData}) {
     e.preventDefault();
   };
 
-  const resetDeckAndField = async () => {
+  const resetDeckAndFieldAndHand = async () => {
     const hostDecDocId = roomData.hostDeckDocId
     const deckRef = db
       .collection('cardsDataBase')
@@ -129,9 +138,11 @@ function _PlayRoom({roomId, roomData}) {
 
     await setDeckCards(initialDeck);
     await setCards([]);
-    
+    await setHandCards([]);
+
     hostDeckRef.set({ cards: initialDeck });
     hostFieldRef.set({ cards: [] });
+    hostHandRef.set({ cards: [] });
   }
 
   const renderField = () => (
@@ -158,22 +169,22 @@ function _PlayRoom({roomId, roomData}) {
       <div className={styles.deckAndHand}>
         <div className={styles.handZone}>
           {handCards.map(card => (
-            <Card
-              key={card.id}
+            <HandCard
+              key={card.uuid}
               card={card}
-              onDragStart={onDragStart}
+              addFieldCard={addFieldCard}
               onRightClick={returnDeckCard}
             />
           ))}
         </div>
         <div 
           className={styles.deck} 
-          onClick={addFieldCard}
+          onClick={addHandCard}
           onDrop={(e) => deckOnDrop(e)}
           onDragOver={onDragOver}
         >デッキ1</div>
       </div>
-      <button onClick={resetDeckAndField}>リセット</button>
+      <button onClick={resetDeckAndFieldAndHand}>リセット</button>
       <button onClick={shuffleDeck}>シャッフル</button>
     </div>
   );
