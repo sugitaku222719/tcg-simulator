@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import 'firebase/compat/firestore';
 import { auth, db, storage } from '@/lib/Firebase';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import styles from '@/styles/_CardRegistrationForm.module.css';
+import { TextField, Button, Box, Typography } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import styles from "@/styles/_CardRegistrationForm.module.css"
 
 function _CardRegistrationForm() {
   const [cardName, setCardName] = useState("");
@@ -10,16 +12,17 @@ function _CardRegistrationForm() {
   const [cardType, setCardType] = useState("");
   const [cardStats, setCardStats] = useState("");
   const [cardImage, setCardImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const cardRegistrationButton = async () => {
     if (!cardName || !cardImage) {
       alert("Card NameとCard Imageは入力してください");
       return;
     }
-    try{
+    try {
       const storageRef = ref(storage, 'image/' + auth.currentUser.uid + '/' + cardImage.name);
-      await uploadBytes(storageRef, cardImage);  // 画像のアップロードを待機
-      const url = await getDownloadURL(storageRef);  // URLの取得を待機
+      await uploadBytes(storageRef, cardImage);
+      const url = await getDownloadURL(storageRef);
 
       await db.collection('cardsDataBase')
         .doc(auth.currentUser.uid)
@@ -30,77 +33,99 @@ function _CardRegistrationForm() {
           cardType: cardType,
           cardStats: cardStats,
           cardImage: cardImage.name,
-          cardImageUrl: url  // 解決されたURLを保存
+          cardImageUrl: url
         });
-        alert("カードが登録されました");
-        setCardName("");
-        setCardText("");
-        setCardType("");
-        setCardStats("");
-        setCardImage(null);
+      alert("カードが登録されました");
+      setCardName("");
+      setCardText("");
+      setCardType("");
+      setCardStats("");
+      setCardImage(null);
+      setImagePreview(null);
     } catch (error) {
       alert('エラーが発生しました');
       console.error('エラーが発生しました: ', error);
     }
   };
 
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setCardImage(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
   return (
     <div className={styles.formContainer}>
-      <div className={styles.inputGroup}>
-        <label htmlFor="cardName" className={styles.label}>cardName:</label>
-        <input
-          type="text"
-          id="cardName"
-          className={styles.input}
+      <Box component="form" noValidate autoComplete="off" sx={{ '& > :not(style)': { m: 1 } }}>
+        <TextField
+          label="Card Name"
+          variant="outlined"
+          fullWidth
+          required
           value={cardName}
-          onChange={(event) => {setCardName(event.target.value)}}
+          onChange={(event) => setCardName(event.target.value)}
         />
-      </div>
-      <div className={styles.inputGroup}>
-        <label htmlFor="cardText" className={styles.label}>cardText:</label>
-        <input
-          type="text"
-          id="cardText"
-          className={styles.input}
+        <TextField
+          label="Card Text"
+          variant="outlined"
+          fullWidth
+          multiline
+          rows={4}
           value={cardText}
-          onChange={(event) => {setCardText(event.target.value)}}
+          onChange={(event) => setCardText(event.target.value)}
         />
-      </div>
-      <div className={styles.inputGroup}>
-        <label htmlFor="cardType" className={styles.label}>cardType:</label>
-        <input
-          type="text"
-          id="cardType"
-          className={styles.input}
+        <TextField
+          label="Card Type"
+          variant="outlined"
+          fullWidth
           value={cardType}
-          onChange={(event) => {setCardType(event.target.value)}}
+          onChange={(event) => setCardType(event.target.value)}
         />
-      </div>
-      <div className={styles.inputGroup}>
-        <label htmlFor="cardStats" className={styles.label}>cardStats:</label>
-        <input
-          type="text"
-          id="cardStats"
-          className={styles.input}
+        <TextField
+          label="Card Stats"
+          variant="outlined"
+          fullWidth
           value={cardStats}
-          onChange={(event) => {setCardStats(event.target.value)}}
+          onChange={(event) => setCardStats(event.target.value)}
         />
-      </div>
-      <div className={styles.inputGroup}>
-        <label htmlFor="cardImage" className={styles.label}>cardImage:</label>
-        <input
-          type="file"
-          id="cardImage"
-          className={styles.fileInput}
-          accept=".png, .jpeg, .jpg"
-          onChange={(event) => {
-            const file = event.target.files[0]
-            setCardImage(file)
-          }}
-        />
-      </div>
-      <button className={styles.button} onClick={cardRegistrationButton}>追加</button>
+        <Button
+          variant="contained"
+          component="label"
+          startIcon={<CloudUploadIcon />}
+        >
+          Upload Image
+          <input
+            type="file"
+            hidden
+            accept=".png, .jpeg, .jpg"
+            onChange={handleImageChange}
+          />
+        </Button>
+        {imagePreview && (
+          <Box mt={2}>
+            <Typography variant="subtitle1">Image Preview:</Typography>
+            <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px' }} />
+          </Box>
+        )}
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={cardRegistrationButton}
+          disabled={!cardName || !cardImage}
+        >
+          追加
+        </Button>
+      </Box>
     </div>
+    
   )
 }
 
