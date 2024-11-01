@@ -1,0 +1,9 @@
+.buttonContainer {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.updateButton {
+  min-width: 100px;
+}

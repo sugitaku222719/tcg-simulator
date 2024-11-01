@@ -3,6 +3,7 @@ import _Header from './_Header'
 import _DeckEdit from './_DeckEdit'
 import { useRouter } from 'next/router'
 import { auth, db } from '@/lib/Firebase'
+import styles from '@/styles/DeckEdit.module.css'
 
 function DeckEdit() {
   const router = useRouter()
@@ -35,10 +36,16 @@ function DeckEdit() {
   }, [deckDocId])
 
   return (
-    <div>
+    <div className="page-container">
       <_Header />
-      <h1>{deckData ? deckData.name : "ローディング中..."}</h1>
-      <_DeckEdit />
+      <main className={`main-content ${styles.deckEditContainer}`}>
+        <h1 className={`page-title ${styles.deckTitle}`}>
+          {deckData ? deckData.name : "ローディング中..."}
+        </h1>
+        <div className={styles.deckEditContent}>
+          <_DeckEdit />
+        </div>
+      </main>
     </div>
   )
 }

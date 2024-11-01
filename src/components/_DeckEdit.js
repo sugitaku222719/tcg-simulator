@@ -2,6 +2,8 @@ import { auth, db } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import _DeckEditButton from './_DeckEditButton';
 import { useRouter } from 'next/router';
+import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem } from '@mui/material';
+import styles from '@/styles/_DeckEdit.module.css';
 
 function _DeckEdit() {
   const [allCards, setAllCards] = useState([]);
@@ -93,49 +95,67 @@ function _DeckEdit() {
   };
 
   return (
-    <div>
+    <Container maxWidth="lg" className={styles.container}>
       <_DeckEditButton deckCards={deckCards} deckDocId={deckDocId} />
-      <div style={{ display: 'flex' }}>
-        <div style={{ flex: 1, marginRight: '20px' }}>
-          <h2>デッキの中身</h2>
-          <ul>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h4" gutterBottom>デッキの中身</Typography>
+          <List className={styles.cardList}>
             {deckCards.map((card) => (
-              <li key={card.deckCardId}>
-                <ul>
-                  <li>ID: {card.cardId}</li>
-                  <li>Name: {card.cardName || "該当のカードが見つかりません"}</li>
-                  <li>
-                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="140" />
-                  </li>
-                  <li>
-                    <button onClick={() => removeCardFromDeck(card.deckCardId)}>削除</button>
-                  </li>
-                </ul>
-              </li>
+              <ListItem key={card.deckCardId}>
+                <Card className={styles.card}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={card.cardImageUrl || ""}
+                    alt={card.cardName || "該当のカードが見つかりません"}
+                  />
+                  <CardContent>
+                    <Typography variant="body2">ID: {card.cardId}</Typography>
+                    <Typography variant="body1">{card.cardName || "該当のカードが見つかりません"}</Typography>
+                    <Button 
+                      variant="contained" 
+                      color="secondary" 
+                      onClick={() => removeCardFromDeck(card.deckCardId)}
+                    >
+                      削除
+                    </Button>
+                  </CardContent>
+                </Card>
+              </ListItem>
             ))}
-          </ul>
-        </div>
-        <div style={{ flex: 1 }}>
-          <h2>すべてのカード</h2>
-          <ul>
+          </List>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Typography variant="h4" gutterBottom>すべてのカード</Typography>
+          <List className={styles.cardList}>
             {allCards.map((card) => (
-              <li key={card.cardId}>
-                <ul>
-                  <li>ID: {card.cardId}</li>
-                  <li>Name: {card.cardName}</li>
-                  <li>
-                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="140" />
-                  </li>
-                  <li>
-                    <button onClick={() => addCardToDeck(card)}>追加</button>
-                  </li>
-                </ul>
-              </li>
+              <ListItem key={card.cardId}>
+                <Card className={styles.card}>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={card.cardImageUrl || ""}
+                    alt={card.cardName}
+                  />
+                  <CardContent>
+                    <Typography variant="body2">ID: {card.cardId}</Typography>
+                    <Typography variant="body1">{card.cardName}</Typography>
+                    <Button 
+                      variant="contained" 
+                      color="primary" 
+                      onClick={() => addCardToDeck(card)}
+                    >
+                      追加
+                    </Button>
+                  </CardContent>
+                </Card>
+              </ListItem>
             ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+          </List>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 

@@ -2,6 +2,8 @@ import { auth, db } from '@/lib/Firebase';
 import React from 'react';
 import { useRouter } from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
+import { Button } from '@mui/material';
+import styles from '@/styles/_DeckEditButton.module.css';
 
 function _DeckEditButton({ deckCards, deckDocId }) {
   const router = useRouter();
@@ -66,8 +68,15 @@ function _DeckEditButton({ deckCards, deckDocId }) {
   };
 
   return (
-    <div>
-      <button onClick={deckEditButton}>更新</button>
+    <div className={styles.buttonContainer}>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={deckEditButton}
+        className={styles.updateButton}
+      >
+        更新
+      </Button>
     </div>
   );
 }

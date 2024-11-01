@@ -1,0 +1,52 @@
+.appBar {
+  background-color: #1a237e;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.logoText {
+  color: #ff1744;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.navContainer {
+  display: flex;
+  gap: 16px;
+}
+
+.navButton {
+  font-size: 16px;
+  text-transform: none;
+}
+
+@media (max-width: 960px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .logoContainer {
+    margin-bottom: 16px;
+  }
+
+  .navContainer {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .navButton {
+    font-size: 14px;
+  }
+}

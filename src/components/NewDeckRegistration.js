@@ -4,10 +4,12 @@ import _NewDeckRegistration from './_NewDeckRegistration'
 
 function NewDeckRegistration() {
   return (
-    <div>
+    <div className="page-container">
       <_Header />
-      <h1>デッキ登録画面</h1>
-      <_NewDeckRegistration />
+      <main className="main-content">
+        <h1 className="page-title">デッキ登録画面</h1>
+        <_NewDeckRegistration />
+      </main>
     </div>
   )
 }

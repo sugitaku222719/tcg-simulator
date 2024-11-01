@@ -1,0 +1,20 @@
+.container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.cardList {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.card {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+.card img {
+  width: 100px;
+  height: 140px;
+  object-fit: cover;
+}
