@@ -1,6 +1,7 @@
 import { auth, db, storage } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import styles from "@/styles/_CardRegistration.module.css"
 
 function _CardRegistration() {
   const [cards, setCards] = useState([]);
@@ -103,45 +104,50 @@ function _CardRegistration() {
   const cardListItems = cards.map((card) => {
     if (editingCard && editingCard.cardId === card.cardId) {
       return (
-        <li key={card.cardId}>
+        <li key={card.cardId} className={styles.editingCard}>
           <input
+            className={styles.input}
             type="text"
             value={cardName}
             onChange={(e) => setCardName(e.target.value)}
             placeholder="Card Name"
           />
           <input
+            className={styles.input}
             type="text"
             value={cardText}
             onChange={(e) => setCardText(e.target.value)}
             placeholder="Card Text"
           />
           <input
+            className={styles.input}
             type="text"
             value={cardType}
             onChange={(e) => setCardType(e.target.value)}
             placeholder="Card Type"
           />
           <input
+            className={styles.input}
             type="text"
             value={cardStats}
             onChange={(e) => setCardStats(e.target.value)}
             placeholder="Card Stats"
           />
           <input
+            className={styles.fileInput}
             type="file"
             accept=".png, .jpeg, .jpg"
             onChange={(e) => setCardImage(e.target.files[0])}
           />
-          <button onClick={saveCard}>保存</button>
-          <button onClick={cancelEditing}>キャンセル</button>
+          <button className={styles.saveButton} onClick={saveCard}>保存</button>
+          <button className={styles.cancelButton} onClick={cancelEditing}>キャンセル</button>
         </li>
       );
     }
 
     return (
-      <li key={card.cardId}>
-        <ul>
+      <li key={card.cardId} className={styles.cardItem}>
+        <ul className={styles.cardDetails}>
           <li>ID: {card.cardId}</li>
           <li>Name: {card.cardName}</li>
           <li>Text: {card.cardText}</li>
@@ -149,6 +155,7 @@ function _CardRegistration() {
           <li>Stats: {card.cardStats}</li>
           <li>
             <img
+              className={styles.cardImage}
               src={card.cardImageUrl || ""}
               alt={card.cardName}
               width="100"
@@ -156,15 +163,15 @@ function _CardRegistration() {
             />
           </li>
         </ul>
-        <button onClick={() => startEditing(card)}>編集</button>
-        <button onClick={() => deleteCard(card.cardId)}>削除</button>
+        <button className={styles.editButton} onClick={() => startEditing(card)}>編集</button>
+        <button className={styles.deleteButton} onClick={() => deleteCard(card.cardId)}>削除</button>
       </li>
     );
   });
 
   return (
-    <div>
-      <ul>{cardListItems}</ul>
+    <div className={styles.cardRegistration}>
+      <ul className={styles.cardList}>{cardListItems}</ul>
     </div>
   );
 }

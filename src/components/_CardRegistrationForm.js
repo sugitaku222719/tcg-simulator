@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import 'firebase/compat/firestore';
 import { auth, db, storage } from '@/lib/Firebase';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import styles from '@/styles/_CardRegistrationForm.module.css';
 
 function _CardRegistrationForm() {
   const [cardName, setCardName] = useState("");
@@ -44,46 +45,61 @@ function _CardRegistrationForm() {
   };
 
   return (
-    <div>
-      <label htmlFor="cardName" >cardName:</label>
-      <input
-        type="text"
-        id="cardName"
-        value={cardName}
-        onChange={(event) => {setCardName(event.target.value)}}
-      />
-      <label htmlFor="cardText" >cardText:</label>
-      <input
-        type="text"
-        id="cardText"
-        value={cardText}
-        onChange={(event) => {setCardText(event.target.value)}}
-      />
-      <label htmlFor="cardType" >cardType:</label>
-      <input
-        type="text"
-        id="cardType"
-        value={cardType}
-        onChange={(event) => {setCardType(event.target.value)}}
-      />
-      <label htmlFor="cardStats" >cardStats:</label>
-      <input
-        type="text"
-        id="cardStats"
-        value={cardStats}
-        onChange={(event) => {setCardStats(event.target.value)}}
-      />
-      <label htmlFor="cardImage" >cardImage:</label>
-      <input
-        type="file"
-        id="cardImage"
-        accept=".png, .jpeg, .jpg"
-        onChange={(event) => {
-          const file = event.target.files[0]
-          setCardImage(file)
-        }}
-      />
-      <button onClick={cardRegistrationButton}>追加</button>
+    <div className={styles.formContainer}>
+      <div className={styles.inputGroup}>
+        <label htmlFor="cardName" className={styles.label}>cardName:</label>
+        <input
+          type="text"
+          id="cardName"
+          className={styles.input}
+          value={cardName}
+          onChange={(event) => {setCardName(event.target.value)}}
+        />
+      </div>
+      <div className={styles.inputGroup}>
+        <label htmlFor="cardText" className={styles.label}>cardText:</label>
+        <input
+          type="text"
+          id="cardText"
+          className={styles.input}
+          value={cardText}
+          onChange={(event) => {setCardText(event.target.value)}}
+        />
+      </div>
+      <div className={styles.inputGroup}>
+        <label htmlFor="cardType" className={styles.label}>cardType:</label>
+        <input
+          type="text"
+          id="cardType"
+          className={styles.input}
+          value={cardType}
+          onChange={(event) => {setCardType(event.target.value)}}
+        />
+      </div>
+      <div className={styles.inputGroup}>
+        <label htmlFor="cardStats" className={styles.label}>cardStats:</label>
+        <input
+          type="text"
+          id="cardStats"
+          className={styles.input}
+          value={cardStats}
+          onChange={(event) => {setCardStats(event.target.value)}}
+        />
+      </div>
+      <div className={styles.inputGroup}>
+        <label htmlFor="cardImage" className={styles.label}>cardImage:</label>
+        <input
+          type="file"
+          id="cardImage"
+          className={styles.fileInput}
+          accept=".png, .jpeg, .jpg"
+          onChange={(event) => {
+            const file = event.target.files[0]
+            setCardImage(file)
+          }}
+        />
+      </div>
+      <button className={styles.button} onClick={cardRegistrationButton}>追加</button>
     </div>
   )
 }
