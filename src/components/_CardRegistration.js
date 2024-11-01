@@ -148,20 +148,23 @@ function _CardRegistration() {
     return (
       <li key={card.cardId} className={styles.cardItem}>
         <ul className={styles.cardDetails}>
-          <li>ID: {card.cardId}</li>
-          <li>Name: {card.cardName}</li>
-          <li>Text: {card.cardText}</li>
-          <li>Type: {card.cardType}</li>
-          <li>Stats: {card.cardStats}</li>
-          <li>
-            <img
-              className={styles.cardImage}
-              src={card.cardImageUrl || ""}
-              alt={card.cardName}
-              width="100"
-              height="140"
-            />
-          </li>
+          <div>
+            <li>
+              <img
+                className={styles.cardImage}
+                src={card.cardImageUrl || ""}
+                alt={card.cardName}
+              />
+            </li>
+          </div>
+          <div className={styles.cardNameAndMore}>
+            <li>Name: {card.cardName}</li>
+            <li>Type: {card.cardType}</li>
+            <li>Stats: {card.cardStats}</li>
+          </div>
+          <div className={styles.cardTextBox}>
+            <li>{card.cardText || "No text"}</li>
+          </div>
         </ul>
         <button className={styles.editButton} onClick={() => startEditing(card)}>編集</button>
         <button className={styles.deleteButton} onClick={() => deleteCard(card.cardId)}>削除</button>
