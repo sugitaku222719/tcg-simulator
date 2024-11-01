@@ -173,22 +173,26 @@ function _PlayRoom({roomId, roomData}) {
       .collection('userDeckList')
       .doc(myDeckDocId)
       .collection("cards");
+    
     const snapshot = await deckRef.get();
-    const _cards = snapshot.docs.map((doc) => ({
-      cardDocId: doc.id,
-      ...doc.data(),
-    }));
-    const initialDeck = _cards.map(card => {
-      return{
-        ...card,
+    const cardPromises = snapshot.docs.map(async (doc) => {
+      const cardRef = doc.data().cardRef;
+      const cardDoc = await cardRef.get();
+      return {
+        cardDocId: cardDoc.id,
+        uuid: doc.id,
+        ...cardDoc.data(),
+        cardRef: cardRef,
         position: {row: 3, col: 3}
       };
     });
-
+  
+    const initialDeck = await Promise.all(cardPromises);
+  
     await setMyDeckCards(initialDeck);
     await setMyCards([]);
     await setMyHandCards([]);
-
+  
     myDeckRef.set({ cards: initialDeck });
     myFieldRef.set({ cards: [] });
     myHandRef.set({ cards: [] });

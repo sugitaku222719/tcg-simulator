@@ -35,9 +35,7 @@ function _NewDeckRegistrationForm({ deckCards }) {
         const cardDocId = uuidv4();
         const cardRef = deckRef.collection('cards').doc(cardDocId);
         batch.set(cardRef, {
-          cardId: card.cardId,
-          cardName: card.cardName,
-          cardImageUrl: card.cardImageUrl,
+          cardRef: db.collection('cardsDataBase').doc(auth.currentUser.uid).collection('userCardList').doc(card.cardId),
           uuid: cardDocId,
         });
       });

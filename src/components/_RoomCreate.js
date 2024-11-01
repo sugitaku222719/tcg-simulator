@@ -1,5 +1,4 @@
 import { auth, db } from '@/lib/Firebase'
-import roomCreate from '@/pages/playRoom/roomCreate';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import _DeckIndex from './_DeckIndex';
@@ -9,20 +8,18 @@ function _RoomCreate() {
   const router = useRouter();
   const [opponentUid, setOpponentUid] = useState("");
 
-  const roomCreateFunction = async (hostUid,guestUid,isHost) => {
+  const roomCreateFunction = async (hostUid, guestUid, isHost) => {
     const roomId = `${hostUid}-${guestUid}`
     try {
-      const roomRef = db
-      .collection("roomsDataBase")
-      .doc(roomId)
-      if (isHost){
+      const roomRef = db.collection("roomsDataBase").doc(roomId)
+      if (isHost) {
         await roomRef.set({
           hostUserId: hostUid,
           guestUserId: guestUid,
           hostDeckDocId: deckDocId,
           createdAt: new Date(),
         }, { merge: true });
-      }else{
+      } else {
         await roomRef.set({
           hostUserId: hostUid,
           guestUserId: guestUid,
@@ -38,22 +35,23 @@ function _RoomCreate() {
         .doc(deckDocId)
         .collection("cards");
       const snapshot = await deckRef.get();
-      const _cards = snapshot.docs.map((doc) => ({
-        cardDocId: doc.id,
-        ...doc.data(),
-      }));
-      const deck = _cards.map(card => {
-        return{
-          ...card,
-          position: {row: 3, col: 3}
+      const deck = await Promise.all(snapshot.docs.map(async (doc) => {
+        const cardRef = doc.data().cardRef;
+        const cardDoc = await cardRef.get();
+        return {
+          cardDocId: cardDoc.id,
+          uuid: doc.id,
+          ...cardDoc.data(),
+          position: { row: 3, col: 3 }
         };
-      });
+      }));
+
       const roomDeckRef = db
         .collection("roomsDataBase")
         .doc(roomId)
         .collection(auth.currentUser.uid)
         .doc("deck");
-      await roomDeckRef.set({cards: deck});
+      await roomDeckRef.set({ cards: deck });
 
       alert("部屋が作成されました");
       router.push(`/playRoom/${roomId}`);
@@ -85,15 +83,15 @@ function _RoomCreate() {
       </div>
       <div>
         <label htmlFor="deckDocId">Deck ID:</label>
-          <input
-            type="text"
-            id="deckDocId"
-            value={deckDocId}
-            onChange={(event) => setDeckDocId(event.target.value)}
-          />
-        </div>
-        <button onClick={roomCreateButton}>部屋作成</button>
-        <button onClick={roomEnteringButton}>部屋入室</button>
+        <input
+          type="text"
+          id="deckDocId"
+          value={deckDocId}
+          onChange={(event) => setDeckDocId(event.target.value)}
+        />
+      </div>
+      <button onClick={roomCreateButton}>部屋作成</button>
+      <button onClick={roomEnteringButton}>部屋入室</button>
       <_DeckIndex />
     </div>
   );

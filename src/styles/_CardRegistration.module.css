@@ -1,0 +1,90 @@
+.cardRegistration {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.cardList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.cardItem {
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.cardDetails {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.cardImage {
+  width: 100px;
+  height: 140px;
+  margin-top: 10px;
+}
+
+.cardNameAndMore{
+  padding: 10px;
+  width: 350px;
+}
+
+.cardTextBox{
+  border: 1px solid black;
+  height: 130px;
+  width: 100%;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+
+}
+
+.editingCard {
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.fileInput {
+  margin-bottom: 10px;
+}
+
+.saveButton, .cancelButton, .editButton, .deleteButton {
+  padding: 5px 10px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.saveButton {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.cancelButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.editButton {
+  background-color: #2196F3;
+  color: white;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+}
