@@ -94,7 +94,7 @@ function _DeckEdit() {
 
   return (
     <div>
-      <_DeckEditButton deckCards={deckCards} />
+      <_DeckEditButton deckCards={deckCards} deckDocId={deckDocId} />
       <div style={{ display: 'flex' }}>
         <div style={{ flex: 1, marginRight: '20px' }}>
           <h2>デッキの中身</h2>
@@ -103,7 +103,7 @@ function _DeckEdit() {
               <li key={card.deckCardId}>
                 <ul>
                   <li>ID: {card.cardId}</li>
-                  <li>Name: {card.cardName}</li>
+                  <li>Name: {card.cardName || "該当のカードが見つかりません"}</li>
                   <li>
                     <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="140" />
                   </li>

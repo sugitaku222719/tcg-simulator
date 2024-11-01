@@ -3,12 +3,11 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
 
-function _DeckEditButton({ deckCards }) {
+function _DeckEditButton({ deckCards, deckDocId }) {
   const router = useRouter();
-  const { deckDocID } = router.query;
 
   const deckEditButton = async () => {
-    if (!deckDocID) {
+    if (!deckDocId) {  // deckDocIDをdeckDocIdに変更
       alert("デッキ名が指定されていません");
       return;
     }
@@ -23,7 +22,7 @@ function _DeckEditButton({ deckCards }) {
         .collection('cardsDataBase')
         .doc(auth.currentUser.uid)
         .collection('userDeckList')
-        .doc(deckDocID);
+        .doc(deckDocId);
 
       // デッキの基本情報を更新（更新日時）
       await deckRef.set({
@@ -39,7 +38,7 @@ function _DeckEditButton({ deckCards }) {
       const newCardIds = new Set();
 
       deckCards.forEach((card) => {
-        const cardDocId = card.uuid || uuidv4();
+        const cardDocId = card.deckCardId || uuidv4();  // deckCardIdを使用
         newCardIds.add(cardDocId);
         const cardRef = deckRef.collection('cards').doc(cardDocId);
         batch.set(cardRef, {
