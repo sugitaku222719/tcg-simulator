@@ -157,7 +157,7 @@ function _CardRegistration() {
                   <Typography className={styles.cardStats}>Stats: {selectedCard.cardStats}</Typography>
                 </div>
                 <div className={styles.cardTextBox}>
-                  <Typography className={styles.cardText}>Text: {convertNewlinesToBr(selectedCard.cardText)}</Typography>
+                  <Typography className={styles.cardText}>{convertNewlinesToBr(selectedCard.cardText)}</Typography>
                 </div>
               </div>
               <div className={styles.buttonContainer}>
