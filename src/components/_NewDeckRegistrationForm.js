@@ -2,6 +2,8 @@ import { auth, db } from '@/lib/Firebase';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { TextField, Button, Box } from '@mui/material';
+import styles from '@/styles/_NewDeckRegistrationForm.module.css';
 
 function _NewDeckRegistrationForm({ deckCards }) {
   const [deckName, setDeckName] = useState("");
@@ -49,16 +51,24 @@ function _NewDeckRegistrationForm({ deckCards }) {
   };
 
   return (
-    <div>
-      <label htmlFor="deckName">deckName:</label>
-      <input
-        type="text"
-        id="deckName"
+    <Box className={styles.formContainer}>
+      <TextField
+        label="Deck Name"
+        variant="outlined"
+        fullWidth
         value={deckName}
         onChange={(event) => setDeckName(event.target.value)}
+        className={styles.input}
       />
-      <button onClick={deckRegistrationButton}>追加</button>
-    </div>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={deckRegistrationButton}
+        className={styles.button}
+      >
+        追加
+      </Button>
+    </Box>
   );
 }
 
