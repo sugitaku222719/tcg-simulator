@@ -3,8 +3,11 @@ import _Header from './_Header'
 
 function Entrance() {
   return (
-    <div>
+    <div className="page-container">
       <_Header />
+      <main className="main-content">
+        {/* エントランスページのコンテンツ */}
+      </main>
     </div>
   )
 }
