@@ -1,0 +1,19 @@
+.deckIndexPage {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.title {
+  margin-bottom: 2rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.newDeckButton {
+  margin-bottom: 2rem;
+}

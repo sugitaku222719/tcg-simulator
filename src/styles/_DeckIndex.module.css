@@ -1,0 +1,29 @@
+.deckIndexContainer {
+  margin-top: 2rem;
+}
+
+.deckListTitle {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.deckListPaper {
+  background-color: #fff;
+}
+
+.deckListItem {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.deckListItem:last-child {
+  border-bottom: none;
+}
+
+.deckListItemText {
+  color: #333;
+  text-decoration: none;
+}
+
+.deckListItemText:hover {
+  background-color: #f0f0f0;
+}
