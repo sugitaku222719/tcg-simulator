@@ -1,7 +1,7 @@
 import { auth, db } from '@/lib/Firebase';
 import React from 'react';
 import { useRouter } from 'next/router';
-import { v4 as uuidv4 } from 'uuid'; // UUID生成ライブラリ
+import { v4 as uuidv4 } from 'uuid';
 
 function _DeckEditButton({ deckCards }) {
   const router = useRouter();
@@ -25,7 +25,7 @@ function _DeckEditButton({ deckCards }) {
         .collection('userDeckList')
         .doc(deckDocID);
 
-      // デッキの基本情報を更新（名前と更新日時）
+      // デッキの基本情報を更新（更新日時）
       await deckRef.set({
         updatedAt: new Date(),
       }, { merge: true });
@@ -39,15 +39,15 @@ function _DeckEditButton({ deckCards }) {
       const newCardIds = new Set();
 
       deckCards.forEach((card) => {
-        // 一意なドキュメントIDとしてUUIDを使用
-        const cardDocId = card.uuid || uuidv4(); // 既存ならそのまま使用、新規なら生成
+        const cardDocId = card.uuid || uuidv4();
         newCardIds.add(cardDocId);
         const cardRef = deckRef.collection('cards').doc(cardDocId);
         batch.set(cardRef, {
-          cardId: card.cardId,
-          cardName: card.cardName,
-          cardImageUrl: card.cardImageUrl,
-          uuid: cardDocId, // ドキュメントIDも保存しておく
+          cardRef: db.collection('cardsDataBase')
+                     .doc(auth.currentUser.uid)
+                     .collection('userCardList')
+                     .doc(card.cardId),
+          uuid: cardDocId,
         });
       });
 

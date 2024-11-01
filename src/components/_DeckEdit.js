@@ -30,66 +30,91 @@ function _DeckEdit() {
   }, []);
 
   useEffect(() => {
-    const deckCardsRef = db
-        .collection('cardsDataBase')
-        .doc(auth.currentUser.uid)
-        .collection('userDeckList')
-        .doc(deckDocId)
-        .collection('cards')
-        .orderBy("cardName", "asc");
+    if (!deckDocId) return;
 
-      const unsubscribe = deckCardsRef.onSnapshot(async (querySnapshot) => {
-        const _cards = querySnapshot.docs.map((doc) => ({
-          cardId: doc.id,
-          ...doc.data(),
-        }));
-        setDeckCards(_cards);
+    const deckCardsRef = db
+      .collection('cardsDataBase')
+      .doc(auth.currentUser.uid)
+      .collection('userDeckList')
+      .doc(deckDocId)
+      .collection('cards');
+
+    const unsubscribe = deckCardsRef.onSnapshot(async (querySnapshot) => {
+      const cardPromises = querySnapshot.docs.map(async (doc) => {
+        const cardRef = doc.data().cardRef;
+        const cardDoc = await cardRef.get();
+        return {
+          deckCardId: doc.id,
+          ...cardDoc.data(),
+          cardId: cardDoc.id
+        };
       });
 
-      return () => {
-        unsubscribe();
-      };
-    }, []);
+      const resolvedCards = await Promise.all(cardPromises);
+      setDeckCards(resolvedCards);
+    });
 
-  const addCardToDeck = (card) => {
-    setDeckCards([...deckCards, card]);
+    return () => {
+      unsubscribe();
+    };
+  }, [deckDocId]);
+
+  const addCardToDeck = async (card) => {
+    if (!deckDocId) return;
+
+    const deckRef = db
+      .collection('cardsDataBase')
+      .doc(auth.currentUser.uid)
+      .collection('userDeckList')
+      .doc(deckDocId);
+
+    const cardRef = db
+      .collection('cardsDataBase')
+      .doc(auth.currentUser.uid)
+      .collection('userCardList')
+      .doc(card.cardId);
+
+    await deckRef.collection('cards').add({
+      cardRef: cardRef
+    });
   };
 
-  const removeCardFromDeck = (index) => {
-    setDeckCards(deckCards.filter((_, i) => i !== index));
+  const removeCardFromDeck = async (deckCardId) => {
+    if (!deckDocId) return;
+
+    await db
+      .collection('cardsDataBase')
+      .doc(auth.currentUser.uid)
+      .collection('userDeckList')
+      .doc(deckDocId)
+      .collection('cards')
+      .doc(deckCardId)
+      .delete();
   };
 
   return (
     <div>
       <_DeckEditButton deckCards={deckCards} />
       <div style={{ display: 'flex' }}>
-        {/* 左側：デッキの中身 */}
         <div style={{ flex: 1, marginRight: '20px' }}>
           <h2>デッキの中身</h2>
           <ul>
-            {deckCards.map((card, index) => (
-              <li key={`${card.cardId}-${index}`}>
+            {deckCards.map((card) => (
+              <li key={card.deckCardId}>
                 <ul>
                   <li>ID: {card.cardId}</li>
                   <li>Name: {card.cardName}</li>
                   <li>
-                    <img
-                      src={card.cardImageUrl || ""}
-                      alt={card.cardName}
-                      width="100"
-                      height="140"
-                    />
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="140" />
                   </li>
                   <li>
-                    <button onClick={() => removeCardFromDeck(index)}>削除</button>
+                    <button onClick={() => removeCardFromDeck(card.deckCardId)}>削除</button>
                   </li>
                 </ul>
               </li>
             ))}
           </ul>
         </div>
-
-        {/* 右側：すべてのカード一覧 */}
         <div style={{ flex: 1 }}>
           <h2>すべてのカード</h2>
           <ul>
@@ -99,12 +124,7 @@ function _DeckEdit() {
                   <li>ID: {card.cardId}</li>
                   <li>Name: {card.cardName}</li>
                   <li>
-                    <img
-                      src={card.cardImageUrl || ""}
-                      alt={card.cardName}
-                      width="100"
-                      height="140"
-                    />
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="140" />
                   </li>
                   <li>
                     <button onClick={() => addCardToDeck(card)}>追加</button>
@@ -119,4 +139,4 @@ function _DeckEdit() {
   );
 }
 
-export default _DeckEdit
+export default _DeckEdit;
