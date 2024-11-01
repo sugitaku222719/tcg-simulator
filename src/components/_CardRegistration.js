@@ -130,11 +130,11 @@ function _CardRegistration() {
 
   const cardListItems = cards.map((card) => (
     <li key={card.cardId} className={styles.cardItem} onClick={() => handleCardClick(card)}>
-      <img className={styles.cardImage} src={card.cardImageUrl || ""} alt={card.cardName} />
+      <img className={styles.cardThumbnail} src={card.cardImageUrl || ""} alt={card.cardName} />
       <div className={styles.cardName}>{card.cardName}</div>
     </li>
   ));
-
+  
   return (
     <div className={styles.cardRegistration}>
       <ul className={styles.cardList}>{cardListItems}</ul>
@@ -147,75 +147,43 @@ function _CardRegistration() {
         <Box className={styles.modalContent}>
           {selectedCard && !editingCard && (
             <>
-              <div className={styles.cardItem}>
-                <div className={styles.cardDetails}>
-                  <div><img className={styles.cardImage} src={selectedCard.cardImageUrl || ""} alt={selectedCard.cardName} /></div>
-                  <div className={styles.cardNameAndMore}>
-                    <Typography variant="h5">Name: {selectedCard.cardName}</Typography>
-                    <Typography>Type: {selectedCard.cardType}</Typography>
-                    <Typography>Stats: {selectedCard.cardStats}</Typography>
-                  </div>
-                  <div className={styles.cardTextBox}>
-                    <Typography>Text: {convertNewlinesToBr(selectedCard.cardText)}</Typography>
-                  </div>
+              <div className={styles.cardDetails}>
+                <div className={styles.cardImageContainer}>
+                  <img className={styles.cardImage} src={selectedCard.cardImageUrl || ""} alt={selectedCard.cardName} />
+                </div>
+                <div className={styles.cardInfo}>
+                  <Typography variant="h5" className={styles.cardTitle}>Name: {selectedCard.cardName}</Typography>
+                  <Typography className={styles.cardType}>Type: {selectedCard.cardType}</Typography>
+                  <Typography className={styles.cardStats}>Stats: {selectedCard.cardStats}</Typography>
+                </div>
+                <div className={styles.cardTextBox}>
+                  <Typography className={styles.cardText}>Text: {convertNewlinesToBr(selectedCard.cardText)}</Typography>
                 </div>
               </div>
-              <Button variant="contained" color="primary" onClick={() => startEditing(selectedCard)}>編集</Button>
-              <Button variant="contained" color="secondary" onClick={() => deleteCard(selectedCard.cardId)}>削除</Button>
+              <div className={styles.buttonContainer}>
+                <Button variant="contained" color="primary" className={styles.editButton} onClick={() => startEditing(selectedCard)}>編集</Button>
+                <Button variant="contained" color="secondary" className={styles.deleteButton} onClick={() => deleteCard(selectedCard.cardId)}>削除</Button>
+              </div>
             </>
           )}
           {editingCard && (
-            <Box component="form" noValidate autoComplete="off" sx={{ '& > :not(style)': { m: 1 } }}>
-              <TextField
-                label="Card Name"
-                variant="outlined"
-                fullWidth
-                required
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-              />
-              <TextField
-                label="Card Text"
-                variant="outlined"
-                fullWidth
-                multiline
-                rows={4}
-                value={cardText}
-                onChange={(e) => setCardText(e.target.value)}
-              />
-              <TextField
-                label="Card Type"
-                variant="outlined"
-                fullWidth
-                value={cardType}
-                onChange={(e) => setCardType(e.target.value)}
-              />
-              <TextField
-                label="Card Stats"
-                variant="outlined"
-                fullWidth
-                value={cardStats}
-                onChange={(e) => setCardStats(e.target.value)}
-              />
-              <Button
-                variant="contained"
-                component="label"
-                startIcon={<CloudUploadIcon />}
-              >
+            <Box component="form" noValidate autoComplete="off" className={styles.editForm}>
+              <TextField label="Card Name" variant="outlined" fullWidth required value={cardName} onChange={(e) => setCardName(e.target.value)} className={styles.input} />
+              <TextField label="Card Text" variant="outlined" fullWidth multiline rows={4} value={cardText} onChange={(e) => setCardText(e.target.value)} className={styles.input} />
+              <TextField label="Card Type" variant="outlined" fullWidth value={cardType} onChange={(e) => setCardType(e.target.value)} className={styles.input} />
+              <TextField label="Card Stats" variant="outlined" fullWidth value={cardStats} onChange={(e) => setCardStats(e.target.value)} className={styles.input} />
+              <Button variant="contained" component="label" startIcon={<CloudUploadIcon />} className={styles.uploadButton}>
                 Upload Image
-                <input
-                  type="file"
-                  hidden
-                  accept=".png, .jpeg, .jpg"
-                  onChange={handleImageChange}
-                />
+                <input type="file" hidden accept=".png,.jpeg, .jpg" onChange={handleImageChange} />
               </Button>
-              <Button variant="contained" color="primary" onClick={saveCard}>
-                保存
-              </Button>
-              <Button variant="contained" color="secondary" onClick={cancelEditing}>
-                キャンセル
-              </Button>
+              <div className={styles.buttonContainer}>
+                <Button variant="contained" color="primary" onClick={saveCard} className={styles.saveButton}>
+                  保存
+                </Button>
+                <Button variant="contained" color="secondary" onClick={cancelEditing} className={styles.cancelButton}>
+                  キャンセル
+                </Button>
+              </div>
             </Box>
           )}
         </Box>
