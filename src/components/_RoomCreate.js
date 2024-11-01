@@ -2,6 +2,8 @@ import { auth, db } from '@/lib/Firebase'
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import _DeckIndex from './_DeckIndex';
+import { TextField, Button, Typography, Container, Box } from '@mui/material';
+import styles from '@/styles/_RoomCreate.module.css';
 
 function _RoomCreate() {
   const [deckDocId, setDeckDocId] = useState("");
@@ -70,30 +72,51 @@ function _RoomCreate() {
   }
 
   return (
-    <div>
-      <h2>あなたのuid　:　{auth.currentUser.uid}</h2>
-      <div>
-        <label htmlFor="opponentUid">対戦相手のuid:</label>
-        <input
-          type="text"
-          id="opponentUid"
+    <Container maxWidth="md" className={styles.container}>
+      <Typography variant="h4" gutterBottom className={styles.title}>
+        ルーム作成
+      </Typography>
+      <Typography variant="h6" gutterBottom>
+        あなたのUID: {auth.currentUser.uid}
+      </Typography>
+      <Box className={styles.formContainer}>
+        <TextField
+          fullWidth
+          label="対戦相手のUID"
+          variant="outlined"
           value={opponentUid}
           onChange={(event) => setOpponentUid(event.target.value)}
+          className={styles.input}
         />
-      </div>
-      <div>
-        <label htmlFor="deckDocId">Deck ID:</label>
-        <input
-          type="text"
-          id="deckDocId"
+        <TextField
+          fullWidth
+          label="Deck ID"
+          variant="outlined"
           value={deckDocId}
           onChange={(event) => setDeckDocId(event.target.value)}
+          className={styles.input}
         />
-      </div>
-      <button onClick={roomCreateButton}>部屋作成</button>
-      <button onClick={roomEnteringButton}>部屋入室</button>
+        <Box className={styles.buttonContainer}>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={roomCreateButton}
+            className={styles.button}
+          >
+            部屋作成
+          </Button>
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            onClick={roomEnteringButton}
+            className={styles.button}
+          >
+            部屋入室
+          </Button>
+        </Box>
+      </Box>
       <_DeckIndex />
-    </div>
+    </Container>
   );
 };
 
