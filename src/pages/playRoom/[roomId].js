@@ -5,9 +5,10 @@ import React, { useEffect, useState } from 'react';
 import PlayRoom from '@/components/PlayRoom';
 import { useRouter } from 'next/router';
 
-function PlayRoomPage({ roomId }) {
+function PlayRoomPage() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
+  const { roomId } = router.query;
   const [isAuthorizedPlayer, setIsAuthorizedPlayer] = useState(false);
   const [roomData, setRoomData] = useState("");
   const [authorizationChecked, setAuthorizationChecked] = useState(false);
@@ -48,7 +49,7 @@ function PlayRoomPage({ roomId }) {
     checkAuthorization();
   }, [user, roomId, router, loading]);
 
-  if (router.isFallback || loading || (user && !authorizationChecked)) {
+  if (loading || (user && !authorizationChecked)) {
     return <div>Loading...</div>;
   }
 
@@ -69,16 +70,3 @@ function PlayRoomPage({ roomId }) {
 }
 
 export default PlayRoomPage;
-
-export async function getStaticProps({ params }) {
-  return {
-    props: { roomId: params.roomId },
-  };
-}
-
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: true,
-  };
-}

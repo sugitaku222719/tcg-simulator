@@ -9,7 +9,7 @@
     "rewrites": [
       {
         "source": "/deckRegistration/**",
-        "destination": "/deckRegistration/[decDocId]/index.html"
+        "destination": "/deckRegistration/[deckDocId]/index.html"
       },
       {
         "source": "/playRoom/**",
