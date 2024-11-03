@@ -5,13 +5,12 @@ import React from 'react'
 import DeckEdit from '@/components/DeckEdit';
 import { useRouter } from 'next/router';
 
-function DeckNamePage() {
+function DeckNamePage({ decDocId }) {
   const [user] = useAuthState(auth);
   const router = useRouter();
-  const { decDocId } = router.query;
 
-  if (typeof window === 'undefined') {
-    return null; // サーバーサイドレンダリング時は何も表示しない
+  if (router.isFallback) {
+    return <div>Loading...</div>
   }
 
   return (
@@ -25,13 +24,13 @@ export default DeckNamePage
 
 export async function getStaticProps({ params }) {
   return {
-    props: { id: params.deckDocId || params.roomId },
+    props: { decDocId: params.decDocId },
   };
 }
 
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: 'blocking',
+    fallback: true,
   };
 }
