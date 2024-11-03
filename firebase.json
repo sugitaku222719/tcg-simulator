@@ -8,6 +8,14 @@
     ],
     "rewrites": [
       {
+        "source": "/deckRegistration/**",
+        "destination": "/deckRegistration/[decDocId].html"
+      },
+      {
+        "source": "/playRoom/**",
+        "destination": "/playRoom/[roomId].html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
