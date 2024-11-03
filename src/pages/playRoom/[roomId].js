@@ -61,6 +61,10 @@ function PlayRoomPage() {
     return <div>Checking authorization...</div>;
   }
 
+  if (typeof window === 'undefined') {
+    return null; // サーバーサイドレンダリング時は何も表示しない
+  }
+
   return (
     <PlayRoom
       roomId={roomId}
@@ -70,3 +74,16 @@ function PlayRoomPage() {
 }
 
 export default PlayRoomPage;
+
+export async function getStaticProps({ params }) {
+  return {
+    props: { id: params.deckDocId || params.roomId },
+  };
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
+}

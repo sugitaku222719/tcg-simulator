@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'export',
   reactStrictMode: true,
-  trailingSlash: true, // この行を追加
+  trailingSlash: true,
   env: {
     NEXT_PUBLIC_APIKEY: process.env.NEXT_PUBLIC_APIKEY,
     NEXT_PUBLIC_AUTHDOMAIN: process.env.NEXT_PUBLIC_AUTHDOMAIN,
@@ -11,13 +11,6 @@ const nextConfig = {
     NEXT_PUBLIC_MESSAGINGSENDERID: process.env.NEXT_PUBLIC_MESSAGINGSENDERID,
     NEXT_PUBLIC_APPID: process.env.NEXT_PUBLIC_APPID
   },
-  // exportPathMap: async function (defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
-  //   return {
-  //     '/': { page: '/' },
-  //     '/cardRegistration': { page: '/cardRegistration' },
-  //     // 他の静的ページを追加
-  //   }
-  // }
 };
 
 
