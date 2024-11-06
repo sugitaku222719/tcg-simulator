@@ -204,6 +204,22 @@ function _PlayRoom({roomId, roomData}) {
     myHandRef.set({ cards: [] });
   }
 
+  const changeCardOrientation = async (card, isVertical) => {
+    const updatedCards = myCards.map(c => 
+      c.uuid === card.uuid ? { ...c, isVertical: isVertical } : c
+    );
+    await setMyCards(updatedCards);
+    myFieldRef.set({ cards: updatedCards });
+  };
+  
+  const changeCardFace = async (card, isFaceUp) => {
+    const updatedCards = myCards.map(c => 
+      c.uuid === card.uuid ? { ...c, isFaceUp: isFaceUp } : c
+    );
+    await setMyCards(updatedCards);
+    myFieldRef.set({ cards: updatedCards });
+  };
+
   const renderField = (field, cards, handCards, deckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
@@ -219,7 +235,9 @@ function _PlayRoom({roomId, roomData}) {
                 onDrop={isOpponent ? null : onDrop}
                 onDragOver={isOpponent ? null : onDragOver}
                 onDragStart={isOpponent ? null : onDragStart}
-                onRightClick={isOpponent ? null : returnToHand}
+                changeCardOrientation={isOpponent ? null : changeCardOrientation}
+                changeCardFace={isOpponent ? null : changeCardFace}
+                returnToHand={isOpponent ? null : returnToHand}
                 isOpponent={isOpponent}
               />
             );

@@ -51,15 +51,15 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
           {showDetails && (
             <div className={styles.detailsWrapper}>
               <CardDetails card={card} />
-            </div>
-          )}
-          {showOrientation && (
-            <div className={styles.orientationChoice} onClick={(e) => e.stopPropagation()}>
-              <button onClick={() => handleOrientation(true, true)}>縦向き(表)</button>
-              <button onClick={() => handleOrientation(true, false)}>縦向き(裏)</button>
-              <button onClick={() => handleOrientation(false, true)}>横向き(表)</button>
-              <button onClick={() => handleOrientation(false, false)}>横向き(裏)</button>
-              <button onClick={handleCancel}>キャンセル</button>
+              {showOrientation && (
+                <div className={styles.orientationChoice} onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => handleOrientation(true, true)}>縦向き(表)</button>
+                  <button onClick={() => handleOrientation(true, false)}>縦向き(裏)</button>
+                  <button onClick={() => handleOrientation(false, true)}>横向き(表)</button>
+                  <button onClick={() => handleOrientation(false, false)}>横向き(裏)</button>
+                  <button onClick={handleCancel}>キャンセル</button>
+                </div>
+              )}
             </div>
           )}
         </>

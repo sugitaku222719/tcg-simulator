@@ -27,6 +27,12 @@
 .detailsWrapper {
   position: absolute;
   top: -100%;
-  left: 0;
+  left: -50%;
   z-index: 1000;
+}
+
+.orientationChoice{
+  position: relative;
+  top: 280px;
+  left: -95px;
 }
