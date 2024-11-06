@@ -13,8 +13,8 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
     }
   };
 
-  const handleClick = () => {
-    if (!isOpponent) {
+  const handleClick = (e) => {
+    if (!isOpponent && !showOrientation) {
       setShowOrientation(true);
     }
   };
@@ -26,7 +26,8 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
     setShowOrientation(false);
   };
 
-  const handleCancel = () => {
+  const handleCancel = (e) => {
+    e.stopPropagation(); // イベントの伝播を停止
     setShowOrientation(false);
   };
 
@@ -53,7 +54,7 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
             </div>
           )}
           {showOrientation && (
-            <div className={styles.orientationChoice}>
+            <div className={styles.orientationChoice} onClick={(e) => e.stopPropagation()}>
               <button onClick={() => handleOrientation(true, true)}>縦向き(表)</button>
               <button onClick={() => handleOrientation(true, false)}>縦向き(裏)</button>
               <button onClick={() => handleOrientation(false, true)}>横向き(表)</button>
