@@ -13,3 +13,9 @@
   left: -50px;
   top: -70px;
 }
+
+.horizontal {
+  transform: rotate(90deg);
+  width: 140px;
+  height: 100px;
+}

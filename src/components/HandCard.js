@@ -4,6 +4,7 @@ import CardDetails from './CardDetails';
 
 const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showOrientation, setShowOrientation] = useState(false);
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -13,20 +14,25 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
   };
 
   const handleClick = () => {
-    if (addFieldCard) {
-      addFieldCard(card);
+    if (!isOpponent) {
+      setShowOrientation(true);
     }
   };
 
+  const handleOrientation = (isVertical) => {
+    if (addFieldCard) {
+      addFieldCard(card, isVertical);
+    }
+    setShowOrientation(false);
+  };
+
   return (
-    <div 
-      className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
-      draggable={!isOpponent}
-      onClick={isOpponent ? null : handleClick}
-      onContextMenu={isOpponent ? null : handleContextMenu}
-      onMouseEnter={() => setShowDetails(true)}
-      onMouseLeave={() => setShowDetails(false)}
-    >
+    <div className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
+         draggable={!isOpponent}
+         onClick={handleClick}
+         onContextMenu={isOpponent ? null : handleContextMenu}
+         onMouseEnter={() => setShowDetails(true)}
+         onMouseLeave={() => setShowDetails(false)}>
       {isOpponent ? (
         <div className={styles.cardBack}></div>
       ) : (
@@ -38,6 +44,12 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
           {showDetails && (
             <div className={styles.detailsWrapper}>
               <CardDetails card={card} />
+            </div>
+          )}
+          {showOrientation && (
+            <div className={styles.orientationChoice}>
+              <button onClick={() => handleOrientation(true)}>縦向き</button>
+              <button onClick={() => handleOrientation(false)}>横向き</button>
             </div>
           )}
         </>

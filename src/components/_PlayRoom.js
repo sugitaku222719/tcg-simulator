@@ -85,13 +85,16 @@ function _PlayRoom({roomId, roomData}) {
     myDeckRef.set({ cards: deck });
   };
 
-  const addFieldCard = async (card) => {
+  const addFieldCard = async (card, isVertical) => {
     if (!myHandCards || myHandCards.length === 0) return;
-    
-    const updatedCards = [...myCards, card];
+    const updatedCard = {
+      ...card,
+      position: { row: 0, col: 0 },
+      isVertical: isVertical
+    };
+    const updatedCards = [...myCards, updatedCard];
     await setMyCards(updatedCards);
     await setMyHandCards(myHandCards.filter((c) => c.uuid !== card.uuid));
-    
     myHandRef.set({ cards: myHandCards.filter((c) => c.uuid !== card.uuid) });
     myFieldRef.set({ cards: updatedCards });
   };
@@ -214,6 +217,7 @@ function _PlayRoom({roomId, roomData}) {
                 onDragOver={isOpponent ? null : onDragOver}
                 onDragStart={isOpponent ? null : onDragStart}
                 onRightClick={isOpponent ? null : returnToHand}
+                isVertical={card ? card.isVertical : true}
               />
             );
           })}
@@ -231,12 +235,14 @@ function _PlayRoom({roomId, roomData}) {
             />
           ))}
         </div>
-        <div 
-          className={styles.deck} 
+        <div
+          className={styles.deck}
           onClick={isOpponent ? null : addHandCard}
           onDrop={isOpponent ? null : deckOnDrop}
           onDragOver={isOpponent ? null : onDragOver}
-        >デッキ{deckCards.length}</div>
+        >
+          デッキ{deckCards.length}
+        </div>
       </div>
       {!isOpponent && (
         <>
