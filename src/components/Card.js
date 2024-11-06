@@ -75,16 +75,16 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
       {showDetails && shouldShowDetails() && (
         <div className={`${styles.detailsWrapper} ${isVertical ? '' : styles.horizontalDetails}`}>
           <CardDetails card={card} />
-        </div>
-      )}
-      {showContextMenu && (
-        <div className={styles.contextMenu}>
-          <button onClick={() => handleOptionClick('vertical')}>縦にする</button>
-          <button onClick={() => handleOptionClick('horizontal')}>横にする</button>
-          <button onClick={() => handleOptionClick('faceUp')}>表にする</button>
-          <button onClick={() => handleOptionClick('faceDown')}>裏にする</button>
-          <button onClick={() => handleOptionClick('returnToHand')}>手札に戻す</button>
-          <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
+          {showContextMenu && (
+            <div className={styles.contextMenu}>
+              <button onClick={() => handleOptionClick('vertical')}>縦にする</button>
+              <button onClick={() => handleOptionClick('horizontal')}>横にする</button>
+              <button onClick={() => handleOptionClick('faceUp')}>表にする</button>
+              <button onClick={() => handleOptionClick('faceDown')}>裏にする</button>
+              <button onClick={() => handleOptionClick('returnToHand')}>手札に戻す</button>
+              <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
+            </div>
+          )}
         </div>
       )}
     </div>

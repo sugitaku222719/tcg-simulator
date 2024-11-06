@@ -55,6 +55,8 @@
   border: 1px solid #ccc;
   padding: 5px;
   z-index: 1000;
+  left: 150px;
+  top: 100px;
 }
 
 .contextMenu button {
