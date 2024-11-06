@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from "@/styles/Card.module.css";
 import CardDetails from './CardDetails';
 
-const Card = ({ card, onDragStart, onRightClick, isVertical }) => {
+const Card = ({ card, onDragStart, onRightClick, isVertical, isOpponent }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const handleContextMenu = (e) => {
@@ -18,15 +18,24 @@ const Card = ({ card, onDragStart, onRightClick, isVertical }) => {
     }
   };
 
+  const shouldShowDetails = () => {
+    if (!isOpponent) {
+      return true; // 自分のカードは常に詳細を表示
+    }
+    return card.isFaceUp; // 相手のカードは表向きの場合のみ詳細を表示
+  };
+
   return (
-    <div className={`${styles.cardWrapper} ${isVertical ? '' : styles.horizontal}`}>
+    <div 
+      className={`${styles.cardWrapper} ${isVertical ? '' : styles.horizontal}`}
+      onMouseEnter={() => setShowDetails(true)}
+      onMouseLeave={() => setShowDetails(false)}
+    >
       <div 
         className={`${styles.card} ${!card.isFaceUp ? styles.cardBack : ''}`}
         draggable={onDragStart ? true : false}
         onDragStart={handleDragStart}
         onContextMenu={handleContextMenu}
-        onMouseEnter={() => setShowDetails(true)}
-        onMouseLeave={() => setShowDetails(false)}
       >
         {card.isFaceUp ? (
           <>
@@ -39,7 +48,7 @@ const Card = ({ card, onDragStart, onRightClick, isVertical }) => {
           <div className={styles.cardBackContent}></div>
         )}
       </div>
-      {showDetails && card.isFaceUp && (
+      {showDetails && shouldShowDetails() && (
         <div className={`${styles.detailsWrapper} ${isVertical ? '' : styles.horizontalDetails}`}>
           <CardDetails card={card} />
         </div>
