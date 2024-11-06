@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from "@/styles/HandCard.module.css";
+import CardDetails from './CardDetails';
 
 const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
+  const [showDetails, setShowDetails] = useState(false);
+
   const handleContextMenu = (e) => {
     e.preventDefault();
     if (onRightClick) {
@@ -16,11 +19,13 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
   };
 
   return (
-    <div
+    <div 
       className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
       draggable={!isOpponent}
       onClick={isOpponent ? null : handleClick}
       onContextMenu={isOpponent ? null : handleContextMenu}
+      onMouseEnter={() => setShowDetails(true)}
+      onMouseLeave={() => setShowDetails(false)}
     >
       {isOpponent ? (
         <div className={styles.cardBack}></div>
@@ -28,13 +33,9 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
         <>
           <div>{card.cardName}</div>
           <div>
-            <img
-              src={card.cardImageUrl || ""}
-              alt={card.cardName}
-              width="100"
-              height="120"
-            />
+            <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
           </div>
+          {showDetails && <CardDetails card={card} />}
         </>
       )}
     </div>

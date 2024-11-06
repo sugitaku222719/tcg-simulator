@@ -10,6 +10,7 @@
   cursor: move;
   user-select: none;
   font-size: medium;
+  position: relative;
 }
 
 .opponentCard {
@@ -21,4 +22,11 @@
   height: 100%;
   background-color: white;
   border: 1px solid #ccc;
+}
+
+.detailsWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
 }
