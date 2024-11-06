@@ -26,6 +26,10 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
     setShowOrientation(false);
   };
 
+  const handleCancel = () => {
+    setShowOrientation(false);
+  };
+
   return (
     <div 
       className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
@@ -54,6 +58,7 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
               <button onClick={() => handleOrientation(true, false)}>縦向き(裏)</button>
               <button onClick={() => handleOrientation(false, true)}>横向き(表)</button>
               <button onClick={() => handleOrientation(false, false)}>横向き(裏)</button>
+              <button onClick={handleCancel}>キャンセル</button>
             </div>
           )}
         </>
