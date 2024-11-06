@@ -48,3 +48,26 @@
   height: 100%;
   background-color: #808080;
 }
+
+.contextMenu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 5px;
+  z-index: 1000;
+}
+
+.contextMenu button {
+  display: block;
+  width: 100%;
+  padding: 5px;
+  margin: 2px 0;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.contextMenu button:hover {
+  background-color: #f0f0f0;
+}
