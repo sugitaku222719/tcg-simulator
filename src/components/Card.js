@@ -20,18 +20,26 @@ const Card = ({ card, onDragStart, onRightClick, isVertical }) => {
 
   return (
     <div
-      className={`${styles.card} ${isVertical ? '' : styles.horizontal}`}
-      draggable={onDragStart ? true : false}
-      onDragStart={handleDragStart}
-      onContextMenu={handleContextMenu}
-      onMouseEnter={() => setShowDetails(true)}
-      onMouseLeave={() => setShowDetails(false)}
+      className={`${styles.cardWrapper} ${isVertical ? '' : styles.horizontal}`}
     >
-      <div>{card.cardName}</div>
-      <div>
-        <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+      <div
+        className={styles.card}
+        draggable={onDragStart ? true : false}
+        onDragStart={handleDragStart}
+        onContextMenu={handleContextMenu}
+        onMouseEnter={() => setShowDetails(true)}
+        onMouseLeave={() => setShowDetails(false)}
+      >
+        <div>{card.cardName}</div>
+        <div>
+          <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+        </div>
       </div>
-      {showDetails && <CardDetails card={card} />}
+      {showDetails && (
+        <div className={`${styles.detailsWrapper} ${isVertical ? '' : styles.horizontalDetails}`}>
+          <CardDetails card={card} />
+        </div>
+      )}
     </div>
   );
 };

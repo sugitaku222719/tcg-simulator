@@ -1,7 +1,13 @@
-.card {
+.cardWrapper {
+  position: relative;
   width: 100px;
   height: 140px;
-  background-color: #f0f0f0;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  /* background-color: #f0f0f0; */
   border: 1px solid #000;
   display: flex;
   flex-direction: column;
@@ -9,13 +15,24 @@
   align-items: center;
   cursor: move;
   user-select: none;
-  position: relative;
-  left: -50px;
-  top: -70px;
 }
 
 .horizontal {
   transform: rotate(90deg);
   width: 140px;
   height: 100px;
+}
+
+.detailsWrapper {
+  position: absolute;
+  top: -100%;
+  left: -50%;
+  z-index: 1000;
+}
+
+.horizontalDetails {
+  top: 150%;
+  left: -100%;
+  transform: rotate(-90deg);
+  transform-origin: top left;
 }
