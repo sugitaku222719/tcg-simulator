@@ -19,20 +19,22 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
     }
   };
 
-  const handleOrientation = (isVertical) => {
+  const handleOrientation = (isVertical, isFaceUp) => {
     if (addFieldCard) {
-      addFieldCard(card, isVertical);
+      addFieldCard(card, isVertical, isFaceUp);
     }
     setShowOrientation(false);
   };
 
   return (
-    <div className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
-         draggable={!isOpponent}
-         onClick={handleClick}
-         onContextMenu={isOpponent ? null : handleContextMenu}
-         onMouseEnter={() => setShowDetails(true)}
-         onMouseLeave={() => setShowDetails(false)}>
+    <div 
+      className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
+      draggable={!isOpponent}
+      onClick={handleClick}
+      onContextMenu={isOpponent ? null : handleContextMenu}
+      onMouseEnter={() => setShowDetails(true)}
+      onMouseLeave={() => setShowDetails(false)}
+    >
       {isOpponent ? (
         <div className={styles.cardBack}></div>
       ) : (
@@ -48,8 +50,10 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
           )}
           {showOrientation && (
             <div className={styles.orientationChoice}>
-              <button onClick={() => handleOrientation(true)}>縦向き</button>
-              <button onClick={() => handleOrientation(false)}>横向き</button>
+              <button onClick={() => handleOrientation(true, true)}>縦向き(表)</button>
+              <button onClick={() => handleOrientation(true, false)}>縦向き(裏)</button>
+              <button onClick={() => handleOrientation(false, true)}>横向き(表)</button>
+              <button onClick={() => handleOrientation(false, false)}>横向き(裏)</button>
             </div>
           )}
         </>

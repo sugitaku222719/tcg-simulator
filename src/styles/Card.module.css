@@ -36,3 +36,13 @@
   transform: rotate(-90deg);
   transform-origin: top left;
 }
+
+.cardBack {
+  background-color: #808080;
+}
+
+.cardBackContent {
+  width: 100%;
+  height: 100%;
+  background-color: #808080;
+}
