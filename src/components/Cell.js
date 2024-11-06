@@ -14,6 +14,7 @@ const Cell = ({ rowIndex, colIndex, card, onDrop, onDragOver, onDragStart, onRig
           card={card}
           onDragStart={onDragStart}
           onRightClick={onRightClick}
+          isVertical={card.isVertical}
         />
       )}
     </div>

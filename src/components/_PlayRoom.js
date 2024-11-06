@@ -85,13 +85,16 @@ function _PlayRoom({roomId, roomData}) {
     myDeckRef.set({ cards: deck });
   };
 
-  const addFieldCard = async (card) => {
+  const addFieldCard = async (card, isVertical) => {
     if (!myHandCards || myHandCards.length === 0) return;
-    
-    const updatedCards = [...myCards, card];
+    const updatedCard = {
+      ...card,
+      position: { row: 3, col: 3 },
+      isVertical: isVertical
+    };
+    const updatedCards = [...myCards, updatedCard];
     await setMyCards(updatedCards);
     await setMyHandCards(myHandCards.filter((c) => c.uuid !== card.uuid));
-    
     myHandRef.set({ cards: myHandCards.filter((c) => c.uuid !== card.uuid) });
     myFieldRef.set({ cards: updatedCards });
   };
@@ -117,8 +120,10 @@ function _PlayRoom({roomId, roomData}) {
     const cardData = e.dataTransfer.getData('application/json');
     if (cardData) {
       const card = JSON.parse(cardData);
-      const updatedCards = myCards.map(c =>
-        c.uuid === card.uuid ? { ...c, position: { row: rowIndex, col: colIndex } } : c
+      const updatedCards = myCards.map(c => 
+        c.uuid === card.uuid 
+          ? { ...c, position: { row: rowIndex, col: colIndex } }
+          : c
       );
       await setMyCards(updatedCards);
       myFieldRef.set({ cards: updatedCards });
@@ -231,12 +236,14 @@ function _PlayRoom({roomId, roomData}) {
             />
           ))}
         </div>
-        <div 
-          className={styles.deck} 
+        <div
+          className={styles.deck}
           onClick={isOpponent ? null : addHandCard}
           onDrop={isOpponent ? null : deckOnDrop}
           onDragOver={isOpponent ? null : onDragOver}
-        >デッキ{deckCards.length}</div>
+        >
+          デッキ{deckCards.length}
+        </div>
       </div>
       {!isOpponent && (
         <>
