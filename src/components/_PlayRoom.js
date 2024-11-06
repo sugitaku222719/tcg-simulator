@@ -220,6 +220,7 @@ function _PlayRoom({roomId, roomData}) {
                 onDragOver={isOpponent ? null : onDragOver}
                 onDragStart={isOpponent ? null : onDragStart}
                 onRightClick={isOpponent ? null : returnToHand}
+                isOpponent={isOpponent}
               />
             );
           })}
