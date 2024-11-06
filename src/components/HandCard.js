@@ -35,7 +35,11 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
           <div>
             <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
           </div>
-          {showDetails && <CardDetails card={card} />}
+          {showDetails && (
+            <div className={styles.detailsWrapper}>
+              <CardDetails card={card} />
+            </div>
+          )}
         </>
       )}
     </div>
