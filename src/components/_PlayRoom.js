@@ -85,12 +85,13 @@ function _PlayRoom({roomId, roomData}) {
     myDeckRef.set({ cards: deck });
   };
 
-  const addFieldCard = async (card, isVertical) => {
+  const addFieldCard = async (card, isVertical, isFaceUp) => {
     if (!myHandCards || myHandCards.length === 0) return;
-    const updatedCard = {
-      ...card,
-      position: { row: 3, col: 3 },
-      isVertical: isVertical
+    const updatedCard = { 
+      ...card, 
+      position: { row: 3, col: 3 }, 
+      isVertical: isVertical,
+      isFaceUp: isFaceUp
     };
     const updatedCards = [...myCards, updatedCard];
     await setMyCards(updatedCards);
