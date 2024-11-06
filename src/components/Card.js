@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from "@/styles/Card.module.css";
 import CardDetails from './CardDetails';
 
-const Card = ({ card, onDragStart, onRightClick }) => {
+const Card = ({ card, onDragStart, onRightClick, isVertical }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const handleContextMenu = (e) => {
@@ -19,8 +19,8 @@ const Card = ({ card, onDragStart, onRightClick }) => {
   };
 
   return (
-    <div 
-      className={styles.card}
+    <div
+      className={`${styles.card} ${isVertical ? '' : styles.horizontal}`}
       draggable={onDragStart ? true : false}
       onDragStart={handleDragStart}
       onContextMenu={handleContextMenu}

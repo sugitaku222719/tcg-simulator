@@ -89,7 +89,7 @@ function _PlayRoom({roomId, roomData}) {
     if (!myHandCards || myHandCards.length === 0) return;
     const updatedCard = {
       ...card,
-      position: { row: 0, col: 0 },
+      position: { row: 3, col: 3 },
       isVertical: isVertical
     };
     const updatedCards = [...myCards, updatedCard];
@@ -120,8 +120,10 @@ function _PlayRoom({roomId, roomData}) {
     const cardData = e.dataTransfer.getData('application/json');
     if (cardData) {
       const card = JSON.parse(cardData);
-      const updatedCards = myCards.map(c =>
-        c.uuid === card.uuid ? { ...c, position: { row: rowIndex, col: colIndex } } : c
+      const updatedCards = myCards.map(c => 
+        c.uuid === card.uuid 
+          ? { ...c, position: { row: rowIndex, col: colIndex } }
+          : c
       );
       await setMyCards(updatedCards);
       myFieldRef.set({ cards: updatedCards });
@@ -217,7 +219,6 @@ function _PlayRoom({roomId, roomData}) {
                 onDragOver={isOpponent ? null : onDragOver}
                 onDragStart={isOpponent ? null : onDragStart}
                 onRightClick={isOpponent ? null : returnToHand}
-                isVertical={card ? card.isVertical : true}
               />
             );
           })}
