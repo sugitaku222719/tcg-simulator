@@ -2,12 +2,15 @@ import { auth, db } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import _DeckEditButton from './_DeckEditButton';
 import { useRouter } from 'next/router';
-import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem } from '@mui/material';
+import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem, Modal, Box, Pagination } from '@mui/material';
 import styles from '@/styles/_DeckEdit.module.css';
 
 function _DeckEdit() {
   const [allCards, setAllCards] = useState([]);
   const [deckCards, setDeckCards] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const cardsPerPage = 12;
   const router = useRouter()
   const { deckDocId } = router.query
 
@@ -94,12 +97,52 @@ function _DeckEdit() {
       .delete();
   };
 
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleChangePage = (event, value) => {
+    setPage(value);
+  };
+
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+    maxHeight: '80vh',
+    overflow: 'auto',
+  };
+
+  const indexOfLastCard = page * cardsPerPage;
+  const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+  const currentCards = allCards.slice(indexOfFirstCard, indexOfLastCard);
+
   return (
     <Container maxWidth="lg" className={styles.container}>
       <_DeckEditButton deckCards={deckCards} deckDocId={deckDocId} />
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Typography variant="h4" gutterBottom>デッキの中身</Typography>
+      <Button variant="contained" color="primary" onClick={handleOpenModal}>
+        デッキ確認
+      </Button>
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="deck-modal-title"
+        aria-describedby="deck-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="deck-modal-title" variant="h6" component="h2">
+            デッキの中身
+          </Typography>
           <List className={styles.cardList}>
             {deckCards.map((card) => (
               <ListItem key={card.deckCardId}>
@@ -113,24 +156,19 @@ function _DeckEdit() {
                   <CardContent>
                     <Typography variant="body2">ID: {card.cardId}</Typography>
                     <Typography variant="body1">{card.cardName || "該当のカードが見つかりません"}</Typography>
-                    <Button 
-                      variant="contained" 
-                      color="secondary" 
-                      onClick={() => removeCardFromDeck(card.deckCardId)}
-                    >
-                      削除
-                    </Button>
                   </CardContent>
                 </Card>
               </ListItem>
             ))}
           </List>
-        </Grid>
-        <Grid item xs={12} md={6}>
+        </Box>
+      </Modal>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
           <Typography variant="h4" gutterBottom>すべてのカード</Typography>
           <List className={styles.cardList}>
-            {allCards.map((card) => (
-              <ListItem key={card.cardId}>
+            {currentCards.map((card) => (
+              <ListItem key={card.cardId} className={styles.cardItem}>
                 <Card className={styles.card}>
                   <CardMedia
                     component="img"
@@ -141,9 +179,9 @@ function _DeckEdit() {
                   <CardContent>
                     <Typography variant="body2">ID: {card.cardId}</Typography>
                     <Typography variant="body1">{card.cardName}</Typography>
-                    <Button 
-                      variant="contained" 
-                      color="primary" 
+                    <Button
+                      variant="contained"
+                      color="primary"
                       onClick={() => addCardToDeck(card)}
                     >
                       追加
@@ -153,6 +191,13 @@ function _DeckEdit() {
               </ListItem>
             ))}
           </List>
+          <Pagination
+            count={Math.ceil(allCards.length / cardsPerPage)}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+            className={styles.pagination}
+          />
         </Grid>
       </Grid>
     </Container>
