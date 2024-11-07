@@ -3,8 +3,12 @@ import SignOut from './SignOut';
 import Link from 'next/link';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import styles from '@/styles/_Header.module.css';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '@/lib/Firebase';
+import SignIn from './SignIn';
 
 function _Header() {
+  const [user] = useAuthState(auth);
   return (
     <AppBar position="static" className={styles.appBar}>
       <Toolbar className={styles.toolbar}>
@@ -30,7 +34,7 @@ function _Header() {
             <Button color="inherit" className={styles.navButton}>対戦部屋</Button>
           </Link>
         </Box>
-        <SignOut />
+        {user ? <SignOut /> : <SignIn />}
       </Toolbar>
     </AppBar>
   );
