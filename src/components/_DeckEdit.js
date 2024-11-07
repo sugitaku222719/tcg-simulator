@@ -114,13 +114,15 @@ function _DeckEdit() {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 1000,
+    width: '80%', // 幅を固定値から割合に変更
+    maxWidth: 1000, // 最大幅を設定
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-    maxHeight: '80vh',
-    overflow: 'auto',
+    height: '80vh', // 高さを設定
+    display: 'flex', // フレックスボックスを使用
+    flexDirection: 'column', // 縦方向に並べる
   };
 
   const indexOfLastCard = page * cardsPerPage;
@@ -148,7 +150,7 @@ function _DeckEdit() {
           <Typography id="deck-modal-title" variant="h6" component="h2">
             デッキの中身
           </Typography>
-          <List className={styles.cardList}>
+          <List className={`${styles.cardList} ${styles.modalCardList}`}>
             {deckCards.map((card) => (
               <ListItem key={card.deckCardId}>
                 <Card className={styles.card}>
@@ -159,7 +161,6 @@ function _DeckEdit() {
                     alt={card.cardName || "該当のカードが見つかりません"}
                   />
                   <CardContent>
-                    {/* <Typography variant="body2">ID: {card.cardId}</Typography> */}
                     <Typography variant="body1">{card.cardName || "該当のカードが見つかりません"}</Typography>
                     <Button 
                       variant="contained" 
