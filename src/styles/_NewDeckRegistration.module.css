@@ -6,6 +6,11 @@
 .cardList {
   max-height: 600px;
   overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  list-style-type: none;
+  padding: 0;
 }
 
 .card {
@@ -17,4 +22,34 @@
   width: 100px;
   height: 140px;
   object-fit: cover;
+}
+
+.cardItem {
+  width: 100%;
+}
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.deckInfoContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.deckCount {
+  margin-left: 1rem;
+}
+
+.searchBar {
+  margin-bottom: 1rem;
+}
+
+.modalCardList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
 }

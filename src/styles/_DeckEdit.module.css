@@ -18,3 +18,35 @@
   height: 140px;
   object-fit: cover;
 }
+
+.cardList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  list-style-type: none;
+  padding: 0;
+}
+
+.cardItem {
+  width: 100%;
+}
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.deckInfoContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.deckCount {
+  margin-left: 1rem;
+}
+
+.searchBar {
+  margin-bottom: 1rem;
+}
