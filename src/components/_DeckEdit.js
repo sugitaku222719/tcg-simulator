@@ -10,7 +10,12 @@ function _DeckEdit() {
   const [deckCards, setDeckCards] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [page, setPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerms, setSearchTerms] = useState({
+    cardName: '',
+    cardText: '',
+    cardType: '',
+    cardStats: ''
+  });
   const cardsPerPage = 12;
   const router = useRouter()
   const { deckDocId } = router.query
@@ -126,13 +131,16 @@ function _DeckEdit() {
     flexDirection: 'column', // 縦方向に並べる
   };
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+  const handleSearchChange = (field) => (event) => {
+    setSearchTerms(prev => ({ ...prev, [field]: event.target.value }));
     setPage(1); // 検索時にページを1に戻す
   };
 
   const filteredCards = allCards.filter(card => 
-    card.cardName.toLowerCase().includes(searchTerm.toLowerCase())
+    card.cardName.toLowerCase().includes(searchTerms.cardName.toLowerCase()) &&
+    (card.cardText || '').toLowerCase().includes(searchTerms.cardText.toLowerCase()) &&
+    (card.cardType || '').toLowerCase().includes(searchTerms.cardType.toLowerCase()) &&
+    (card.cardStats || '').toLowerCase().includes(searchTerms.cardStats.toLowerCase())
   );
 
   const indexOfLastCard = page * cardsPerPage;
@@ -189,14 +197,48 @@ function _DeckEdit() {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h4" gutterBottom>すべてのカード</Typography>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="カード名で検索"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className={styles.searchBar}
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="カード名で検索"
+                value={searchTerms.cardName}
+                onChange={handleSearchChange('cardName')}
+                className={styles.searchBar}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="テキストで検索"
+                value={searchTerms.cardText}
+                onChange={handleSearchChange('cardText')}
+                className={styles.searchBar}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="タイプで検索"
+                value={searchTerms.cardType}
+                onChange={handleSearchChange('cardType')}
+                className={styles.searchBar}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="スタッツで検索"
+                value={searchTerms.cardStats}
+                onChange={handleSearchChange('cardStats')}
+                className={styles.searchBar}
+              />
+            </Grid>
+          </Grid>
           <List className={styles.cardList}>
             {currentCards.map((card) => (
               <ListItem key={card.cardId} className={styles.cardItem}>
