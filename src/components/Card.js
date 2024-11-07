@@ -74,6 +74,7 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
       </div>
       {showDetails && shouldShowDetails() && (
         <div className={`${styles.detailsWrapper} ${isVertical ? '' : styles.horizontalDetails}`}>
+          <div className={`${isOpponent ? styles.opponentDetails : ''}`}>
           <CardDetails card={card} />
           {showContextMenu && (
             <div className={styles.contextMenu}>
@@ -85,6 +86,7 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
               <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
             </div>
           )}
+          </div>
         </div>
       )}
     </div>
