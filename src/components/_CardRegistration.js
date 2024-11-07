@@ -2,7 +2,7 @@ import { auth, db, storage } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import styles from "@/styles/_CardRegistration.module.css";
-import { TextField, Button, Box, Typography, Modal } from '@mui/material';
+import { TextField, Button, Box, Typography, Modal, Pagination } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 function _CardRegistration() {
@@ -15,6 +15,8 @@ function _CardRegistration() {
   const [cardStats, setCardStats] = useState("");
   const [cardImage, setCardImage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const cardsPerPage = 12;
 
   useEffect(() => {
     const cardsRef = db
@@ -31,7 +33,7 @@ function _CardRegistration() {
         };
       });
       setCards(_cards);
-    })
+    });
 
     return () => {
       unsubscribe();
@@ -128,16 +130,31 @@ function _CardRegistration() {
     setEditingCard(null);
   };
 
-  const cardListItems = cards.map((card) => (
+  const handleChangePage = (event, value) => {
+    setPage(value);
+  };
+
+  const indexOfLastCard = page * cardsPerPage;
+  const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+  const currentCards = cards.slice(indexOfFirstCard, indexOfLastCard);
+
+  const cardListItems = currentCards.map((card) => (
     <li key={card.cardId} className={styles.cardItem} onClick={() => handleCardClick(card)}>
       <img className={styles.cardThumbnail} src={card.cardImageUrl || ""} alt={card.cardName} />
       <div className={styles.cardName}>{card.cardName}</div>
     </li>
   ));
-  
+
   return (
     <div className={styles.cardRegistration}>
       <ul className={styles.cardList}>{cardListItems}</ul>
+      <Pagination
+        count={Math.ceil(cards.length / cardsPerPage)}
+        page={page}
+        onChange={handleChangePage}
+        color="primary"
+        className={styles.pagination}
+      />
       <Modal
         open={modalOpen}
         onClose={handleCloseModal}
