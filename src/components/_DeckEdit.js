@@ -114,7 +114,7 @@ function _DeckEdit() {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 1000,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -130,9 +130,14 @@ function _DeckEdit() {
   return (
     <Container maxWidth="lg" className={styles.container}>
       <_DeckEditButton deckCards={deckCards} deckDocId={deckDocId} />
-      <Button variant="contained" color="primary" onClick={handleOpenModal}>
-        デッキ確認
-      </Button>
+      <div className={styles.deckInfoContainer}>
+        <Button variant="contained" color="primary" onClick={handleOpenModal}>
+          デッキ確認
+        </Button>
+        <Typography variant="body1" className={styles.deckCount}>
+          デッキ枚数: {deckCards.length}
+        </Typography>
+      </div>
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -154,8 +159,15 @@ function _DeckEdit() {
                     alt={card.cardName || "該当のカードが見つかりません"}
                   />
                   <CardContent>
-                    <Typography variant="body2">ID: {card.cardId}</Typography>
+                    {/* <Typography variant="body2">ID: {card.cardId}</Typography> */}
                     <Typography variant="body1">{card.cardName || "該当のカードが見つかりません"}</Typography>
+                    <Button 
+                      variant="contained" 
+                      color="secondary" 
+                      onClick={() => removeCardFromDeck(card.deckCardId)}
+                    >
+                      削除
+                    </Button>
                   </CardContent>
                 </Card>
               </ListItem>
@@ -177,7 +189,7 @@ function _DeckEdit() {
                     alt={card.cardName}
                   />
                   <CardContent>
-                    <Typography variant="body2">ID: {card.cardId}</Typography>
+                    {/* <Typography variant="body2">ID: {card.cardId}</Typography> */}
                     <Typography variant="body1">{card.cardName}</Typography>
                     <Button
                       variant="contained"
