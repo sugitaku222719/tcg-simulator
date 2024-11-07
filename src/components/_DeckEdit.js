@@ -2,7 +2,7 @@ import { auth, db } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import _DeckEditButton from './_DeckEditButton';
 import { useRouter } from 'next/router';
-import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem, Modal, Box, Pagination } from '@mui/material';
+import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem, Modal, Box, Pagination, TextField } from '@mui/material';
 import styles from '@/styles/_DeckEdit.module.css';
 
 function _DeckEdit() {
@@ -10,6 +10,7 @@ function _DeckEdit() {
   const [deckCards, setDeckCards] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const cardsPerPage = 12;
   const router = useRouter()
   const { deckDocId } = router.query
@@ -125,9 +126,18 @@ function _DeckEdit() {
     flexDirection: 'column', // 縦方向に並べる
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setPage(1); // 検索時にページを1に戻す
+  };
+
+  const filteredCards = allCards.filter(card => 
+    card.cardName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const indexOfLastCard = page * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-  const currentCards = allCards.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = filteredCards.slice(indexOfFirstCard, indexOfLastCard);
 
   return (
     <Container maxWidth="lg" className={styles.container}>
@@ -179,6 +189,14 @@ function _DeckEdit() {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h4" gutterBottom>すべてのカード</Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="カード名で検索"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className={styles.searchBar}
+          />
           <List className={styles.cardList}>
             {currentCards.map((card) => (
               <ListItem key={card.cardId} className={styles.cardItem}>
@@ -190,7 +208,6 @@ function _DeckEdit() {
                     alt={card.cardName}
                   />
                   <CardContent>
-                    {/* <Typography variant="body2">ID: {card.cardId}</Typography> */}
                     <Typography variant="body1">{card.cardName}</Typography>
                     <Button
                       variant="contained"
@@ -205,7 +222,7 @@ function _DeckEdit() {
             ))}
           </List>
           <Pagination
-            count={Math.ceil(allCards.length / cardsPerPage)}
+            count={Math.ceil(filteredCards.length / cardsPerPage)}
             page={page}
             onChange={handleChangePage}
             color="primary"
