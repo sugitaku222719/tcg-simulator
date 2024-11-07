@@ -172,9 +172,9 @@ function _CardRegistration() {
                   <Typography variant="h5" className={styles.cardTitle}>Name: {selectedCard.cardName}</Typography>
                   <Typography className={styles.cardType}>Type: {selectedCard.cardType}</Typography>
                   <Typography className={styles.cardStats}>Stats: {selectedCard.cardStats}</Typography>
-                </div>
-                <div className={styles.cardTextBox}>
-                  <Typography className={styles.cardText}>{convertNewlinesToBr(selectedCard.cardText)}</Typography>
+                  <div className={styles.cardTextBox}>
+                    <Typography className={styles.cardText}>{convertNewlinesToBr(selectedCard.cardText)}</Typography>
+                  </div>
                 </div>
               </div>
               <div className={styles.buttonContainer}>
