@@ -54,3 +54,23 @@
 .joinButton {
   margin-top: 1rem;
 }
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.joinButton, .deleteButton {
+  margin: 0 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .buttonContainer {
+    flex-direction: column;
+  }
+
+  .joinButton, .deleteButton {
+    margin: 0.5rem 0;
+  }
+}

@@ -182,6 +182,61 @@ function _RoomCreate() {
     }
   };
 
+  const handleDeleteRoom = async () => {
+    if (!selectedRoom) {
+      alert("削除する部屋を選択してください。");
+      return;
+    }
+
+    try {
+      // usersDataBaseから該当のフィールドを削除
+      const hostUserRef = db.collection("usersDataBase").doc(selectedRoom.hostUserId).collection("rooms").doc("hostRooms");
+      const guestUserRef = db.collection("usersDataBase").doc(selectedRoom.guestUserId).collection("rooms").doc("guestRooms");
+
+      await hostUserRef.update({
+        [selectedRoom.roomId]: firebase.firestore.FieldValue.delete()
+      });
+
+      await guestUserRef.update({
+        [selectedRoom.roomId]: firebase.firestore.FieldValue.delete()
+      });
+
+      // RoomsDataBaseから該当のコレクションとサブコレクションを削除
+      const roomRef = db.collection("roomsDataBase").doc(selectedRoom.roomId);
+      await deleteCollection(roomRef, 100);
+
+      // ローカルのrooms状態を更新
+      setRooms(prevRooms => prevRooms.filter(room => room.roomId !== selectedRoom.roomId));
+      setSelectedRoom(null);
+
+      alert("部屋が削除されました。");
+    } catch (error) {
+      console.error("部屋の削除中にエラーが発生しました: ", error);
+      alert("部屋の削除中にエラーが発生しました。");
+    }
+  };
+
+  // サブコレクションを含むコレクションを再帰的に削除する関数
+  const deleteCollection = async (collectionRef, batchSize) => {
+    const query = collectionRef.limit(batchSize);
+    const snapshot = await query.get();
+
+    if (snapshot.size === 0) {
+      return;
+    }
+
+    const batch = db.batch();
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+
+    if (snapshot.size === batchSize) {
+      process.nextTick(() => deleteCollection(collectionRef, batchSize));
+    }
+  };
+
   return (
     <Container maxWidth="md" className={styles.container}>
       <Typography variant="h4" gutterBottom className={styles.title}>
@@ -279,17 +334,28 @@ function _RoomCreate() {
           </Paper>
         ))}
       </List>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleJoinRoom}
-        disabled={!selectedRoom || !selectedRoom.hostDeckDocId || !selectedRoom.guestDeckDocId}
-        className={styles.joinButton}
-      >
-        選択した部屋に入室
-      </Button>
+      <Box className={styles.buttonContainer}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleJoinRoom}
+          disabled={!selectedRoom || !selectedRoom.hostDeckDocId || !selectedRoom.guestDeckDocId}
+          className={styles.joinButton}
+        >
+          選択した部屋に入室
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleDeleteRoom}
+          disabled={!selectedRoom}
+          className={styles.deleteButton}
+        >
+          削除
+        </Button>
+      </Box>
     </Container>
   );
-};
+}
 
 export default _RoomCreate
