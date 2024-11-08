@@ -87,10 +87,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  padding: 20px;
   border-radius: 5px;
   max-width: 80%;
   max-height: 80%;
+  padding: 20px;
   overflow-y: auto;
 }
 
@@ -165,4 +165,10 @@
   padding: 10px;
   font-size: 16px;
   cursor: pointer;
+}
+
+.cardDetails{
+  position: absolute;
+  top: calc(50% - 140px);
+  left: calc(50% - 100px);
 }

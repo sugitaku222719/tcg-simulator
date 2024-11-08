@@ -5,6 +5,7 @@ import { auth, db } from '../lib/Firebase';
 import HandCard from './HandCard';
 import { Modal } from '@mui/material';
 import { NetworkCellSharp } from '@mui/icons-material';
+import CardDetails from './CardDetails';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -46,6 +47,8 @@ function _PlayRoom({roomId, roomData}) {
   const [showSideDeckModal, setShowSideDeckModal] = useState(false);
   const [selectedSideDeckCard, setSelectedSideDeckCard] = useState(null);
   const [showOrientationModal, setShowOrientationModal] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
     const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
@@ -462,19 +465,28 @@ function _PlayRoom({roomId, roomData}) {
       <div className={styles.myPlayRoom}>
         {renderField(myField, myCards, myHandCards, myDeckCards, myTrashCards, mySideDeckCards, false)}
       </div>
-      <Modal
-        open={showDeckModal}
-        onClose={() => setShowDeckModal(false)}
-        aria-labelledby="デッキの中身"
-      >
+      <Modal open={showDeckModal} onClose={() => setShowDeckModal(false)} aria-labelledby="デッキの中身">
         <div className={styles.deckModal}>
           <h2 id="デッキの中身">デッキの中身</h2>
           <div className={styles.deckCards}>
             {myDeckCards.map(card => (
-              <div key={card.uuid} onClick={() => handleCardSearch(card)} className={styles.deckCard}>
-                <div>{card.cardName}</div>
-                <div>
-                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+              <div
+                key={card.uuid}
+                onClick={() => handleCardSearch(card)}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
+              >
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
                 </div>
               </div>
             ))}
