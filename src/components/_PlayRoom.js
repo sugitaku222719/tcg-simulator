@@ -494,11 +494,7 @@ function _PlayRoom({roomId, roomData}) {
           <button onClick={() => setShowDeckModal(false)}>閉じる</button>
         </div>
       </Modal>
-      <Modal
-        open={showMyTrashModal}
-        onClose={() => setShowMyTrashModal(false)}
-        aria-labelledby="自分の捨て札の中身"
-      >
+      <Modal open={showMyTrashModal} onClose={() => setShowMyTrashModal(false)} aria-labelledby="自分の捨て札の中身">
         <div className={styles.deckModal}>
           <h2 id="自分の捨て札の中身">自分の捨て札の中身</h2>
           <div className={styles.deckCards}>
@@ -506,11 +502,20 @@ function _PlayRoom({roomId, roomData}) {
               <div
                 key={card.uuid}
                 onClick={() => handleTrashCardClick(card, false)}
-                className={styles.deckCard}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
               >
-                <div>{card.cardName}</div>
-                <div>
-                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -518,22 +523,28 @@ function _PlayRoom({roomId, roomData}) {
           <button onClick={() => setShowMyTrashModal(false)}>閉じる</button>
         </div>
       </Modal>
-      <Modal
-        open={showOpponentTrashModal}
-        onClose={() => setShowOpponentTrashModal(false)}
-        aria-labelledby="相手の捨て札の中身"
-      >
+
+      <Modal open={showOpponentTrashModal} onClose={() => setShowOpponentTrashModal(false)} aria-labelledby="相手の捨て札の中身">
         <div className={styles.deckModal}>
           <h2 id="相手の捨て札の中身">相手の捨て札の中身</h2>
           <div className={styles.deckCards}>
             {opponentTrashCards.map(card => (
               <div
                 key={card.uuid}
-                className={styles.deckCard}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
               >
-                <div>{card.cardName}</div>
-                <div>
-                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -541,23 +552,29 @@ function _PlayRoom({roomId, roomData}) {
           <button onClick={() => setShowOpponentTrashModal(false)}>閉じる</button>
         </div>
       </Modal>
-      <Modal 
-        open={showSideDeckModal} 
-        onClose={() => setShowSideDeckModal(false)} 
-        aria-labelledby="サイドデッキの中身"
-      >
+
+      <Modal open={showSideDeckModal} onClose={() => setShowSideDeckModal(false)} aria-labelledby="サイドデッキの中身">
         <div className={styles.deckModal}>
           <h2 id="サイドデッキの中身">サイドデッキの中身</h2>
           <div className={styles.deckCards}>
             {mySideDeckCards.map(card => (
-              <div 
-                key={card.uuid} 
-                onClick={() => handleSideDeckCardClick(card)} 
-                className={styles.deckCard}
+              <div
+                key={card.uuid}
+                onClick={() => handleSideDeckCardClick(card)}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
               >
-                <div>{card.cardName}</div>
-                <div>
-                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
                 </div>
               </div>
             ))}
