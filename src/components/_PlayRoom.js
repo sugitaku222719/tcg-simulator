@@ -3,6 +3,8 @@ import styles from "../styles/_PlayRoom.module.css"
 import Cell from './Cell';
 import { auth, db } from '../lib/Firebase';
 import HandCard from './HandCard';
+import { Modal } from '@mui/material';
+import { NetworkCellSharp } from '@mui/icons-material';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -27,6 +29,9 @@ function _PlayRoom({roomId, roomData}) {
   const opponentDeckRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("deck");
   const opponentFieldRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("field");
   const opponentHandRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("hand");
+  const [showDeckOptions, setShowDeckOptions] = useState(false);
+  const [showDeckModal, setShowDeckModal] = useState(false);
+  const [deckModalPosition, setDeckModalPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
@@ -100,16 +105,62 @@ function _PlayRoom({roomId, roomData}) {
     myFieldRef.set({ cards: updatedCards });
   };
 
-  const addHandCard = async () => {
-    if (!myDeckCards || myDeckCards.length === 0) return;
+  const handleDeckRightClick = (e) => {
+    e.preventDefault();
+    setDeckModalPosition({ x: e.clientX, y: e.clientY });
+    setShowDeckOptions(true);
+  };
 
-    const newCard = myDeckCards[0];
+  const handleDeckOptionClick = (option) => {
+    switch(option) {
+      case 'draw':
+        addHandCard();
+        break;
+      case 'search':
+        setShowDeckModal(true);
+        break;
+      case 'shuffle':
+        shuffleDeck();
+        break;
+      default:
+        break;
+    }
+    setShowDeckOptions(false);
+  };
+
+  const handleCardSearch = (card) => {
+    addHandCard(card);
+    setShowDeckModal(false);
+  };
+
+  const addHandCard = async (selectedCard = null) => {
+    if (!myDeckCards || myDeckCards.length === 0) return;
+    
+    let newCard;
+    let updatedDeckCards;
+    
+    if (selectedCard && typeof selectedCard === 'object' && !('_reactName' in selectedCard)) {
+      // selectedCardがカードオブジェクトの場合
+      newCard = { ...selectedCard };
+      updatedDeckCards = myDeckCards.filter(card => card.uuid && card.uuid !== selectedCard.uuid);
+    } else {
+      // デッキから1枚引く場合
+      newCard = { ...myDeckCards[0] };
+      updatedDeckCards = myDeckCards.slice(1);
+    }
+    
+    console.log("New card:", newCard);
+    
     const updatedHandCards = [...myHandCards, newCard];
     await setMyHandCards(updatedHandCards);
-    await setMyDeckCards(myDeckCards.slice(1));
+    await setMyDeckCards(updatedDeckCards);
     
-    myDeckRef.set({ cards: myDeckCards.slice(1) });
-    myHandRef.set({ cards: updatedHandCards });
+    // Firestoreに保存する前にデータを整形
+    const deckData = { cards: updatedDeckCards.map(card => ({...card, cardRef: null})) };
+    const handData = { cards: updatedHandCards.map(card => ({...card, cardRef: null})) };
+  
+    await myDeckRef.set(deckData);
+    await myHandRef.set(handData);
   };
 
   const onDragStart = (e, card) => {
@@ -256,13 +307,26 @@ function _PlayRoom({roomId, roomData}) {
             />
           ))}
         </div>
-        <div
-          className={styles.deck}
-          onClick={isOpponent ? null : addHandCard}
-          onDrop={isOpponent ? null : deckOnDrop}
-          onDragOver={isOpponent ? null : onDragOver}
-        >
-          デッキ{deckCards.length}
+        <div className={styles.deckWrapper}>
+          <div 
+            className={styles.deck}
+            onClick={() => addHandCard()}  // 引数なしで呼び出す
+            onContextMenu={isOpponent ? null : handleDeckRightClick}
+            onDrop={isOpponent ? null : deckOnDrop}
+            onDragOver={isOpponent ? null : onDragOver}
+          >
+            デッキ{deckCards.length}
+          </div>
+          {!isOpponent && showDeckOptions && (
+            <div
+              className={styles.deckOptions}
+            >
+              <button onClick={() => handleDeckOptionClick('draw')}>カードを上から1枚引く</button>
+              <button onClick={() => handleDeckOptionClick('search')}>カードを探す</button>
+              <button onClick={() => handleDeckOptionClick('shuffle')}>シャッフルする</button>
+              <button onClick={() => setShowDeckOptions(false)}>キャンセル</button>
+            </div>
+          )}
         </div>
       </div>
       {!isOpponent && (
@@ -282,6 +346,26 @@ function _PlayRoom({roomId, roomData}) {
       <div className={styles.myPlayRoom}>
         {renderField(myField, myCards, myHandCards, myDeckCards, false)}
       </div>
+      <Modal
+        open={showDeckModal}
+        onClose={() => setShowDeckModal(false)}
+        aria-labelledby="デッキの中身"
+      >
+        <div className={styles.deckModal}>
+          <h2 id="デッキの中身">デッキの中身</h2>
+          <div className={styles.deckCards}>
+            {myDeckCards.map(card => (
+              <div key={card.uuid} onClick={() => handleCardSearch(card)} className={styles.deckCard}>
+                <div>{card.cardName}</div>
+                <div>
+                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => setShowDeckModal(false)}>閉じる</button>
+        </div>
+      </Modal>
     </div>
   );
 }
