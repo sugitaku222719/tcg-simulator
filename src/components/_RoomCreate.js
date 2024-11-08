@@ -12,9 +12,9 @@ function _RoomCreate() {
   const router = useRouter();
   const [opponentUid, setOpponentUid] = useState("");
   const myUsersDataBaseRef = db
-      .collection("usersDataBase")
-      .doc(auth.currentUser.uid)
-      .collection("rooms")
+    .collection("usersDataBase")
+    .doc(auth.currentUser.uid)
+    .collection("rooms")
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -23,7 +23,7 @@ function _RoomCreate() {
         .doc(auth.currentUser.uid)
         .collection('userDeckList')
         .orderBy("name", "asc");
-  
+
       const snapshot = await cardsRef.get();
       const _decks = snapshot.docs.map(doc => ({
         deckId: doc.id,
@@ -31,17 +31,17 @@ function _RoomCreate() {
       }));
       setDecks(_decks);
     };
-  
+
     const unsubscribeHostRooms = myUsersDataBaseRef.doc("hostRooms").onSnapshot(snapshot => {
       const hostRooms = snapshot.data() || {};
       updateRooms(hostRooms, true);
     });
-  
+
     const unsubscribeGuestRooms = myUsersDataBaseRef.doc("guestRooms").onSnapshot(snapshot => {
       const guestRooms = snapshot.data() || {};
       updateRooms(guestRooms, false);
     });
-  
+
     const updateRooms = (newRooms, isHost) => {
       setRooms(prevRooms => {
         const updatedRooms = prevRooms.filter(room => room.isHost !== isHost);
@@ -53,58 +53,54 @@ function _RoomCreate() {
         return [...updatedRooms, ...newRoomsList];
       });
     };
-  
+
     fetchDecks();
-  
-    // Clean up the listeners when the component unmounts
+
     return () => {
       unsubscribeHostRooms();
       unsubscribeGuestRooms();
     };
   }, []);
 
-  const roomCreateFunction = async (hostUid, guestUid, isHost) => {
-    const roomId = `${hostUid}-${guestUid}`
+  const roomCreateOrEnterFunction = async () => {
+    const existingHostRoom = rooms.find(room => room.hostUserId === opponentUid);
+    const existingGuestRoom = rooms.find(room => room.guestUserId === opponentUid);
+
+    if (existingHostRoom) {
+      // 既存の部屋に入室（ゲストとして）
+      await roomFunction(opponentUid, auth.currentUser.uid, false, existingHostRoom.roomId);
+    } else if (existingGuestRoom) {
+      // 既存の部屋に入室（ホストとして）
+      await roomFunction(auth.currentUser.uid, opponentUid, true, existingGuestRoom.roomId);
+    } else {
+      // 新しい部屋を作成（ホストとして）
+      await roomFunction(auth.currentUser.uid, opponentUid, true);
+    }
+  };
+
+  const roomFunction = async (hostUid, guestUid, isHost, existingRoomId = null) => {
+    const roomId = existingRoomId || `${hostUid}-${guestUid}`;
     try {
-      const roomRef = db.collection("roomsDataBase").doc(roomId)
-      const roomData = isHost ? {
+      const roomRef = db.collection("roomsDataBase").doc(roomId);
+      const roomData = {
         hostUserId: hostUid,
         guestUserId: guestUid,
-        hostDeckDocId: deckDocId,
-        hostSideDeckDocId: sideDeckDocId,
-        createdAt: new Date(),
-      } : {
-        hostUserId: hostUid,
-        guestUserId: guestUid,
-        guestDeckDocId: deckDocId,
-        guestSideDeckDocId: sideDeckDocId,
+        [isHost ? 'hostDeckDocId' : 'guestDeckDocId']: deckDocId,
+        [isHost ? 'hostSideDeckDocId' : 'guestSideDeckDocId']: sideDeckDocId,
         createdAt: new Date(),
       };
-  
-      // roomsDataBaseにデータを保存
+
       await roomRef.set(roomData, { merge: true });
-  
-      // usersDataBaseにデータを保存
-      const userRoomRef = db
-        .collection("usersDataBase")
-        .doc(auth.currentUser.uid)
-        .collection("rooms")
-        .doc(isHost ? "hostRooms" : "guestRooms");
-  
-      await userRoomRef.set({
-        [roomId]: roomData
-      }, { merge: true });
-  
-      // 相手のusersDataBaseにもデータを保存
+
+      const userRoomRef = myUsersDataBaseRef.doc(isHost ? "hostRooms" : "guestRooms");
+      await userRoomRef.set({ [roomId]: roomData }, { merge: true });
+
       const opponentRoomRef = db
         .collection("usersDataBase")
         .doc(isHost ? guestUid : hostUid)
         .collection("rooms")
         .doc(isHost ? "guestRooms" : "hostRooms");
-  
-      await opponentRoomRef.set({
-        [roomId]: roomData
-      }, { merge: true });
+      await opponentRoomRef.set({ [roomId]: roomData }, { merge: true });
   
       const deckRef = db
         .collection('cardsDataBase')
@@ -164,7 +160,7 @@ function _RoomCreate() {
         await roomSideDeckRef.set({ cards: [] });
       }
   
-      alert("部屋が作成されました");
+      alert(existingRoomId ? "部屋に入室しました" : "部屋が作成されました");
       router.push(`/playRoom/${roomId}`);
     } catch (error) {
       alert("エラーが発生しました");
@@ -183,7 +179,7 @@ function _RoomCreate() {
   return (
     <Container maxWidth="md" className={styles.container}>
       <Typography variant="h4" gutterBottom className={styles.title}>
-        ルーム作成
+        ルーム作成/入室
       </Typography>
       <Typography variant="h6" gutterBottom>
         あなたのUID: {auth.currentUser.uid}
@@ -232,18 +228,10 @@ function _RoomCreate() {
           <Button 
             variant="contained" 
             color="primary" 
-            onClick={roomCreateButton}
+            onClick={roomCreateOrEnterFunction}
             className={styles.button}
           >
-            部屋作成
-          </Button>
-          <Button 
-            variant="contained" 
-            color="secondary" 
-            onClick={roomEnteringButton}
-            className={styles.button}
-          >
-            部屋入室
+            部屋作成/入室
           </Button>
         </Box>
       </Box>
