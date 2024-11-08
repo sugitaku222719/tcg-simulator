@@ -43,6 +43,9 @@ function _PlayRoom({roomId, roomData}) {
   const [showTrashModal, setShowTrashModal] = useState(false);
   const [showMyTrashModal, setShowMyTrashModal] = useState(false);
   const [showOpponentTrashModal, setShowOpponentTrashModal] = useState(false);
+  const [showSideDeckModal, setShowSideDeckModal] = useState(false);
+  const [selectedSideDeckCard, setSelectedSideDeckCard] = useState(null);
+  const [showOrientationModal, setShowOrientationModal] = useState(false);
 
   useEffect(() => {
     const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
@@ -337,6 +340,40 @@ function _PlayRoom({roomId, roomData}) {
     setShowMyTrashModal(false);
   };
 
+  const handleSideDeckClick = () => {
+    setShowSideDeckModal(true);
+  };
+
+  const handleSideDeckCardClick = (card) => {
+    setSelectedSideDeckCard(card);
+    setShowSideDeckModal(false);
+    setShowOrientationModal(true);
+  };
+
+  const handleOrientationSelect = async (orientation) => {
+    if (!selectedSideDeckCard) return;
+
+    const [isVertical, isFaceUp] = orientation.split('-');
+    const updatedCard = {
+      ...selectedSideDeckCard,
+      position: { row: 10, col: 30 }, // フィールドの中央付近に配置
+      isVertical: isVertical === 'vertical',
+      isFaceUp: isFaceUp === 'up'
+    };
+
+    const updatedCards = [...myCards, updatedCard];
+    const updatedSideDeckCards = mySideDeckCards.filter((c) => c.uuid !== selectedSideDeckCard.uuid);
+
+    await setMyCards(updatedCards);
+    await setMySideDeckCards(updatedSideDeckCards);
+
+    myFieldRef.set({ cards: updatedCards });
+    mySideDeckRef.set({ cards: updatedSideDeckCards });
+
+    setSelectedSideDeckCard(null);
+    setShowOrientationModal(false);
+  };
+
   const renderField = (field, cards, handCards, deckCards, trashCards, sideDeckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
@@ -364,7 +401,8 @@ function _PlayRoom({roomId, roomData}) {
       ))}
       <div className={styles.deckAndHand}>
         <div 
-          className={styles.sideDeck}
+          className={styles.sideDeck} 
+          onClick={isOpponent ? null : handleSideDeckClick}
         >
           サイドデッキ<br />{sideDeckCards.length}
         </div>
@@ -489,6 +527,46 @@ function _PlayRoom({roomId, roomData}) {
             ))}
           </div>
           <button onClick={() => setShowOpponentTrashModal(false)}>閉じる</button>
+        </div>
+      </Modal>
+      <Modal 
+        open={showSideDeckModal} 
+        onClose={() => setShowSideDeckModal(false)} 
+        aria-labelledby="サイドデッキの中身"
+      >
+        <div className={styles.deckModal}>
+          <h2 id="サイドデッキの中身">サイドデッキの中身</h2>
+          <div className={styles.deckCards}>
+            {mySideDeckCards.map(card => (
+              <div 
+                key={card.uuid} 
+                onClick={() => handleSideDeckCardClick(card)} 
+                className={styles.deckCard}
+              >
+                <div>{card.cardName}</div>
+                <div>
+                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => setShowSideDeckModal(false)}>閉じる</button>
+        </div>
+      </Modal>
+      <Modal
+        open={showOrientationModal}
+        onClose={() => setShowOrientationModal(false)}
+        aria-labelledby="カードの向きを選択"
+      >
+        <div className={styles.orientationModal}>
+          <h2 id="カードの向きを選択">カードの向きを選択</h2>
+          <div className={styles.orientationOptions}>
+            <button onClick={() => handleOrientationSelect('vertical-up')}>縦（表）</button>
+            <button onClick={() => handleOrientationSelect('vertical-down')}>縦（裏）</button>
+            <button onClick={() => handleOrientationSelect('horizontal-up')}>横（表）</button>
+            <button onClick={() => handleOrientationSelect('horizontal-down')}>横（裏）</button>
+          </div>
+          <button onClick={() => setShowOrientationModal(false)}>キャンセル</button>
         </div>
       </Modal>
     </div>
