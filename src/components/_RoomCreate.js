@@ -168,14 +168,6 @@ function _RoomCreate() {
     }
   };
 
-  const roomCreateButton = () => {
-    roomCreateFunction(auth.currentUser.uid, opponentUid, true)
-  }
-
-  const roomEnteringButton = () => {
-    roomCreateFunction(opponentUid, auth.currentUser.uid, false)
-  }
-
   return (
     <Container maxWidth="md" className={styles.container}>
       <Typography variant="h4" gutterBottom className={styles.title}>
