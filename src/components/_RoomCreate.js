@@ -1,7 +1,7 @@
 import { auth, db } from '@/lib/Firebase'
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react'
-import { TextField, Button, Typography, Container, Box, Select, MenuItem, FormControl, InputLabel, List, ListItem, ListItemText } from '@mui/material';
+import { TextField, Button, Typography, Container, Box, Select, MenuItem, FormControl, InputLabel, List, ListItem, ListItemText, Paper } from '@mui/material';
 import styles from '@/styles/_RoomCreate.module.css';
 
 function _RoomCreate() {
@@ -11,6 +11,8 @@ function _RoomCreate() {
   const [rooms, setRooms] = useState([]);
   const router = useRouter();
   const [opponentUid, setOpponentUid] = useState("");
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
   const myUsersDataBaseRef = db
     .collection("usersDataBase")
     .doc(auth.currentUser.uid)
@@ -168,6 +170,18 @@ function _RoomCreate() {
     }
   };
 
+  const handleRoomClick = (room) => {
+    setSelectedRoom(room);
+  };
+
+  const handleJoinRoom = () => {
+    if (selectedRoom && selectedRoom.hostDeckDocId && selectedRoom.guestDeckDocId) {
+      router.push(`/playRoom/${selectedRoom.roomId}`);
+    } else {
+      alert("両プレイヤーがデッキを選択するまで部屋に入室できません。");
+    }
+  };
+
   return (
     <Container maxWidth="md" className={styles.container}>
       <Typography variant="h4" gutterBottom className={styles.title}>
@@ -232,32 +246,48 @@ function _RoomCreate() {
       </Typography>
       <List>
         {rooms.map((room) => (
-          <ListItem key={room.roomId}>
-            <ListItemText
-              primary={`Room ID: ${room.roomId}`}
-              secondary={
-                <>
-                  <Typography component="span" variant="body2" display="block">
-                    Opponent User ID: {room.isHost ? room.guestUserId : room.hostUserId}
-                  </Typography>
-                  <Typography component="span" variant="body2" display="block">
-                    My Deck ID: {room.isHost ? room.hostDeckDocId : room.guestDeckDocId}
-                  </Typography>
-                  <Typography component="span" variant="body2" display="block">
-                    My Side Deck ID: {room.isHost ? room.hostSideDeckDocId : room.guestSideDeckDocId}
-                  </Typography>
-                  <Typography component="span" variant="body2" display="block">
-                    Opponent Deck ID: {room.isHost ? room.guestDeckDocId : room.hostDeckDocId}
-                  </Typography>
-                  <Typography component="span" variant="body2" display="block">
-                    Opponent Side Deck ID: {room.isHost ? room.guestSideDeckDocId : room.hostSideDeckDocId}
-                  </Typography>
-                </>
-              }
-            />
-          </ListItem>
+          <Paper 
+            key={room.roomId} 
+            elevation={3} 
+            className={`${styles.roomItem} ${selectedRoom && selectedRoom.roomId === room.roomId ? styles.selectedRoom : ''}`}
+            onClick={() => handleRoomClick(room)}
+          >
+            <ListItem>
+              <ListItemText
+                primary={`Room ID: ${room.roomId}`}
+                secondary={
+                  <>
+                    <Typography component="span" variant="body2" display="block">
+                      Opponent User ID: {room.isHost ? room.guestUserId : room.hostUserId}
+                    </Typography>
+                    <Typography component="span" variant="body2" display="block">
+                      My Deck ID: {room.isHost ? room.hostDeckDocId : room.guestDeckDocId}
+                    </Typography>
+                    <Typography component="span" variant="body2" display="block">
+                      My Side Deck ID: {room.isHost ? room.hostSideDeckDocId : room.guestSideDeckDocId}
+                    </Typography>
+                    <Typography component="span" variant="body2" display="block">
+                      Opponent Deck ID: {room.isHost ? room.guestDeckDocId : room.hostDeckDocId}
+                    </Typography>
+                    <Typography component="span" variant="body2" display="block">
+                      Opponent Side Deck ID: {room.isHost ? room.guestSideDeckDocId : room.hostSideDeckDocId}
+                    </Typography>
+                  </>
+                }
+              />
+            </ListItem>
+          </Paper>
         ))}
       </List>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleJoinRoom}
+        disabled={!selectedRoom || !selectedRoom.hostDeckDocId || !selectedRoom.guestDeckDocId}
+        className={styles.joinButton}
+      >
+        選択した部屋に入室
+      </Button>
     </Container>
   );
 };
