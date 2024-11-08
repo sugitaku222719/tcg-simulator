@@ -7,6 +7,7 @@ import styles from '@/styles/_RoomCreate.module.css';
 
 function _RoomCreate() {
   const [deckDocId, setDeckDocId] = useState("");
+  const [sideDeckDocId, setSideDeckDocId] = useState("");
   const router = useRouter();
   const [opponentUid, setOpponentUid] = useState("");
 
@@ -19,6 +20,7 @@ function _RoomCreate() {
           hostUserId: hostUid,
           guestUserId: guestUid,
           hostDeckDocId: deckDocId,
+          hostSideDeckDocId: sideDeckDocId,
           createdAt: new Date(),
         }, { merge: true });
       } else {
@@ -26,6 +28,7 @@ function _RoomCreate() {
           hostUserId: hostUid,
           guestUserId: guestUid,
           guestDeckDocId: deckDocId,
+          guestSideDeckDocId: sideDeckDocId,
           createdAt: new Date(),
         }, { merge: true });
       }
@@ -54,6 +57,39 @@ function _RoomCreate() {
         .collection(auth.currentUser.uid)
         .doc("deck");
       await roomDeckRef.set({ cards: deck });
+
+      if (sideDeckDocId){
+        const sideDeckRef = db
+          .collection('cardsDataBase')
+          .doc(auth.currentUser.uid)
+          .collection('userDeckList')
+          .doc(sideDeckDocId)
+          .collection("cards");
+        const sideSnapshot = await sideDeckRef.get();
+        const sideDeck = await Promise.all(sideSnapshot.docs.map(async (doc) => {
+          const cardRef = doc.data().cardRef;
+          const cardDoc = await cardRef.get();
+          return {
+            cardDocId: cardDoc.id,
+            uuid: doc.id,
+            ...cardDoc.data(),
+            position: { row: 3, col: 3 }
+          };
+        }));
+        const roomSideDeckRef = db
+          .collection("roomsDataBase")
+          .doc(roomId)
+          .collection(auth.currentUser.uid)
+          .doc("sideDeck");
+        await roomSideDeckRef.set({ cards: sideDeck });
+    }else{
+      const roomSideDeckRef = db
+          .collection("roomsDataBase")
+          .doc(roomId)
+          .collection(auth.currentUser.uid)
+          .doc("sideDeck");
+        await roomSideDeckRef.set({ cards: [] });
+    }
 
       alert("部屋が作成されました");
       router.push(`/playRoom/${roomId}`);
@@ -94,6 +130,14 @@ function _RoomCreate() {
           variant="outlined"
           value={deckDocId}
           onChange={(event) => setDeckDocId(event.target.value)}
+          className={styles.input}
+        />
+        <TextField
+          fullWidth
+          label="Side Deck ID"
+          variant="outlined"
+          value={sideDeckDocId}
+          onChange={(event) => setSideDeckDocId(event.target.value)}
           className={styles.input}
         />
         <Box className={styles.buttonContainer}>
