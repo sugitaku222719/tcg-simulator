@@ -17,6 +17,8 @@ function _PlayRoom({roomId, roomData}) {
   const [opponentHandCards, setOpponentHandCards] = useState([]);
   const [myTrashCards, setMyTrashCards] = useState([]);
   const [opponentTrashCards, setOpponentTrashCards] = useState([]);
+  const [mySideDeckCards, setMySideDeckCards] = useState([]);
+  const [opponentSideDeckCards, setOpponentSideDeckCards] = useState([]);
   const hostUserUid = roomData.hostUserId;
   const guestUserUid = roomData.guestUserId;
   const isHost = roomData.hostUserId === auth.currentUser.uid;
@@ -29,10 +31,12 @@ function _PlayRoom({roomId, roomData}) {
   const myFieldRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("field");
   const myHandRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("hand");
   const myTrashRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("trash");
+  const mySideDeckRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("sideDeck");
   const opponentDeckRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("deck");
   const opponentFieldRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("field");
   const opponentHandRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("hand");
   const opponentTrashRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("trash");
+  const opponentSideDeckRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("sideDeck");
   const [showDeckOptions, setShowDeckOptions] = useState(false);
   const [showDeckModal, setShowDeckModal] = useState(false);
   const [deckModalPosition, setDeckModalPosition] = useState({ x: 0, y: 0 });
@@ -65,6 +69,12 @@ function _PlayRoom({roomId, roomData}) {
       }
     });
 
+    const unsubscribeMySideDeck = mySideDeckRef.onSnapshot((doc) => {
+      if (doc.exists) {
+        setMySideDeckCards(doc.data().cards || []);
+      }
+    });
+
     const unsubscribeOpponentDeck = opponentDeckRef.onSnapshot((doc) => {
       if (doc.exists) {
         setOpponentDeckCards(doc.data().cards || []);
@@ -89,15 +99,23 @@ function _PlayRoom({roomId, roomData}) {
       }
     });
 
+    const unsubscribeOpponentSideDeck = opponentSideDeckRef.onSnapshot((doc) => {
+      if (doc.exists) {
+        setOpponentSideDeckCards(doc.data().cards || []);
+      }
+    });
+
     return () => {
       unsubscribeMyDeck();
       unsubscribeMyField();
       unsubscribeMyHand();
       unsubscribeMyTrash();
+      unsubscribeMySideDeck();
       unsubscribeOpponentDeck();
       unsubscribeOpponentField();
       unsubscribeOpponentHand();
       unsubscribeOpponentTrash();
+      unsubscribeOpponentSideDeck();
     };
   }, []);
 
@@ -319,7 +337,7 @@ function _PlayRoom({roomId, roomData}) {
     setShowMyTrashModal(false);
   };
 
-  const renderField = (field, cards, handCards, deckCards, trashCards, isOpponent) => (
+  const renderField = (field, cards, handCards, deckCards, trashCards, sideDeckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
         <div key={rowIndex} className={styles.row}>
@@ -345,6 +363,11 @@ function _PlayRoom({roomId, roomData}) {
         </div>
       ))}
       <div className={styles.deckAndHand}>
+        <div 
+          className={styles.sideDeck}
+        >
+          サイドデッキ<br />{sideDeckCards.length}
+        </div>
         <div className={styles.handZone}>
           {handCards.map(card => (
             <HandCard
@@ -396,10 +419,10 @@ function _PlayRoom({roomId, roomData}) {
   return (
     <div>
       <div className={styles.opponentPlayRoom}>
-        {renderField(opponentField, opponentCards, opponentHandCards, opponentDeckCards, opponentTrashCards, true)}
+        {renderField(opponentField, opponentCards, opponentHandCards, opponentDeckCards, opponentTrashCards, opponentSideDeckCards, true)}
       </div>
       <div className={styles.myPlayRoom}>
-        {renderField(myField, myCards, myHandCards, myDeckCards, myTrashCards, false)}
+        {renderField(myField, myCards, myHandCards, myDeckCards, myTrashCards, mySideDeckCards, false)}
       </div>
       <Modal
         open={showDeckModal}
