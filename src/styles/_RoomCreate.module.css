@@ -40,3 +40,17 @@
     width: 100%;
   }
 }
+
+.roomItem {
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.selectedRoom {
+  background-color: #e3f2fd;
+}
+
+.joinButton {
+  margin-top: 1rem;
+}
