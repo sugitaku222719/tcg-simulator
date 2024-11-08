@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from "@/styles/Card.module.css";
 import CardDetails from './CardDetails';
 
-const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, returnToHand, addToTrash, isVertical, isFaceUp, isOpponent }) => {
+const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, returnToHand, addToTrash, returnToSideDeck, isVertical, isFaceUp, isOpponent }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -39,6 +39,9 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
       case 'addToTrash':
         addToTrash(card);
         break;
+      case 'returnToSideDeck': // この case を追加
+        returnToSideDeck(card);
+        break;  
       default:
         break;
     }
@@ -87,6 +90,7 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
                 <button onClick={() => handleOptionClick('faceDown')}>裏にする</button>
                 <button onClick={() => handleOptionClick('returnToHand')}>手札に戻す</button>
                 <button onClick={() => handleOptionClick('addToTrash')}>捨て札に置く</button>
+                <button onClick={() => handleOptionClick('returnToSideDeck')}>サイドデッキに戻す</button> {/* この行を追加 */}
                 <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
               </div>
             )}

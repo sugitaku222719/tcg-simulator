@@ -377,6 +377,14 @@ function _PlayRoom({roomId, roomData}) {
     setShowOrientationModal(false);
   };
 
+  const returnToSideDeck = async (card) => {
+    const updatedSideDeckCards = [...mySideDeckCards, card];
+    await setMySideDeckCards(updatedSideDeckCards);
+    await setMyCards(myCards.filter((c) => c.uuid !== card.uuid));
+    mySideDeckRef.set({ cards: updatedSideDeckCards });
+    myFieldRef.set({ cards: myCards.filter((c) => c.uuid !== card.uuid) });
+  };
+
   const renderField = (field, cards, handCards, deckCards, trashCards, sideDeckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
@@ -396,6 +404,7 @@ function _PlayRoom({roomId, roomData}) {
                 changeCardFace={isOpponent ? null : changeCardFace}
                 returnToHand={isOpponent ? null : returnToHand}
                 addToTrash={isOpponent ? null : addToTrash}
+                returnToSideDeck={isOpponent ? null : returnToSideDeck} // この行を追加
                 isOpponent={isOpponent}
               />
             );
