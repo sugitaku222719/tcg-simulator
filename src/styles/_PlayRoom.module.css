@@ -51,6 +51,7 @@
   justify-content: center;
   align-items: center;
   font-size: 80px;
+  margin: 10px;
 }
 
 .deckWrapper{
@@ -86,10 +87,10 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  padding: 20px;
   border-radius: 5px;
   max-width: 80%;
   max-height: 80%;
+  padding: 20px;
   overflow-y: auto;
 }
 
@@ -125,4 +126,55 @@
   position: absolute;
   top: -150px;
   left: 90%;
+}
+
+.sideDeck{
+  width: 100px;
+  height: 140px;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.orientationModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.orientationOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.orientationOptions button {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.deckCardWrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.cardDetails {
+  position: absolute;
+  top: 0;
+  left: -50%;
+  z-index: 1000;
 }

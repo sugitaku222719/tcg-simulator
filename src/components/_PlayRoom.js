@@ -5,6 +5,7 @@ import { auth, db } from '../lib/Firebase';
 import HandCard from './HandCard';
 import { Modal } from '@mui/material';
 import { NetworkCellSharp } from '@mui/icons-material';
+import CardDetails from './CardDetails';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -17,6 +18,8 @@ function _PlayRoom({roomId, roomData}) {
   const [opponentHandCards, setOpponentHandCards] = useState([]);
   const [myTrashCards, setMyTrashCards] = useState([]);
   const [opponentTrashCards, setOpponentTrashCards] = useState([]);
+  const [mySideDeckCards, setMySideDeckCards] = useState([]);
+  const [opponentSideDeckCards, setOpponentSideDeckCards] = useState([]);
   const hostUserUid = roomData.hostUserId;
   const guestUserUid = roomData.guestUserId;
   const isHost = roomData.hostUserId === auth.currentUser.uid;
@@ -29,16 +32,23 @@ function _PlayRoom({roomId, roomData}) {
   const myFieldRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("field");
   const myHandRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("hand");
   const myTrashRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("trash");
+  const mySideDeckRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("sideDeck");
   const opponentDeckRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("deck");
   const opponentFieldRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("field");
   const opponentHandRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("hand");
   const opponentTrashRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("trash");
+  const opponentSideDeckRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("sideDeck");
   const [showDeckOptions, setShowDeckOptions] = useState(false);
   const [showDeckModal, setShowDeckModal] = useState(false);
   const [deckModalPosition, setDeckModalPosition] = useState({ x: 0, y: 0 });
   const [showTrashModal, setShowTrashModal] = useState(false);
   const [showMyTrashModal, setShowMyTrashModal] = useState(false);
   const [showOpponentTrashModal, setShowOpponentTrashModal] = useState(false);
+  const [showSideDeckModal, setShowSideDeckModal] = useState(false);
+  const [selectedSideDeckCard, setSelectedSideDeckCard] = useState(null);
+  const [showOrientationModal, setShowOrientationModal] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
     const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
@@ -62,6 +72,12 @@ function _PlayRoom({roomId, roomData}) {
     const unsubscribeMyTrash = myTrashRef.onSnapshot((doc) => {
       if (doc.exists) {
         setMyTrashCards(doc.data().cards || []);
+      }
+    });
+
+    const unsubscribeMySideDeck = mySideDeckRef.onSnapshot((doc) => {
+      if (doc.exists) {
+        setMySideDeckCards(doc.data().cards || []);
       }
     });
 
@@ -89,15 +105,23 @@ function _PlayRoom({roomId, roomData}) {
       }
     });
 
+    const unsubscribeOpponentSideDeck = opponentSideDeckRef.onSnapshot((doc) => {
+      if (doc.exists) {
+        setOpponentSideDeckCards(doc.data().cards || []);
+      }
+    });
+
     return () => {
       unsubscribeMyDeck();
       unsubscribeMyField();
       unsubscribeMyHand();
       unsubscribeMyTrash();
+      unsubscribeMySideDeck();
       unsubscribeOpponentDeck();
       unsubscribeOpponentField();
       unsubscribeOpponentHand();
       unsubscribeOpponentTrash();
+      unsubscribeOpponentSideDeck();
     };
   }, []);
 
@@ -319,7 +343,41 @@ function _PlayRoom({roomId, roomData}) {
     setShowMyTrashModal(false);
   };
 
-  const renderField = (field, cards, handCards, deckCards, trashCards, isOpponent) => (
+  const handleSideDeckClick = () => {
+    setShowSideDeckModal(true);
+  };
+
+  const handleSideDeckCardClick = (card) => {
+    setSelectedSideDeckCard(card);
+    setShowSideDeckModal(false);
+    setShowOrientationModal(true);
+  };
+
+  const handleOrientationSelect = async (orientation) => {
+    if (!selectedSideDeckCard) return;
+
+    const [isVertical, isFaceUp] = orientation.split('-');
+    const updatedCard = {
+      ...selectedSideDeckCard,
+      position: { row: 10, col: 30 }, // フィールドの中央付近に配置
+      isVertical: isVertical === 'vertical',
+      isFaceUp: isFaceUp === 'up'
+    };
+
+    const updatedCards = [...myCards, updatedCard];
+    const updatedSideDeckCards = mySideDeckCards.filter((c) => c.uuid !== selectedSideDeckCard.uuid);
+
+    await setMyCards(updatedCards);
+    await setMySideDeckCards(updatedSideDeckCards);
+
+    myFieldRef.set({ cards: updatedCards });
+    mySideDeckRef.set({ cards: updatedSideDeckCards });
+
+    setSelectedSideDeckCard(null);
+    setShowOrientationModal(false);
+  };
+
+  const renderField = (field, cards, handCards, deckCards, trashCards, sideDeckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
         <div key={rowIndex} className={styles.row}>
@@ -345,6 +403,12 @@ function _PlayRoom({roomId, roomData}) {
         </div>
       ))}
       <div className={styles.deckAndHand}>
+        <div 
+          className={styles.sideDeck} 
+          onClick={isOpponent ? null : handleSideDeckClick}
+        >
+          サイドデッキ<br />{sideDeckCards.length}
+        </div>
         <div className={styles.handZone}>
           {handCards.map(card => (
             <HandCard
@@ -396,24 +460,33 @@ function _PlayRoom({roomId, roomData}) {
   return (
     <div>
       <div className={styles.opponentPlayRoom}>
-        {renderField(opponentField, opponentCards, opponentHandCards, opponentDeckCards, opponentTrashCards, true)}
+        {renderField(opponentField, opponentCards, opponentHandCards, opponentDeckCards, opponentTrashCards, opponentSideDeckCards, true)}
       </div>
       <div className={styles.myPlayRoom}>
-        {renderField(myField, myCards, myHandCards, myDeckCards, myTrashCards, false)}
+        {renderField(myField, myCards, myHandCards, myDeckCards, myTrashCards, mySideDeckCards, false)}
       </div>
-      <Modal
-        open={showDeckModal}
-        onClose={() => setShowDeckModal(false)}
-        aria-labelledby="デッキの中身"
-      >
+      <Modal open={showDeckModal} onClose={() => setShowDeckModal(false)} aria-labelledby="デッキの中身">
         <div className={styles.deckModal}>
           <h2 id="デッキの中身">デッキの中身</h2>
           <div className={styles.deckCards}>
             {myDeckCards.map(card => (
-              <div key={card.uuid} onClick={() => handleCardSearch(card)} className={styles.deckCard}>
-                <div>{card.cardName}</div>
-                <div>
-                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+              <div
+                key={card.uuid}
+                onClick={() => handleCardSearch(card)}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
+              >
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -421,11 +494,7 @@ function _PlayRoom({roomId, roomData}) {
           <button onClick={() => setShowDeckModal(false)}>閉じる</button>
         </div>
       </Modal>
-      <Modal
-        open={showMyTrashModal}
-        onClose={() => setShowMyTrashModal(false)}
-        aria-labelledby="自分の捨て札の中身"
-      >
+      <Modal open={showMyTrashModal} onClose={() => setShowMyTrashModal(false)} aria-labelledby="自分の捨て札の中身">
         <div className={styles.deckModal}>
           <h2 id="自分の捨て札の中身">自分の捨て札の中身</h2>
           <div className={styles.deckCards}>
@@ -433,11 +502,20 @@ function _PlayRoom({roomId, roomData}) {
               <div
                 key={card.uuid}
                 onClick={() => handleTrashCardClick(card, false)}
-                className={styles.deckCard}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
               >
-                <div>{card.cardName}</div>
-                <div>
-                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -445,27 +523,79 @@ function _PlayRoom({roomId, roomData}) {
           <button onClick={() => setShowMyTrashModal(false)}>閉じる</button>
         </div>
       </Modal>
-      <Modal
-        open={showOpponentTrashModal}
-        onClose={() => setShowOpponentTrashModal(false)}
-        aria-labelledby="相手の捨て札の中身"
-      >
+
+      <Modal open={showOpponentTrashModal} onClose={() => setShowOpponentTrashModal(false)} aria-labelledby="相手の捨て札の中身">
         <div className={styles.deckModal}>
           <h2 id="相手の捨て札の中身">相手の捨て札の中身</h2>
           <div className={styles.deckCards}>
             {opponentTrashCards.map(card => (
               <div
                 key={card.uuid}
-                className={styles.deckCard}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
               >
-                <div>{card.cardName}</div>
-                <div>
-                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
                 </div>
               </div>
             ))}
           </div>
           <button onClick={() => setShowOpponentTrashModal(false)}>閉じる</button>
+        </div>
+      </Modal>
+
+      <Modal open={showSideDeckModal} onClose={() => setShowSideDeckModal(false)} aria-labelledby="サイドデッキの中身">
+        <div className={styles.deckModal}>
+          <h2 id="サイドデッキの中身">サイドデッキの中身</h2>
+          <div className={styles.deckCards}>
+            {mySideDeckCards.map(card => (
+              <div
+                key={card.uuid}
+                onClick={() => handleSideDeckCardClick(card)}
+                onMouseEnter={() => setHoveredCard(card)}
+                onMouseLeave={() => setHoveredCard(null)}
+                className={styles.deckCardWrapper}
+              >
+                <div className={styles.cardDetails}>
+                  {hoveredCard && hoveredCard.uuid === card.uuid && (
+                    <CardDetails card={card} />
+                  )}
+                </div>
+                <div className={styles.deckCard}>
+                  <div>{card.cardName}</div>
+                  <div>
+                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => setShowSideDeckModal(false)}>閉じる</button>
+        </div>
+      </Modal>
+      <Modal
+        open={showOrientationModal}
+        onClose={() => setShowOrientationModal(false)}
+        aria-labelledby="カードの向きを選択"
+      >
+        <div className={styles.orientationModal}>
+          <h2 id="カードの向きを選択">カードの向きを選択</h2>
+          <div className={styles.orientationOptions}>
+            <button onClick={() => handleOrientationSelect('vertical-up')}>縦（表）</button>
+            <button onClick={() => handleOrientationSelect('vertical-down')}>縦（裏）</button>
+            <button onClick={() => handleOrientationSelect('horizontal-up')}>横（表）</button>
+            <button onClick={() => handleOrientationSelect('horizontal-down')}>横（裏）</button>
+          </div>
+          <button onClick={() => setShowOrientationModal(false)}>キャンセル</button>
         </div>
       </Modal>
     </div>
