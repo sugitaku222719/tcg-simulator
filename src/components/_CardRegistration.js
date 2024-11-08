@@ -2,7 +2,7 @@ import { auth, db, storage } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import styles from "@/styles/_CardRegistration.module.css";
-import { TextField, Button, Box, Typography, Modal, Pagination } from '@mui/material';
+import { TextField, Button, Box, Typography, Modal, Pagination, Grid } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 function _CardRegistration() {
@@ -17,6 +17,12 @@ function _CardRegistration() {
   const [modalOpen, setModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const cardsPerPage = 12;
+  const [searchTerms, setSearchTerms] = useState({
+    cardName: '',
+    cardText: '',
+    cardType: '',
+    cardStats: ''
+  });
 
   useEffect(() => {
     const cardsRef = db
@@ -134,9 +140,21 @@ function _CardRegistration() {
     setPage(value);
   };
 
+  const handleSearchChange = (field) => (event) => {
+    setSearchTerms(prev => ({ ...prev, [field]: event.target.value }));
+    setPage(1);
+  };
+
+  const filteredCards = cards.filter(card =>
+    card.cardName.toLowerCase().includes(searchTerms.cardName.toLowerCase()) &&
+    (card.cardText || '').toLowerCase().includes(searchTerms.cardText.toLowerCase()) &&
+    (card.cardType || '').toLowerCase().includes(searchTerms.cardType.toLowerCase()) &&
+    (card.cardStats || '').toLowerCase().includes(searchTerms.cardStats.toLowerCase())
+  );
+
   const indexOfLastCard = page * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-  const currentCards = cards.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = filteredCards.slice(indexOfFirstCard, indexOfLastCard);
 
   const cardListItems = currentCards.map((card) => (
     <li key={card.cardId} className={styles.cardItem} onClick={() => handleCardClick(card)}>
@@ -147,9 +165,51 @@ function _CardRegistration() {
 
   return (
     <div className={styles.cardRegistration}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="カード名で検索"
+            value={searchTerms.cardName}
+            onChange={handleSearchChange('cardName')}
+            className={styles.searchBar}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="テキストで検索"
+            value={searchTerms.cardText}
+            onChange={handleSearchChange('cardText')}
+            className={styles.searchBar}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="タイプで検索"
+            value={searchTerms.cardType}
+            onChange={handleSearchChange('cardType')}
+            className={styles.searchBar}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="スタッツで検索"
+            value={searchTerms.cardStats}
+            onChange={handleSearchChange('cardStats')}
+            className={styles.searchBar}
+          />
+        </Grid>
+      </Grid>
       <ul className={styles.cardList}>{cardListItems}</ul>
       <Pagination
-        count={Math.ceil(cards.length / cardsPerPage)}
+        count={Math.ceil(filteredCards.length / cardsPerPage)}
         page={page}
         onChange={handleChangePage}
         color="primary"
