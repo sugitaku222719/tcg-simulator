@@ -4,6 +4,7 @@ import Cell from './Cell';
 import { auth, db } from '../lib/Firebase';
 import HandCard from './HandCard';
 import { Modal } from '@mui/material';
+import { NetworkCellSharp } from '@mui/icons-material';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -138,19 +139,28 @@ function _PlayRoom({roomId, roomData}) {
     let newCard;
     let updatedDeckCards;
     
-    if (selectedCard) {
-      newCard = selectedCard;
-      updatedDeckCards = myDeckCards.filter(card => card.uuid !== selectedCard.uuid);
+    if (selectedCard && typeof selectedCard === 'object' && !('_reactName' in selectedCard)) {
+      // selectedCardがカードオブジェクトの場合
+      newCard = { ...selectedCard };
+      updatedDeckCards = myDeckCards.filter(card => card.uuid && card.uuid !== selectedCard.uuid);
     } else {
-      newCard = myDeckCards[0];
+      // デッキから1枚引く場合
+      newCard = { ...myDeckCards[0] };
       updatedDeckCards = myDeckCards.slice(1);
     }
+    
+    console.log("New card:", newCard);
     
     const updatedHandCards = [...myHandCards, newCard];
     await setMyHandCards(updatedHandCards);
     await setMyDeckCards(updatedDeckCards);
-    myDeckRef.set({ cards: updatedDeckCards });
-    myHandRef.set({ cards: updatedHandCards });
+    
+    // Firestoreに保存する前にデータを整形
+    const deckData = { cards: updatedDeckCards.map(card => ({...card, cardRef: null})) };
+    const handData = { cards: updatedHandCards.map(card => ({...card, cardRef: null})) };
+  
+    await myDeckRef.set(deckData);
+    await myHandRef.set(handData);
   };
 
   const onDragStart = (e, card) => {
@@ -297,9 +307,9 @@ function _PlayRoom({roomId, roomData}) {
             />
           ))}
         </div>
-        <div
+        <div 
           className={styles.deck}
-          onClick={isOpponent ? null : addHandCard}
+          onClick={() => addHandCard()}  // 引数なしで呼び出す
           onContextMenu={isOpponent ? null : handleDeckRightClick}
           onDrop={isOpponent ? null : deckOnDrop}
           onDragOver={isOpponent ? null : onDragOver}
