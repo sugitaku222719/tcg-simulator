@@ -1,15 +1,34 @@
 import { auth, db } from '@/lib/Firebase'
 import { useRouter } from 'next/router';
-import React, { useState } from 'react'
-import _DeckIndex from './_DeckIndex';
-import { TextField, Button, Typography, Container, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react'
+import { TextField, Button, Typography, Container, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import styles from '@/styles/_RoomCreate.module.css';
 
 function _RoomCreate() {
   const [deckDocId, setDeckDocId] = useState("");
   const [sideDeckDocId, setSideDeckDocId] = useState("");
+  const [decks, setDecks] = useState([]);
   const router = useRouter();
   const [opponentUid, setOpponentUid] = useState("");
+
+  useEffect(() => {
+    const fetchDecks = async () => {
+      const cardsRef = db
+        .collection('cardsDataBase')
+        .doc(auth.currentUser.uid)
+        .collection('userDeckList')
+        .orderBy("name", "asc");
+
+      const snapshot = await cardsRef.get();
+      const _decks = snapshot.docs.map(doc => ({
+        deckId: doc.id,
+        ...doc.data(),
+      }));
+      setDecks(_decks);
+    };
+
+    fetchDecks();
+  }, []);
 
   const roomCreateFunction = async (hostUid, guestUid, isHost) => {
     const roomId = `${hostUid}-${guestUid}`
@@ -124,22 +143,37 @@ function _RoomCreate() {
           onChange={(event) => setOpponentUid(event.target.value)}
           className={styles.input}
         />
-        <TextField
-          fullWidth
-          label="Deck ID"
-          variant="outlined"
-          value={deckDocId}
-          onChange={(event) => setDeckDocId(event.target.value)}
-          className={styles.input}
-        />
-        <TextField
-          fullWidth
-          label="Side Deck ID"
-          variant="outlined"
-          value={sideDeckDocId}
-          onChange={(event) => setSideDeckDocId(event.target.value)}
-          className={styles.input}
-        />
+        <FormControl fullWidth variant="outlined" className={styles.input}>
+          <InputLabel>デッキ選択</InputLabel>
+          <Select
+            value={deckDocId}
+            onChange={(event) => setDeckDocId(event.target.value)}
+            label="デッキ選択"
+          >
+            {decks.map((deck) => (
+              <MenuItem key={deck.deckId} value={deck.deckId}>
+                {deck.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth variant="outlined" className={styles.input}>
+          <InputLabel>サイドデッキ選択</InputLabel>
+          <Select
+            value={sideDeckDocId}
+            onChange={(event) => setSideDeckDocId(event.target.value)}
+            label="サイドデッキ選択"
+          >
+            <MenuItem value="">
+              <em>なし</em>
+            </MenuItem>
+            {decks.map((deck) => (
+              <MenuItem key={deck.deckId} value={deck.deckId}>
+                {deck.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <Box className={styles.buttonContainer}>
           <Button 
             variant="contained" 
@@ -159,7 +193,6 @@ function _RoomCreate() {
           </Button>
         </Box>
       </Box>
-      <_DeckIndex />
     </Container>
   );
 };
