@@ -290,14 +290,47 @@ function _PlayRoom({roomId, roomData}) {
     });
   
     const initialDeck = await Promise.all(cardPromises);
+
+    const mySideDeckDocId = isHost ? roomData.hostSideDeckDocId : roomData.guestSideDeckDocId;
+    if (mySideDeckDocId){
+      const deckRef = db
+      .collection('cardsDataBase')
+      .doc(myUserUid)
+      .collection('userDeckList')
+      .doc(mySideDeckDocId)
+      .collection("cards");
+    
+      const snapshot = await deckRef.get();
+      const cardPromises = snapshot.docs.map(async (doc) => {
+        const cardRef = doc.data().cardRef;
+        const cardDoc = await cardRef.get();
+        return {
+          cardDocId: cardDoc.id,
+          uuid: doc.id,
+          ...cardDoc.data(),
+          cardRef: cardRef,
+          position: {row: 3, col: 3}
+        };
+      });
+
+      const initialDeck = await Promise.all(cardPromises);
+
+      await setMySideDeckCards(initialDeck);
+      mySideDeckRef.set({ cards: initialDeck });
+    }else{
+      await setMySideDeckCards([]);
+      mySideDeckRef.set({ cards: [] });
+    }
   
     await setMyDeckCards(initialDeck);
     await setMyCards([]);
     await setMyHandCards([]);
+    await setMyTrashCards([]);
   
     myDeckRef.set({ cards: initialDeck });
     myFieldRef.set({ cards: [] });
     myHandRef.set({ cards: [] });
+    myTrashRef.set({ cards: [] });
   }
 
   const changeCardOrientation = async (card, isVertical) => {
