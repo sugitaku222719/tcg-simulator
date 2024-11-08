@@ -121,6 +121,7 @@
   align-items: center;
   background-color: #f0f0f0;
   flex-shrink: 0;
+  cursor: pointer;
   position: absolute;
   top: -150px;
   left: 90%;

@@ -36,6 +36,7 @@ function _PlayRoom({roomId, roomData}) {
   const [showDeckOptions, setShowDeckOptions] = useState(false);
   const [showDeckModal, setShowDeckModal] = useState(false);
   const [deckModalPosition, setDeckModalPosition] = useState({ x: 0, y: 0 });
+  const [showTrashModal, setShowTrashModal] = useState(false);
 
   useEffect(() => {
     const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
@@ -275,6 +276,27 @@ function _PlayRoom({roomId, roomData}) {
     myFieldRef.set({ cards: updatedCards });
   };
 
+  const addToTrash = async (card) => {
+    const updatedTrashCards = [...myTrashCards, card];
+    await setMyTrashCards(updatedTrashCards);
+    await setMyCards(myCards.filter((c) => c.uuid !== card.uuid));
+    myTrashRef.set({ cards: updatedTrashCards });
+    myFieldRef.set({ cards: myCards.filter((c) => c.uuid !== card.uuid) });
+  };
+  
+  const handleTrashClick = () => {
+    setShowTrashModal(true);
+  };
+  
+  const handleTrashCardClick = async (card) => {
+    const updatedHandCards = [...myHandCards, card];
+    await setMyHandCards(updatedHandCards);
+    await setMyTrashCards(myTrashCards.filter((c) => c.uuid !== card.uuid));
+    myHandRef.set({ cards: updatedHandCards });
+    myTrashRef.set({ cards: myTrashCards.filter((c) => c.uuid !== card.uuid) });
+    setShowTrashModal(false);
+  };
+
   const renderField = (field, cards, handCards, deckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
@@ -293,6 +315,7 @@ function _PlayRoom({roomId, roomData}) {
                 changeCardOrientation={isOpponent ? null : changeCardOrientation}
                 changeCardFace={isOpponent ? null : changeCardFace}
                 returnToHand={isOpponent ? null : returnToHand}
+                addToTrash={isOpponent ? null : addToTrash}
                 isOpponent={isOpponent}
               />
             );
@@ -333,12 +356,12 @@ function _PlayRoom({roomId, roomData}) {
           )}
         </div>
         <div 
-          className={styles.trashBox}
-
-        >
-          捨て札
+            className={styles.trashBox} 
+            onClick={isOpponent ? null : handleTrashClick}
+          >
+            捨て札 {myTrashCards.length}
+          </div>
         </div>
-      </div>
       {!isOpponent && (
         <>
           <button onClick={resetDeckAndFieldAndHand}>リセット</button>
@@ -374,6 +397,30 @@ function _PlayRoom({roomId, roomData}) {
             ))}
           </div>
           <button onClick={() => setShowDeckModal(false)}>閉じる</button>
+        </div>
+      </Modal>
+      <Modal
+        open={showTrashModal}
+        onClose={() => setShowTrashModal(false)}
+        aria-labelledby="捨て札の中身"
+      >
+        <div className={styles.deckModal}>
+          <h2 id="捨て札の中身">捨て札の中身</h2>
+          <div className={styles.deckCards}>
+            {myTrashCards.map(card => (
+              <div
+                key={card.uuid}
+                onClick={() => handleTrashCardClick(card)}
+                className={styles.deckCard}
+              >
+                <div>{card.cardName}</div>
+                <div>
+                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <button onClick={() => setShowTrashModal(false)}>閉じる</button>
         </div>
       </Modal>
     </div>

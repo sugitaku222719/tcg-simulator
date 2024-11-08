@@ -2,7 +2,7 @@ import React from 'react';
 import Card from './Card';
 import styles from "@/styles/Cell.module.css";
 
-const Cell = ({ rowIndex, colIndex, card, onDrop, onDragOver, onDragStart, changeCardOrientation, changeCardFace, returnToHand, isOpponent }) => {
+const Cell = ({ rowIndex, colIndex, card, onDrop, onDragOver, onDragStart, changeCardOrientation, changeCardFace, returnToHand, addToTrash, isOpponent }) => {
   return (
     <div 
       className={styles.cell}
@@ -16,6 +16,7 @@ const Cell = ({ rowIndex, colIndex, card, onDrop, onDragOver, onDragStart, chang
           changeCardOrientation={changeCardOrientation}
           changeCardFace={changeCardFace}
           returnToHand={returnToHand}
+          addToTrash={addToTrash}
           isVertical={card.isVertical}
           isFaceUp={card.isFaceUp}
           isOpponent={isOpponent}
