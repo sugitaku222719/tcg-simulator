@@ -15,6 +15,8 @@ function _PlayRoom({roomId, roomData}) {
   const [opponentDeckCards, setOpponentDeckCards] = useState([]);
   const [myHandCards, setMyHandCards] = useState([]);
   const [opponentHandCards, setOpponentHandCards] = useState([]);
+  const [myTrashCards, setMyTrashCards] = useState([]);
+  const [opponentTrashCards, setOpponentTrashCards] = useState([]);
   const hostUserUid = roomData.hostUserId;
   const guestUserUid = roomData.guestUserId;
   const isHost = roomData.hostUserId === auth.currentUser.uid;
@@ -26,9 +28,11 @@ function _PlayRoom({roomId, roomData}) {
   const myDeckRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("deck");
   const myFieldRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("field");
   const myHandRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("hand");
+  const myTrashRef = db.collection('roomsDataBase').doc(roomId).collection(myUserUid).doc("trash");
   const opponentDeckRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("deck");
   const opponentFieldRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("field");
   const opponentHandRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("hand");
+  const opponentTrashRef = db.collection('roomsDataBase').doc(roomId).collection(opponentUserUid).doc("trash");
   const [showDeckOptions, setShowDeckOptions] = useState(false);
   const [showDeckModal, setShowDeckModal] = useState(false);
   const [deckModalPosition, setDeckModalPosition] = useState({ x: 0, y: 0 });
@@ -327,6 +331,12 @@ function _PlayRoom({roomId, roomData}) {
               <button onClick={() => setShowDeckOptions(false)}>キャンセル</button>
             </div>
           )}
+        </div>
+        <div 
+          className={styles.trashBox}
+
+        >
+          捨て札
         </div>
       </div>
       {!isOpponent && (
