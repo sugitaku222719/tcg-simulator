@@ -42,17 +42,6 @@
   padding: 10px;
 }
 
-.deck {
-  width: 100px;
-  height: 140px;
-  border: 1px solid #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f0f0f0;
-  flex-shrink: 0;
-}
-
 .handZone {
   width: calc(100% - 150px);
   height: 160px;
@@ -64,6 +53,21 @@
 
 }
 
+.deckWrapper{
+  position: relative;
+}
+
+.deck {
+  width: 100px;
+  height: 140px;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  flex-shrink: 0;
+}
+
 .deckOptions {
   background-color: white;
   border: 1px solid black;
@@ -71,8 +75,9 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  position: relative;
-  left: -100px;
+  position: absolute;
+  left: -150px;
+  top: 0px;
 }
 
 .deckModal {
@@ -92,12 +97,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
 }
 
 .deckCard {
   border: 1px solid black;
   padding: 5px;
   cursor: pointer;
+  width: 100px;
+  height: 140px;
 }
 
 .deckCard:hover {

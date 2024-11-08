@@ -307,14 +307,26 @@ function _PlayRoom({roomId, roomData}) {
             />
           ))}
         </div>
-        <div 
-          className={styles.deck}
-          onClick={() => addHandCard()}  // 引数なしで呼び出す
-          onContextMenu={isOpponent ? null : handleDeckRightClick}
-          onDrop={isOpponent ? null : deckOnDrop}
-          onDragOver={isOpponent ? null : onDragOver}
-        >
-          デッキ{deckCards.length}
+        <div className={styles.deckWrapper}>
+          <div 
+            className={styles.deck}
+            onClick={() => addHandCard()}  // 引数なしで呼び出す
+            onContextMenu={isOpponent ? null : handleDeckRightClick}
+            onDrop={isOpponent ? null : deckOnDrop}
+            onDragOver={isOpponent ? null : onDragOver}
+          >
+            デッキ{deckCards.length}
+          </div>
+          {!isOpponent && showDeckOptions && (
+            <div
+              className={styles.deckOptions}
+            >
+              <button onClick={() => handleDeckOptionClick('draw')}>カードを上から1枚引く</button>
+              <button onClick={() => handleDeckOptionClick('search')}>カードを探す</button>
+              <button onClick={() => handleDeckOptionClick('shuffle')}>シャッフルする</button>
+              <button onClick={() => setShowDeckOptions(false)}>キャンセル</button>
+            </div>
+          )}
         </div>
       </div>
       {!isOpponent && (
@@ -334,17 +346,6 @@ function _PlayRoom({roomId, roomData}) {
       <div className={styles.myPlayRoom}>
         {renderField(myField, myCards, myHandCards, myDeckCards, false)}
       </div>
-      {showDeckOptions && (
-        <div
-          className={styles.deckOptions}
-          style={{ position: 'absolute', left: deckModalPosition.x, top: deckModalPosition.y }}
-        >
-          <button onClick={() => handleDeckOptionClick('draw')}>カードを上から1枚引く</button>
-          <button onClick={() => handleDeckOptionClick('search')}>カードを探す</button>
-          <button onClick={() => handleDeckOptionClick('shuffle')}>シャッフルする</button>
-          <button onClick={() => setShowDeckOptions(false)}>キャンセル</button>
-        </div>
-      )}
       <Modal
         open={showDeckModal}
         onClose={() => setShowDeckModal(false)}
@@ -355,7 +356,10 @@ function _PlayRoom({roomId, roomData}) {
           <div className={styles.deckCards}>
             {myDeckCards.map(card => (
               <div key={card.uuid} onClick={() => handleCardSearch(card)} className={styles.deckCard}>
-                {card.name}
+                <div>{card.cardName}</div>
+                <div>
+                  <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
+                </div>
               </div>
             ))}
           </div>
