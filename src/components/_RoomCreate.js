@@ -1,15 +1,20 @@
 import { auth, db } from '@/lib/Firebase'
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react'
-import { TextField, Button, Typography, Container, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { TextField, Button, Typography, Container, Box, Select, MenuItem, FormControl, InputLabel, List, ListItem, ListItemText } from '@mui/material';
 import styles from '@/styles/_RoomCreate.module.css';
 
 function _RoomCreate() {
   const [deckDocId, setDeckDocId] = useState("");
   const [sideDeckDocId, setSideDeckDocId] = useState("");
   const [decks, setDecks] = useState([]);
+  const [rooms, setRooms] = useState([]);
   const router = useRouter();
   const [opponentUid, setOpponentUid] = useState("");
+  const myUsersDataBaseRef = db
+      .collection("usersDataBase")
+      .doc(auth.currentUser.uid)
+      .collection("rooms")
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -27,7 +32,23 @@ function _RoomCreate() {
       setDecks(_decks);
     };
 
+    const fetchRooms = async () => {
+      const hostRoomsSnapshot = await myUsersDataBaseRef.doc("hostRooms").get();
+      const guestRoomsSnapshot = await myUsersDataBaseRef.doc("guestRooms").get();
+
+      const hostRooms = hostRoomsSnapshot.data() || {};
+      const guestRooms = guestRoomsSnapshot.data() || {};
+
+      const allRooms = [
+        ...Object.entries(hostRooms).map(([roomId, room]) => ({ ...room, roomId, isHost: true })),
+        ...Object.entries(guestRooms).map(([roomId, room]) => ({ ...room, roomId, isHost: false }))
+      ];
+
+      setRooms(allRooms);
+    };
+
     fetchDecks();
+    fetchRooms();
   }, []);
 
   const roomCreateFunction = async (hostUid, guestUid, isHost) => {
@@ -110,8 +131,8 @@ function _RoomCreate() {
         await roomSideDeckRef.set({ cards: [] });
     }
 
-      alert("部屋が作成されました");
-      router.push(`/playRoom/${roomId}`);
+    alert("部屋が作成されました");
+    router.push(`/playRoom/${roomId}`);
     } catch (error) {
       alert("エラーが発生しました");
       console.error('エラーが発生しました: ', error);
@@ -193,6 +214,37 @@ function _RoomCreate() {
           </Button>
         </Box>
       </Box>
+      <Typography variant="h5" gutterBottom>
+        ルーム一覧
+      </Typography>
+      <List>
+        {rooms.map((room) => (
+          <ListItem key={room.roomId}>
+            <ListItemText
+              primary={`Room ID: ${room.roomId}`}
+              secondary={
+                <>
+                  <Typography component="span" variant="body2" display="block">
+                    Opponent User ID: {room.isHost ? room.guestUserId : room.hostUserId}
+                  </Typography>
+                  <Typography component="span" variant="body2" display="block">
+                    My Deck ID: {room.isHost ? room.hostDeckDocId : room.guestDeckDocId}
+                  </Typography>
+                  <Typography component="span" variant="body2" display="block">
+                    My Side Deck ID: {room.isHost ? room.hostSideDeckDocId : room.guestSideDeckDocId}
+                  </Typography>
+                  <Typography component="span" variant="body2" display="block">
+                    Opponent Deck ID: {room.isHost ? room.guestDeckDocId : room.hostDeckDocId}
+                  </Typography>
+                  <Typography component="span" variant="body2" display="block">
+                    Opponent Side Deck ID: {room.isHost ? room.guestSideDeckDocId : room.hostSideDeckDocId}
+                  </Typography>
+                </>
+              }
+            />
+          </ListItem>
+        ))}
+      </List>
     </Container>
   );
 };
