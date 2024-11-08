@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from "@/styles/Card.module.css";
 import CardDetails from './CardDetails';
 
-const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, returnToHand, isVertical, isFaceUp, isOpponent }) => {
+const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, returnToHand, addToTrash, isVertical, isFaceUp, isOpponent }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -35,6 +35,9 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
         break;
       case 'returnToHand':
         returnToHand(card);
+        break;
+      case 'addToTrash':
+        addToTrash(card);
         break;
       default:
         break;
@@ -75,17 +78,18 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
       {showDetails && shouldShowDetails() && (
         <div className={`${styles.detailsWrapper} ${isVertical ? '' : styles.horizontalDetails}`}>
           <div className={`${isOpponent ? styles.opponentDetails : ''}`}>
-          <CardDetails card={card} />
-          {showContextMenu && (
-            <div className={styles.contextMenu}>
-              <button onClick={() => handleOptionClick('vertical')}>縦にする</button>
-              <button onClick={() => handleOptionClick('horizontal')}>横にする</button>
-              <button onClick={() => handleOptionClick('faceUp')}>表にする</button>
-              <button onClick={() => handleOptionClick('faceDown')}>裏にする</button>
-              <button onClick={() => handleOptionClick('returnToHand')}>手札に戻す</button>
-              <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
-            </div>
-          )}
+            <CardDetails card={card} />
+            {showContextMenu && (
+              <div className={styles.contextMenu}>
+                <button onClick={() => handleOptionClick('vertical')}>縦にする</button>
+                <button onClick={() => handleOptionClick('horizontal')}>横にする</button>
+                <button onClick={() => handleOptionClick('faceUp')}>表にする</button>
+                <button onClick={() => handleOptionClick('faceDown')}>裏にする</button>
+                <button onClick={() => handleOptionClick('returnToHand')}>手札に戻す</button>
+                <button onClick={() => handleOptionClick('addToTrash')}>捨て札に置く</button>
+                <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
+              </div>
+            )}
           </div>
         </div>
       )}
