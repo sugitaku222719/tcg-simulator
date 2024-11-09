@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react'
 import { TextField, Button, Typography, Container, Box, Select, MenuItem, FormControl, InputLabel, List, ListItem, ListItemText, Paper } from '@mui/material';
 import styles from '@/styles/_RoomCreate.module.css';
+import { deleteField, deleteDoc, getDocs, collection } from 'firebase/firestore';
 
 function _RoomCreate() {
   const [deckDocId, setDeckDocId] = useState("");
@@ -194,16 +195,18 @@ function _RoomCreate() {
       const guestUserRef = db.collection("usersDataBase").doc(selectedRoom.guestUserId).collection("rooms").doc("guestRooms");
 
       await hostUserRef.update({
-        [selectedRoom.roomId]: firebase.firestore.FieldValue.delete()
+        [selectedRoom.roomId]: deleteField()
       });
 
       await guestUserRef.update({
-        [selectedRoom.roomId]: firebase.firestore.FieldValue.delete()
+        [selectedRoom.roomId]: deleteField()
       });
+
+      console.log("usersDataBaseから該当のフィールドを削除しました")
 
       // RoomsDataBaseから該当のコレクションとサブコレクションを削除
       const roomRef = db.collection("roomsDataBase").doc(selectedRoom.roomId);
-      await deleteCollection(roomRef, 100);
+      await deleteCollection(roomRef);
 
       // ローカルのrooms状態を更新
       setRooms(prevRooms => prevRooms.filter(room => room.roomId !== selectedRoom.roomId));
@@ -216,25 +219,18 @@ function _RoomCreate() {
     }
   };
 
-  // サブコレクションを含むコレクションを再帰的に削除する関数
-  const deleteCollection = async (collectionRef, batchSize) => {
-    const query = collectionRef.limit(batchSize);
-    const snapshot = await query.get();
+  // サブコレクションを含むドキュメントを再帰的に削除する関数
+  const deleteCollection = async (docRef) => {
+    // サブコレクションを取得
+    const collections = await getDocs(collection(docRef));
 
-    if (snapshot.size === 0) {
-      return;
+    // サブコレクションを再帰的に削除
+    for (const collectionDoc of collections.docs) {
+      await deleteCollection(collectionDoc.ref);
     }
 
-    const batch = db.batch();
-    snapshot.docs.forEach((doc) => {
-      batch.delete(doc.ref);
-    });
-
-    await batch.commit();
-
-    if (snapshot.size === batchSize) {
-      process.nextTick(() => deleteCollection(collectionRef, batchSize));
-    }
+    // ドキュメント自体を削除
+    await deleteDoc(docRef);
   };
 
   return (
