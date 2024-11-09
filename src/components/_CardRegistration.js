@@ -208,6 +208,7 @@ function _CardRegistration() {
         </Grid>
       </Grid>
       <ul className={styles.cardList}>{cardListItems}</ul>
+      <Box display="flex" justifyContent="center" width="100%" mt={2} mb={2}>
       <Pagination
         count={Math.ceil(filteredCards.length / cardsPerPage)}
         page={page}
@@ -215,6 +216,7 @@ function _CardRegistration() {
         color="primary"
         className={styles.pagination}
       />
+    </Box>
       <Modal
         open={modalOpen}
         onClose={handleCloseModal}
