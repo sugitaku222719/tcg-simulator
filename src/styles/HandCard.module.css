@@ -11,6 +11,8 @@
   user-select: none;
   font-size: medium;
   position: relative;
+  padding: 3px;
+  cursor: pointer;
 }
 
 .opponentCard {
