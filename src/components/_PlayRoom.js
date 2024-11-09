@@ -6,7 +6,6 @@ import HandCard from './HandCard';
 import { Modal } from '@mui/material';
 import { NetworkCellSharp } from '@mui/icons-material';
 import CardDetails from './CardDetails';
-// import DeckOptions from './DeckOptions';
 import DeckModal from './DeckModal';
 import TrashModal from './TrashModal';
 import SideDeckModal from './SideDeckModal';
