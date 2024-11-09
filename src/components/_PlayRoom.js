@@ -6,6 +6,9 @@ import HandCard from './HandCard';
 import { Modal } from '@mui/material';
 import { NetworkCellSharp } from '@mui/icons-material';
 import CardDetails from './CardDetails';
+// import DeckOptions from './DeckOptions';
+// import DeckModal from './DeckModal';
+import TrashModal from './TrashModal';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -536,64 +539,25 @@ function _PlayRoom({roomId, roomData}) {
           <button onClick={() => setShowDeckModal(false)}>閉じる</button>
         </div>
       </Modal>
-      <Modal open={showMyTrashModal} onClose={() => setShowMyTrashModal(false)} aria-labelledby="自分の捨て札の中身">
-        <div className={styles.deckModal}>
-          <h2 id="自分の捨て札の中身">自分の捨て札の中身</h2>
-          <div className={styles.deckCards}>
-            {myTrashCards.map(card => (
-              <div
-                key={card.uuid}
-                onClick={() => handleTrashCardClick(card, false)}
-                onMouseEnter={() => setHoveredCard(card)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className={styles.deckCardWrapper}
-              >
-                <div className={styles.cardDetails}>
-                  {hoveredCard && hoveredCard.uuid === card.uuid && (
-                    <CardDetails card={card} />
-                  )}
-                </div>
-                <div className={styles.deckCard}>
-                  <div>{card.cardName}</div>
-                  <div>
-                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={() => setShowMyTrashModal(false)}>閉じる</button>
-        </div>
-      </Modal>
+      <TrashModal 
+        showModal={showMyTrashModal}
+        setShowModal={setShowMyTrashModal}
+        trashCards={myTrashCards}
+        handleTrashCardClick={handleTrashCardClick}
+        isOpponent={false}
+        hoveredCard={hoveredCard}
+        setHoveredCard={setHoveredCard}
+      />
 
-      <Modal open={showOpponentTrashModal} onClose={() => setShowOpponentTrashModal(false)} aria-labelledby="相手の捨て札の中身">
-        <div className={styles.deckModal}>
-          <h2 id="相手の捨て札の中身">相手の捨て札の中身</h2>
-          <div className={styles.deckCards}>
-            {opponentTrashCards.map(card => (
-              <div
-                key={card.uuid}
-                onMouseEnter={() => setHoveredCard(card)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className={styles.deckCardWrapper}
-              >
-                <div className={styles.cardDetails}>
-                  {hoveredCard && hoveredCard.uuid === card.uuid && (
-                    <CardDetails card={card} />
-                  )}
-                </div>
-                <div className={styles.deckCard}>
-                  <div>{card.cardName}</div>
-                  <div>
-                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={() => setShowOpponentTrashModal(false)}>閉じる</button>
-        </div>
-      </Modal>
+      <TrashModal 
+        showModal={showOpponentTrashModal}
+        setShowModal={setShowOpponentTrashModal}
+        trashCards={opponentTrashCards}
+        handleTrashCardClick={handleTrashCardClick}
+        isOpponent={true}
+        hoveredCard={hoveredCard}
+        setHoveredCard={setHoveredCard}
+      />
 
       <Modal open={showSideDeckModal} onClose={() => setShowSideDeckModal(false)} aria-labelledby="サイドデッキの中身">
         <div className={styles.deckModal}>
