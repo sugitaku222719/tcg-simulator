@@ -188,30 +188,37 @@ function _RoomCreate() {
       alert("削除する部屋を選択してください。");
       return;
     }
-
+  
     try {
       // usersDataBaseから該当のフィールドを削除
       const hostUserRef = db.collection("usersDataBase").doc(selectedRoom.hostUserId).collection("rooms").doc("hostRooms");
       const guestUserRef = db.collection("usersDataBase").doc(selectedRoom.guestUserId).collection("rooms").doc("guestRooms");
-
+  
       await hostUserRef.update({
         [selectedRoom.roomId]: deleteField()
       });
-
+  
       await guestUserRef.update({
         [selectedRoom.roomId]: deleteField()
       });
-
-      console.log("usersDataBaseから該当のフィールドを削除しました")
-
-      // RoomsDataBaseから該当のコレクションとサブコレクションを削除
+  
+      console.log("usersDataBaseから該当のフィールドを削除しました");
+  
+      // RoomsDataBaseから該当のドキュメントとサブコレクションを削除
       const roomRef = db.collection("roomsDataBase").doc(selectedRoom.roomId);
-      await deleteCollection(roomRef);
-
+      roomRef.collection(auth.currentUser.uid).get().then((snapshots) => {
+        const docs = snapshots.docs
+        docs.forEach(async (doc) => {
+          const id = doc.id
+          await db.collection(auth.currentUser.uid).doc(id).delete()
+        })
+      })
+      roomRef.delete()
+  
       // ローカルのrooms状態を更新
       setRooms(prevRooms => prevRooms.filter(room => room.roomId !== selectedRoom.roomId));
       setSelectedRoom(null);
-
+  
       alert("部屋が削除されました。");
     } catch (error) {
       console.error("部屋の削除中にエラーが発生しました: ", error);
@@ -219,20 +226,7 @@ function _RoomCreate() {
     }
   };
 
-  // サブコレクションを含むドキュメントを再帰的に削除する関数
-  const deleteCollection = async (docRef) => {
-    // サブコレクションを取得
-    const collections = await getDocs(collection(docRef));
-
-    // サブコレクションを再帰的に削除
-    for (const collectionDoc of collections.docs) {
-      await deleteCollection(collectionDoc.ref);
-    }
-
-    // ドキュメント自体を削除
-    await deleteDoc(docRef);
-  };
-
+  
   return (
     <Container maxWidth="md" className={styles.container}>
       <Typography variant="h4" gutterBottom className={styles.title}>
