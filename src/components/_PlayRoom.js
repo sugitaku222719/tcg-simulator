@@ -10,6 +10,7 @@ import DeckModal from './DeckModal';
 import TrashModal from './TrashModal';
 import SideDeckModal from './SideDeckModal';
 import OrientationModal from './OrientationModal';
+import useCardSubscriptions from '../hooks/useCardSubscriptions';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -54,80 +55,33 @@ function _PlayRoom({roomId, roomData}) {
   const [showDetails, setShowDetails] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  useEffect(() => {
-    const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setMyDeckCards(doc.data().cards || []);
-      }
-    });
+  const refs = {
+    myDeck: myDeckRef,
+    myField: myFieldRef,
+    myHand: myHandRef,
+    myTrash: myTrashRef,
+    mySideDeck: mySideDeckRef,
+    opponentDeck: opponentDeckRef,
+    opponentField: opponentFieldRef,
+    opponentHand: opponentHandRef,
+    opponentTrash: opponentTrashRef,
+    opponentSideDeck: opponentSideDeckRef
+  };
 
-    const unsubscribeMyField = myFieldRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setMyCards(doc.data().cards || []);
-      }
-    });
+  const setters = {
+    myDeck: setMyDeckCards,
+    myField: setMyCards,
+    myHand: setMyHandCards,
+    myTrash: setMyTrashCards,
+    mySideDeck: setMySideDeckCards,
+    opponentDeck: setOpponentDeckCards,
+    opponentField: setOpponentCards,
+    opponentHand: setOpponentHandCards,
+    opponentTrash: setOpponentTrashCards,
+    opponentSideDeck: setOpponentSideDeckCards
+  };
 
-    const unsubscribeMyHand = myHandRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setMyHandCards(doc.data().cards || []);
-      }
-    });
-
-    const unsubscribeMyTrash = myTrashRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setMyTrashCards(doc.data().cards || []);
-      }
-    });
-
-    const unsubscribeMySideDeck = mySideDeckRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setMySideDeckCards(doc.data().cards || []);
-      }
-    });
-
-    const unsubscribeOpponentDeck = opponentDeckRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setOpponentDeckCards(doc.data().cards || []);
-      }
-    });
-
-    const unsubscribeOpponentField = opponentFieldRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setOpponentCards(doc.data().cards || []);
-      }
-    });
-
-    const unsubscribeOpponentHand = opponentHandRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setOpponentHandCards(doc.data().cards || []);
-      }
-    });
-
-    const unsubscribeOpponentTrash = opponentTrashRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setOpponentTrashCards(doc.data().cards || []);
-      }
-    });
-
-    const unsubscribeOpponentSideDeck = opponentSideDeckRef.onSnapshot((doc) => {
-      if (doc.exists) {
-        setOpponentSideDeckCards(doc.data().cards || []);
-      }
-    });
-
-    return () => {
-      unsubscribeMyDeck();
-      unsubscribeMyField();
-      unsubscribeMyHand();
-      unsubscribeMyTrash();
-      unsubscribeMySideDeck();
-      unsubscribeOpponentDeck();
-      unsubscribeOpponentField();
-      unsubscribeOpponentHand();
-      unsubscribeOpponentTrash();
-      unsubscribeOpponentSideDeck();
-    };
-  }, []);
+  useCardSubscriptions(refs, setters);
 
   const shuffleDeck = async () => {
     let deck = [...myDeckCards];
