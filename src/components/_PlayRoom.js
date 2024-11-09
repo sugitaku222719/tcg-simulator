@@ -7,7 +7,7 @@ import { Modal } from '@mui/material';
 import { NetworkCellSharp } from '@mui/icons-material';
 import CardDetails from './CardDetails';
 // import DeckOptions from './DeckOptions';
-// import DeckModal from './DeckModal';
+import DeckModal from './DeckModal';
 import TrashModal from './TrashModal';
 
 function _PlayRoom({roomId, roomData}) {
@@ -510,35 +510,14 @@ function _PlayRoom({roomId, roomData}) {
       <div className={styles.myPlayRoom}>
         {renderField(myField, myCards, myHandCards, myDeckCards, myTrashCards, mySideDeckCards, false)}
       </div>
-      <Modal open={showDeckModal} onClose={() => setShowDeckModal(false)} aria-labelledby="デッキの中身">
-        <div className={styles.deckModal}>
-          <h2 id="デッキの中身">デッキの中身</h2>
-          <div className={styles.deckCards}>
-            {myDeckCards.map(card => (
-              <div
-                key={card.uuid}
-                onClick={() => handleCardSearch(card)}
-                onMouseEnter={() => setHoveredCard(card)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className={styles.deckCardWrapper}
-              >
-                <div className={styles.cardDetails}>
-                  {hoveredCard && hoveredCard.uuid === card.uuid && (
-                    <CardDetails card={card} />
-                  )}
-                </div>
-                <div className={styles.deckCard}>
-                  <div>{card.cardName}</div>
-                  <div>
-                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={() => setShowDeckModal(false)}>閉じる</button>
-        </div>
-      </Modal>
+      <DeckModal 
+        showDeckModal={showDeckModal}
+        setShowDeckModal={setShowDeckModal}
+        myDeckCards={myDeckCards}
+        handleCardSearch={handleCardSearch}
+        hoveredCard={hoveredCard}
+        setHoveredCard={setHoveredCard}
+      />
       <TrashModal 
         showModal={showMyTrashModal}
         setShowModal={setShowMyTrashModal}
