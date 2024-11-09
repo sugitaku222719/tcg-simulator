@@ -9,6 +9,8 @@ import CardDetails from './CardDetails';
 // import DeckOptions from './DeckOptions';
 import DeckModal from './DeckModal';
 import TrashModal from './TrashModal';
+import SideDeckModal from './SideDeckModal';
+import OrientationModal from './OrientationModal';
 
 function _PlayRoom({roomId, roomData}) {
   const [myField, setMyField] = useState(Array(20).fill().map(() => Array(60).fill(null)));
@@ -538,51 +540,20 @@ function _PlayRoom({roomId, roomData}) {
         setHoveredCard={setHoveredCard}
       />
 
-      <Modal open={showSideDeckModal} onClose={() => setShowSideDeckModal(false)} aria-labelledby="サイドデッキの中身">
-        <div className={styles.deckModal}>
-          <h2 id="サイドデッキの中身">サイドデッキの中身</h2>
-          <div className={styles.deckCards}>
-            {mySideDeckCards.map(card => (
-              <div
-                key={card.uuid}
-                onClick={() => handleSideDeckCardClick(card)}
-                onMouseEnter={() => setHoveredCard(card)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className={styles.deckCardWrapper}
-              >
-                <div className={styles.cardDetails}>
-                  {hoveredCard && hoveredCard.uuid === card.uuid && (
-                    <CardDetails card={card} />
-                  )}
-                </div>
-                <div className={styles.deckCard}>
-                  <div>{card.cardName}</div>
-                  <div>
-                    <img src={card.cardImageUrl || ""} alt={card.cardName} width="100" height="120" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button onClick={() => setShowSideDeckModal(false)}>閉じる</button>
-        </div>
-      </Modal>
-      <Modal
-        open={showOrientationModal}
-        onClose={() => setShowOrientationModal(false)}
-        aria-labelledby="カードの向きを選択"
-      >
-        <div className={styles.orientationModal}>
-          <h2 id="カードの向きを選択">カードの向きを選択</h2>
-          <div className={styles.orientationOptions}>
-            <button onClick={() => handleOrientationSelect('vertical-up')}>縦（表）</button>
-            <button onClick={() => handleOrientationSelect('vertical-down')}>縦（裏）</button>
-            <button onClick={() => handleOrientationSelect('horizontal-up')}>横（表）</button>
-            <button onClick={() => handleOrientationSelect('horizontal-down')}>横（裏）</button>
-          </div>
-          <button onClick={() => setShowOrientationModal(false)}>キャンセル</button>
-        </div>
-      </Modal>
+      <SideDeckModal 
+        showModal={showSideDeckModal}
+        setShowModal={setShowSideDeckModal}
+        sideDeckCards={mySideDeckCards}
+        handleSideDeckCardClick={handleSideDeckCardClick}
+        hoveredCard={hoveredCard}
+        setHoveredCard={setHoveredCard}
+      />
+
+      <OrientationModal 
+        showModal={showOrientationModal}
+        setShowModal={setShowOrientationModal}
+        handleOrientationSelect={handleOrientationSelect}
+      />
     </div>
   );
 }
