@@ -55,6 +55,7 @@ function _PlayRoom({roomId, roomData}) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   useEffect(() => {
+    console.log("useEffect")
     const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
       if (doc.exists) {
         setMyDeckCards(doc.data().cards || []);
