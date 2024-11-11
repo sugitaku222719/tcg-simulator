@@ -59,6 +59,14 @@ function _CardRegistration() {
         cardsRef = cardsRef.orderBy('createdAt', 'desc');
         break;
       case 'name':
+        cardsRef = cardsRef.orderBy('cardName', 'asc');
+        break;
+      case 'stats':
+        cardsRef = cardsRef.orderBy('cardStats', 'asc');
+        break;
+      case 'type':
+        cardsRef = cardsRef.orderBy('cardType', 'asc');
+        break;
       default:
         cardsRef = cardsRef.orderBy('cardName', 'asc');
         break;
@@ -77,21 +85,7 @@ function _CardRegistration() {
     return () => {
       unsubscribe();
     };
-  }, [sortOrder]); // sortOrderの変更を監視
-
-  // ソート順変更のハンドラー
-  const handleSortChange = (event) => {
-    setSortOrder(event.target.value);
-  };
-
-  const convertNewlinesToBr = (text) => {
-    return text.split('\n').map((line, index) => (
-      <React.Fragment key={index}>
-        {line}
-        {index !== text.split('\n').length - 1 && <br />}
-      </React.Fragment>
-    ));
-  };
+  }, [sortOrder]);
 
   const deleteCard = async (cardId) => {
     try {
@@ -251,11 +245,13 @@ function _CardRegistration() {
             variant="outlined"
             label="並び順"
             value={sortOrder}
-            onChange={handleSortChange}
+            onChange={(e) => setSortOrder(e.target.value)}
             className={styles.sortSelect}
           >
             <MenuItem value="name">名前順</MenuItem>
             <MenuItem value="date">作成日時順</MenuItem>
+            <MenuItem value="stats">スタッツ順</MenuItem>
+            <MenuItem value="type">タイプ順</MenuItem>
           </TextField>
         </Grid>
       </Grid>
