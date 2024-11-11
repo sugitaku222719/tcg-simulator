@@ -181,11 +181,11 @@
   z-index: 1000;
 }
 
-.resetButtonWrapper{
+.resetButtonWrapper {
   display: flex;
-  justify-content: flex-end;
-  padding-right: 25px;
-  padding-bottom: 10px;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
 }
 
 .resetButton{

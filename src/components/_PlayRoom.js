@@ -3,7 +3,7 @@ import styles from "../styles/_PlayRoom.module.css"
 import Cell from './Cell';
 import { auth, db } from '../lib/Firebase';
 import HandCard from './HandCard';
-import { Button, Modal } from '@mui/material';
+import { Box, Button, Modal, Typography } from '@mui/material';
 import { NetworkCellSharp } from '@mui/icons-material';
 import CardDetails from './CardDetails';
 import DeckModal from './DeckModal';
@@ -53,6 +53,8 @@ function _PlayRoom({roomId, roomData}) {
   const [showOrientationModal, setShowOrientationModal] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [showCoinResult, setShowCoinResult] = useState(false);
+  const [coinResult, setCoinResult] = useState('');
 
   useEffect(() => {
     const unsubscribeMyDeck = myDeckRef.onSnapshot((doc) => {
@@ -449,6 +451,17 @@ function _PlayRoom({roomId, roomData}) {
     await myFieldRef.set({ cards: updatedCards });
   };
 
+  const handleCoinToss = () => {
+    const result = Math.random() < 0.5 ? '表' : '裏';
+    setCoinResult(result);
+    setShowCoinResult(true);
+    
+    // 3秒後に結果を非表示にする
+    setTimeout(() => {
+      setShowCoinResult(false);
+    }, 3000);
+  };
+
   const renderField = (field, cards, handCards, deckCards, trashCards, sideDeckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
@@ -525,9 +538,23 @@ function _PlayRoom({roomId, roomData}) {
         </div>
       </div>
       {!isOpponent && (
-         <div className={styles.resetButtonWrapper}>
-          <Button variant="contained" color="primary" onClick={resetDeckAndFieldAndHand} className={styles.resetButton}>
+        <div className={styles.resetButtonWrapper}>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={resetDeckAndFieldAndHand} 
+            className={styles.resetButton}
+          >
             リセット
+          </Button>
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            onClick={handleCoinToss} 
+            className={styles.resetButton}
+            style={{ marginLeft: '10px' }}
+          >
+            コイントス
           </Button>
         </div>
       )}
@@ -584,6 +611,24 @@ function _PlayRoom({roomId, roomData}) {
         setShowModal={setShowOrientationModal}
         handleOrientationSelect={handleOrientationSelect}
       />
+      {showCoinResult && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            padding: '20px 40px',
+            borderRadius: '10px',
+            zIndex: 1000
+          }}
+        >
+          <Typography variant="h3" sx={{ color: 'white', fontWeight: 'bold' }}>
+            {coinResult}
+          </Typography>
+        </Box>
+      )}
     </div>
   );
 }
