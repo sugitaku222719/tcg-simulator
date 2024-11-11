@@ -2,7 +2,7 @@ import { auth, db } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import _DeckEditButton from './_DeckEditButton';
 import { useRouter } from 'next/router';
-import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem, Modal, Box, Pagination, TextField } from '@mui/material';
+import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem, Modal, Box, Pagination, TextField, MenuItem } from '@mui/material';
 import styles from '@/styles/_DeckEdit.module.css';
 
 function _DeckEdit() {
@@ -22,7 +22,7 @@ function _DeckEdit() {
   const [sortOrder, setSortOrder] = useState('name');
 
   useEffect(() => {
-    const cardsRef = db
+    let cardsRef = db
       .collection('cardsDataBase')
       .doc(auth.currentUser.uid)
       .collection('userCardList')
