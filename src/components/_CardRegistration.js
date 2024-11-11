@@ -125,9 +125,9 @@ function _CardRegistration() {
         .doc(editingCard.cardId)
         .update({
           cardName: cardName,
-          cardText: cardText,
-          cardType: cardType,
-          cardStats: cardStats,
+          cardText: cardText || "",
+          cardType: cardType || "",
+          cardStats: cardStats || "",
           cardImageUrl: url
         });
       alert("カードが更新されました");
