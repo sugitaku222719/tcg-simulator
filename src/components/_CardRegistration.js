@@ -65,6 +65,15 @@ function _CardRegistration() {
     };
   }, [sortOrder]);
 
+  const convertNewlinesToBr = (text) => {
+    return text.split('\n').map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        {index !== text.split('\n').length - 1 && <br />}
+      </React.Fragment>
+    ));
+  };
+
   const deleteCard = async (cardId) => {
     try {
       await db
