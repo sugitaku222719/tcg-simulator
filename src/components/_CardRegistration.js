@@ -25,6 +25,7 @@ function _CardRegistration() {
     cardStats: ''
   });
   const [sortOrder, setSortOrder] = useState('name');
+  const convertNewlinesToBr = useNewlineToBr();
 
   useEffect(() => {
     let cardsRef = db
@@ -65,15 +66,6 @@ function _CardRegistration() {
       unsubscribe();
     };
   }, [sortOrder]);
-
-  // const convertNewlinesToBr = (text) => {
-  //   return text.split('\n').map((line, index) => (
-  //     <React.Fragment key={index}>
-  //       {line}
-  //       {index !== text.split('\n').length - 1 && <br />}
-  //     </React.Fragment>
-  //   ));
-  // };
 
   const deleteCard = async (cardId) => {
     try {

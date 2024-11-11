@@ -18,12 +18,17 @@ function _CardRegistrationForm() {
   useEffect(() => {
     const fetchSampleImageUrl = async () => {
       try {
-        const url = await getDownloadURL(ref(storage, 'image/SampleImage/Sample.jpg'));
+        // サンプル画像のパスを修正
+        const sampleImageRef = ref(storage, 'image/SampleImage/Sample.jpg');
+        const url = await getDownloadURL(sampleImageRef);
         setSampleImageUrl(url);
       } catch (error) {
         console.error('サンプル画像URLの取得に失敗しました:', error);
+        // フォールバック用のデフォルト画像URLを設定
+        setSampleImageUrl('https://firebasestorage.googleapis.com/v0/b/tcg-simulator-2dfd2.appspot.com/o/image%2FSampleImage%2FSample.jpg?alt=media&token=e23f90e5-9145-46c4-be00-6ff91f19cc33');
       }
     };
+  
     fetchSampleImageUrl();
   }, []);
 
@@ -32,19 +37,27 @@ function _CardRegistrationForm() {
       alert("Card Nameは入力してください");
       return;
     }
+  
     try {
       let url;
       let imageName;
+  
       if (cardImage) {
-        const storageRef = ref(storage, 'image/' + auth.currentUser.uid + '/' + cardImage.name);
+        // ユーザー固有の画像パスを使用
+        const storageRef = ref(storage, `image/${auth.currentUser.uid}/${cardImage.name}`);
         await uploadBytes(storageRef, cardImage);
         url = await getDownloadURL(storageRef);
         imageName = cardImage.name;
       } else {
+        // サンプル画像を使用
         url = sampleImageUrl;
         imageName = 'Sample.jpg';
       }
-
+  
+      if (!url) {
+        throw new Error('画像URLの取得に失敗しました');
+      }
+  
       await db.collection('cardsDataBase')
         .doc(auth.currentUser.uid)
         .collection('userCardList')
@@ -57,6 +70,7 @@ function _CardRegistrationForm() {
           cardImageUrl: url,
           createdAt: new Date()
         });
+  
       alert("カードが登録されました");
       setCardName("");
       setCardText("");
