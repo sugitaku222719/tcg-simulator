@@ -13,5 +13,11 @@ const nextConfig = {
   },
 };
 
+module.exports = {
+  webpack: (config) => {
+    config.optimization.splitChunks = false;
+    return config;
+  },
+};
 
 export default nextConfig;
