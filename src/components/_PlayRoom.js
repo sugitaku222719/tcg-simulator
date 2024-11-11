@@ -423,6 +423,21 @@ function _PlayRoom({roomId, roomData}) {
     myFieldRef.set({ cards: myCards.filter((c) => c.uuid !== card.uuid) });
   };
 
+  const updateCardDetails = async (cardUuid, updatedDetails) => {
+    const updatedCards = myCards.map(card => {
+      if (card.uuid === cardUuid) {
+        return {
+          ...card,
+          ...updatedDetails
+        };
+      }
+      return card;
+    });
+  
+    await setMyCards(updatedCards);
+    await myFieldRef.set({ cards: updatedCards });
+  };
+
   const renderField = (field, cards, handCards, deckCards, trashCards, sideDeckCards, isOpponent) => (
     <div className={styles.field}>
       {field.map((row, rowIndex) => (
@@ -444,6 +459,7 @@ function _PlayRoom({roomId, roomData}) {
                 addToTrash={isOpponent ? null : addToTrash}
                 returnToSideDeck={isOpponent ? null : returnToSideDeck} // この行を追加
                 isOpponent={isOpponent}
+                onCardUpdate={isOpponent ? null : updateCardDetails}
               />
             );
           })}
