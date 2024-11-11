@@ -174,8 +174,9 @@ function _RoomCreate() {
     setSelectedRoom(room);
     setDeckDocId(room.isHost ? room.hostDeckDocId : room.guestDeckDocId);
     setSideDeckDocId(room.isHost ? room.hostSideDeckDocId : room.guestSideDeckDocId);
+    console.log("selectedRoom:",selectedRoom)
   };
-  
+
   const handleJoinRoom = () => {
     if (selectedRoom && selectedRoom.hostDeckDocId && selectedRoom.guestDeckDocId) {
       router.push(`/playRoom/${selectedRoom.roomId}`);
