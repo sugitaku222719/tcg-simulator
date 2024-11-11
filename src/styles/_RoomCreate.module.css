@@ -48,7 +48,8 @@
 }
 
 .selectedRoom {
-  background-color: #e3f2fd;
+  /* background-color: #e3f2fd; */
+  background-color: red;
 }
 
 .joinButton {

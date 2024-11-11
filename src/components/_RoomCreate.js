@@ -172,8 +172,10 @@ function _RoomCreate() {
 
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
+    setDeckDocId(room.isHost ? room.hostDeckDocId : room.guestDeckDocId);
+    setSideDeckDocId(room.isHost ? room.hostSideDeckDocId : room.guestSideDeckDocId);
   };
-
+  
   const handleJoinRoom = () => {
     if (selectedRoom && selectedRoom.hostDeckDocId && selectedRoom.guestDeckDocId) {
       router.push(`/playRoom/${selectedRoom.roomId}`);
@@ -249,7 +251,7 @@ function _RoomCreate() {
           <Paper 
             key={room.roomId} 
             elevation={3} 
-            className={`${styles.roomItem} ${selectedRoom && selectedRoom.roomId === room.roomId ? styles.selectedRoom : ''}`}
+            className={`${styles.roomItem} ${selectedRoom && selectedRoom.roomId == room.roomId ? styles.selectedRoom : ''}`}
             onClick={() => handleRoomClick(room)}
           >
             <ListItem>
