@@ -457,7 +457,8 @@ function _PlayRoom({roomId, roomData}) {
                 changeCardFace={isOpponent ? null : changeCardFace}
                 returnToHand={isOpponent ? null : returnToHand}
                 addToTrash={isOpponent ? null : addToTrash}
-                returnToSideDeck={isOpponent ? null : returnToSideDeck} // この行を追加
+                returnToSideDeck={isOpponent ? null : returnToSideDeck}
+                returnToDeckFromField={isOpponent ? null : returnToDeckFromField}  // 追加
                 isOpponent={isOpponent}
                 onCardUpdate={isOpponent ? null : updateCardDetails}
               />

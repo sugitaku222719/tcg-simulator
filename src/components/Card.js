@@ -3,7 +3,20 @@ import styles from "@/styles/Card.module.css";
 import CardDetails from './CardDetails';
 import { Modal, Box, TextField, Button } from '@mui/material';
 
-const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, returnToHand, addToTrash, returnToSideDeck, isVertical, isFaceUp, isOpponent, onCardUpdate }) => {
+const Card = ({ 
+  card, 
+  onDragStart, 
+  changeCardOrientation, 
+  changeCardFace, 
+  returnToHand, 
+  addToTrash, 
+  returnToSideDeck,
+  returnToDeckFromField, // 追加
+  isVertical, 
+  isFaceUp, 
+  isOpponent, 
+  onCardUpdate 
+}) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -80,9 +93,12 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
       case 'addToTrash':
         addToTrash(card);
         break;
-      case 'returnToSideDeck': // この case を追加
+      case 'returnToDeck':
+        returnToDeckFromField(card);
+        break;
+      case 'returnToSideDeck':
         returnToSideDeck(card);
-        break;  
+        break;
       default:
         break;
     }
@@ -126,15 +142,16 @@ const Card = ({ card, onDragStart, changeCardOrientation, changeCardFace, return
             <CardDetails card={card} />
             {showContextMenu && (
               <div className={styles.contextMenu}>
-                <button onClick={() => handleOptionClick('vertical')}>縦にする</button>
-                <button onClick={() => handleOptionClick('horizontal')}>横にする</button>
-                <button onClick={() => handleOptionClick('faceUp')}>表にする</button>
-                <button onClick={() => handleOptionClick('faceDown')}>裏にする</button>
-                <button onClick={() => handleOptionClick('returnToHand')}>手札に戻す</button>
-                <button onClick={() => handleOptionClick('addToTrash')}>捨て札に置く</button>
-                <button onClick={() => handleOptionClick('returnToSideDeck')}>サイドデッキに戻す</button> {/* この行を追加 */}
-                <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
-              </div>
+              <button onClick={() => handleOptionClick('vertical')}>縦にする</button>
+              <button onClick={() => handleOptionClick('horizontal')}>横にする</button>
+              <button onClick={() => handleOptionClick('faceUp')}>表にする</button>
+              <button onClick={() => handleOptionClick('faceDown')}>裏にする</button>
+              <button onClick={() => handleOptionClick('returnToHand')}>手札に戻す</button>
+              <button onClick={() => handleOptionClick('addToTrash')}>捨て札に置く</button>
+              <button onClick={() => handleOptionClick('returnToDeck')}>デッキに戻す</button>
+              <button onClick={() => handleOptionClick('returnToSideDeck')}>サイドデッキに戻す</button>
+              <button onClick={() => setShowContextMenu(false)}>キャンセル</button>
+            </div>
             )}
           </div>
         </div>
