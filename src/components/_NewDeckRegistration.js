@@ -1,7 +1,7 @@
 import { auth, db } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import _NewDeckRegistrationForm from './_NewDeckRegistrationForm';
-import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem, Modal, Box, Pagination, TextField } from '@mui/material';
+import { Container, Grid, Typography, Card, CardContent, CardMedia, Button, List, ListItem, Modal, Box, Pagination, TextField, MenuItem } from '@mui/material';
 import styles from '@/styles/_NewDeckRegistration.module.css';
 
 function _NewDeckRegistration() {
@@ -16,13 +16,31 @@ function _NewDeckRegistration() {
     cardStats: ''
   });
   const cardsPerPage = 12;
+  const [sortOrder, setSortOrder] = useState('name');
 
   useEffect(() => {
-    const cardsRef = db
+    let cardsRef = db
       .collection('cardsDataBase')
       .doc(auth.currentUser.uid)
       .collection('userCardList')
-      .orderBy("cardName", "asc");
+    
+    switch (sortOrder) {
+      case 'date':
+        cardsRef = cardsRef.orderBy('createdAt', 'desc');
+        break;
+      case 'name':
+        cardsRef = cardsRef.orderBy('cardName', 'asc');
+        break;
+      case 'stats':
+        cardsRef = cardsRef.orderBy('cardStats', 'asc');
+        break;
+      case 'type':
+        cardsRef = cardsRef.orderBy('cardType', 'asc');
+        break;
+      default:
+        cardsRef = cardsRef.orderBy('cardName', 'asc');
+        break;
+    }
 
     const unsubscribe = cardsRef.onSnapshot(async (querySnapshot) => {
       const _cards = querySnapshot.docs.map((doc) => ({
@@ -35,7 +53,7 @@ function _NewDeckRegistration() {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [sortOrder]);
 
   const addCardToDeck = (card) => {
     setDeckCards([...deckCards, card]);
@@ -180,6 +198,22 @@ function _NewDeckRegistration() {
                 className={styles.searchBar}
               />
             </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              select
+              fullWidth
+              variant="outlined"
+              label="並び順"
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className={styles.sortSelect}
+            >
+              <MenuItem value="name">名前順</MenuItem>
+              <MenuItem value="date">作成日時順</MenuItem>
+              <MenuItem value="stats">スタッツ順</MenuItem>
+              <MenuItem value="type">タイプ順</MenuItem>
+            </TextField>
+          </Grid>
           </Grid>
           <List className={styles.cardList}>
             {currentCards.map((card) => (

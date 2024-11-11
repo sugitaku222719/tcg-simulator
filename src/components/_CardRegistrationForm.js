@@ -50,9 +50,9 @@ function _CardRegistrationForm() {
         .collection('userCardList')
         .add({
           cardName: cardName,
-          cardText: cardText,
-          cardType: cardType,
-          cardStats: cardStats,
+          cardText: cardText || "",
+          cardType: cardType || "",
+          cardStats: cardStats || "",
           cardImage: imageName,
           cardImageUrl: url,
           createdAt: new Date()
