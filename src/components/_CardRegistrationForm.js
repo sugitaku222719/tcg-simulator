@@ -145,6 +145,7 @@ function _CardRegistrationForm() {
         >
           追加
         </Button>
+        <p style={{color : "gray"}}>※最大200kbまで</p>
       </Box>
     </div>
   )

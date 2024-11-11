@@ -20,6 +20,7 @@ function _DeckEdit() {
   const router = useRouter()
   const { deckDocId } = router.query
   const [sortOrder, setSortOrder] = useState('name');
+  const [deckSortOrder, setDeckSortOrder] = useState('name');
 
   useEffect(() => {
     let cardsRef = db
@@ -79,14 +80,28 @@ function _DeckEdit() {
         };
       });
 
-      const resolvedCards = await Promise.all(cardPromises);
+      let resolvedCards = await Promise.all(cardPromises);
+      
+      // ソート処理
+      switch (deckSortOrder) {
+        case 'name':
+          resolvedCards.sort((a, b) => a.cardName.localeCompare(b.cardName));
+          break;
+        case 'type':
+          resolvedCards.sort((a, b) => (a.cardType || '').localeCompare(b.cardType || ''));
+          break;
+        case 'stats':
+          resolvedCards.sort((a, b) => (a.cardStats || '').localeCompare(b.cardStats || ''));
+          break;
+      }
+
       setDeckCards(resolvedCards);
     });
 
     return () => {
       unsubscribe();
     };
-  }, [deckDocId]);
+  }, [deckDocId, deckSortOrder]);
 
   const addCardToDeck = async (card) => {
     if (!deckDocId) return;
@@ -176,16 +191,29 @@ function _DeckEdit() {
           デッキ枚数: {deckCards.length}
         </Typography>
       </div>
-      <Modal
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="deck-modal-title"
-        aria-describedby="deck-modal-description"
-      >
+
+      <Modal open={openModal} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           <Typography id="deck-modal-title" variant="h6" component="h2">
             デッキの中身
           </Typography>
+          
+          {/* デッキ内カードのソート用ドロップダウン */}
+          <TextField
+            select
+            fullWidth
+            variant="outlined"
+            label="デッキ内カードの並び順"
+            value={deckSortOrder}
+            onChange={(e) => setDeckSortOrder(e.target.value)}
+            className={styles.sortSelect}
+            sx={{ mb: 2 }}
+          >
+            <MenuItem value="name">名前順</MenuItem>
+            <MenuItem value="type">タイプ順</MenuItem>
+            <MenuItem value="stats">スタッツ順</MenuItem>
+          </TextField>
+
           <List className={`${styles.cardList} ${styles.modalCardList}`}>
             {deckCards.map((card) => (
               <ListItem key={card.deckCardId}>
