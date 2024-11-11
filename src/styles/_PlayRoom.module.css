@@ -180,3 +180,14 @@
   left: -50%;
   z-index: 1000;
 }
+
+.resetButtonWrapper{
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 25px;
+  padding-bottom: 10px;
+}
+
+.resetButton{
+  width: 70px;
+}

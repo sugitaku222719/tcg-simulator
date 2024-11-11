@@ -3,7 +3,7 @@ import styles from "../styles/_PlayRoom.module.css"
 import Cell from './Cell';
 import { auth, db } from '../lib/Firebase';
 import HandCard from './HandCard';
-import { Modal } from '@mui/material';
+import { Button, Modal } from '@mui/material';
 import { NetworkCellSharp } from '@mui/icons-material';
 import CardDetails from './CardDetails';
 import DeckModal from './DeckModal';
@@ -512,10 +512,11 @@ function _PlayRoom({roomId, roomData}) {
         </div>
       </div>
       {!isOpponent && (
-        <>
-          <button onClick={resetDeckAndFieldAndHand}>リセット</button>
-          <button onClick={shuffleDeck}>シャッフル</button>
-        </>
+         <div className={styles.resetButtonWrapper}>
+          <Button variant="contained" color="primary" onClick={resetDeckAndFieldAndHand} className={styles.resetButton}>
+            リセット
+          </Button>
+        </div>
       )}
     </div>
   );
