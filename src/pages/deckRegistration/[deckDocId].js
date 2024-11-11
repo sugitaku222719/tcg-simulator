@@ -21,16 +21,3 @@ function DeckNamePage({ decDocId }) {
 }
 
 export default DeckNamePage
-
-// export async function getStaticProps({ params }) {
-//   return {
-//     props: { decDocId: params.decDocId },
-//   };
-// }
-
-// export async function getStaticPaths() {
-//   return {
-//     paths: [],
-//     fallback: true,
-//   };
-// }
