@@ -10,7 +10,7 @@ import SignIn from './SignIn';
 function _Header() {
   const [user] = useAuthState(auth);
   return (
-    <AppBar position="static" className={styles.appBar}>
+    <AppBar position="static" className={styles.appBar} style={{backgroundColor : "#1a237e"}}>
       <Toolbar className={styles.toolbar}>
         <Box className={styles.logoContainer}>
           <Typography variant="h4" className={styles.logoText}>

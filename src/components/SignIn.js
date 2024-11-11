@@ -14,7 +14,7 @@ function SignIn() {
 
   return (
     <div>
-      <Button onClick={signInWithGoogle}>ログイン</Button>
+      <Button onClick={signInWithGoogle} style={{color : "red"}}>ログイン</Button>
     </div>
   )
 }
