@@ -4,6 +4,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import styles from "@/styles/_CardRegistration.module.css";
 import { TextField, Button, Box, Typography, Modal, Pagination, Grid, MenuItem } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import useNewlineToBr from '@/hooks/useNewlineToBr';
 
 function _CardRegistration() {
   const [cards, setCards] = useState([]);
@@ -65,14 +66,14 @@ function _CardRegistration() {
     };
   }, [sortOrder]);
 
-  const convertNewlinesToBr = (text) => {
-    return text.split('\n').map((line, index) => (
-      <React.Fragment key={index}>
-        {line}
-        {index !== text.split('\n').length - 1 && <br />}
-      </React.Fragment>
-    ));
-  };
+  // const convertNewlinesToBr = (text) => {
+  //   return text.split('\n').map((line, index) => (
+  //     <React.Fragment key={index}>
+  //       {line}
+  //       {index !== text.split('\n').length - 1 && <br />}
+  //     </React.Fragment>
+  //   ));
+  // };
 
   const deleteCard = async (cardId) => {
     try {
