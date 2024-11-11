@@ -1,8 +1,8 @@
-import SignIn from '@/components/SignIn';
 import { auth, db } from '@/lib/Firebase';
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from 'react';
 import PlayRoom from '@/components/PlayRoom';
+import Entrance from '@/components/Entrance';
 import { useRouter } from 'next/router';
 
 function PlayRoomPage() {
@@ -12,6 +12,14 @@ function PlayRoomPage() {
   const [isAuthorizedPlayer, setIsAuthorizedPlayer] = useState(false);
   const [roomData, setRoomData] = useState("");
   const [authorizationChecked, setAuthorizationChecked] = useState(false);
+  const [isAlertShown, setIsAlertShown] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user && !isAlertShown) {
+      setIsAlertShown(true);
+      alert("ログインしてください");
+    }
+  }, [user, loading, isAlertShown]);
 
   useEffect(() => {
     const checkAuthorization = async () => {
@@ -54,7 +62,7 @@ function PlayRoomPage() {
   }
 
   if (!user) {
-    return <SignIn />;
+    return <Entrance />;
   }
 
   if (user && !isAuthorizedPlayer) {

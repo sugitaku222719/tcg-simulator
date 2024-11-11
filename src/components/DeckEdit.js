@@ -9,6 +9,7 @@ function DeckEdit() {
   const router = useRouter()
   const { deckDocId } = router.query
   const [deckData, setDeckData] = useState(null)
+  const [isAlertShown, setIsAlertShown] = useState(false)
 
   useEffect(() => {
     if (!deckDocId) return
@@ -25,15 +26,25 @@ function DeckEdit() {
         if (deckRef.exists) {
           setDeckData(deckRef.data())
         } else {
-          console.log("デッキが見つかりませんでした")
+          if (!isAlertShown) {
+            setIsAlertShown(true)
+            alert("デッキが見つかりませんでした")
+            console.log("デッキが見つかりませんでした")
+            setIsAlertShown(false)
+          }
         }
       } catch (error) {
-        console.error("データ取得中にエラーが発生しました:", error)
+        if (!isAlertShown) {
+          setIsAlertShown(true)
+          alert("データ取得中にエラーが発生しました")
+          console.error("データ取得中にエラーが発生しました:", error)
+          setIsAlertShown(false)
+        }
       }
     }
 
     getDeckData()
-  }, [deckDocId])
+  }, [deckDocId, isAlertShown])
 
   return (
     <div className="page-container">

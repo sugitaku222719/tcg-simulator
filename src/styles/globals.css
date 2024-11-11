@@ -39,25 +39,6 @@ a {
 }
 
 /* ヘッダーのスタイル */
-.header {
-  background-color: #1a237e;
-  color: white;
-  padding: 10px 0;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
 
 .nav-links {
   display: flex;
