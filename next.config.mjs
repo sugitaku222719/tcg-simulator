@@ -11,13 +11,10 @@ const nextConfig = {
     NEXT_PUBLIC_MESSAGINGSENDERID: process.env.NEXT_PUBLIC_MESSAGINGSENDERID,
     NEXT_PUBLIC_APPID: process.env.NEXT_PUBLIC_APPID
   },
-};
-
-module.exports = {
-  webpack: (config) => {
-    config.optimization.splitChunks = false;
-    return config;
-  },
+  // webpack: (config) => {
+  //   config.optimization.splitChunks = false;
+  //   return config;
+  // },
 };
 
 export default nextConfig;

@@ -174,9 +174,6 @@ function _RoomCreate() {
 
   const handleRoomClick = (room) => {
     setSelectedRoom(room);
-    setDeckDocId(room.isHost ? room.hostDeckDocId : room.guestDeckDocId);
-    setSideDeckDocId(room.isHost ? room.hostSideDeckDocId : room.guestSideDeckDocId);
-    console.log("selectedRoom:",selectedRoom)
   };
 
   const handleJoinRoom = () => {
@@ -256,6 +253,10 @@ function _RoomCreate() {
             elevation={3} 
             className={`${styles.roomItem} ${selectedRoom && selectedRoom.roomId == room.roomId ? styles.selectedRoom : ''}`}
             onClick={() => handleRoomClick(room)}
+            style={{
+              backgroundColor: selectedRoom && selectedRoom.roomId === room.roomId ? '#e3f2fd' : 'inherit',
+              transition: 'background-color 0.3s'
+            }}
           >
             <ListItem>
               <ListItemText

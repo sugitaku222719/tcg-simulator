@@ -44,12 +44,11 @@
 .roomItem {
   margin-bottom: 1rem;
   cursor: pointer;
-  /* transition: background-color 0.3s; */
+  transition: background-color 0.3s;
 }
 
 .selectedRoom {
-  /* background-color: #e3f2fd; */
-  background-color: red;
+  background-color: #e3f2fd;
 }
 
 .joinButton {
