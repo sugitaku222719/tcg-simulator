@@ -354,6 +354,17 @@ function _PlayRoom({roomId, roomData}) {
   };
 
   const addToTrash = async (card) => {
+    // 手札から捨て札に移動する場合
+    if (myHandCards.some(c => c.uuid === card.uuid)) {
+      const updatedTrashCards = [...myTrashCards, card];
+      await setMyTrashCards(updatedTrashCards);
+      await setMyHandCards(myHandCards.filter((c) => c.uuid !== card.uuid));
+      myTrashRef.set({ cards: updatedTrashCards });
+      myHandRef.set({ cards: myHandCards.filter((c) => c.uuid !== card.uuid) });
+      return;
+    }
+  
+    // フィールドから捨て札に移動する場合（既存の処理）
     const updatedTrashCards = [...myTrashCards, card];
     await setMyTrashCards(updatedTrashCards);
     await setMyCards(myCards.filter((c) => c.uuid !== card.uuid));
@@ -480,6 +491,7 @@ function _PlayRoom({roomId, roomData}) {
               card={card}
               addFieldCard={isOpponent ? null : addFieldCard}
               onRightClick={isOpponent ? null : returnToDeck}
+              addToTrash={isOpponent ? null : addToTrash} // 追加
               isOpponent={isOpponent}
             />
           ))}
