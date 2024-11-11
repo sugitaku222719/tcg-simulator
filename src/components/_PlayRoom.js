@@ -388,6 +388,7 @@ function _PlayRoom({roomId, roomData}) {
     setSelectedSideDeckCard(card);
     setShowSideDeckModal(false);
     setShowOrientationModal(true);
+    setHoveredCard(null)
   };
 
   const handleOrientationSelect = async (orientation) => {
