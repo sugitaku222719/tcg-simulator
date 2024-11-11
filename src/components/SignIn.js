@@ -14,7 +14,7 @@ function SignIn() {
 
   return (
     <div>
-      <Button onClick={signInWithGoogle}>Googleでログインする</Button>
+      <Button onClick={signInWithGoogle}>ログイン</Button>
     </div>
   )
 }
