@@ -2,7 +2,7 @@ import { auth, db, storage } from '@/lib/Firebase';
 import React, { useEffect, useState } from 'react';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import styles from "@/styles/_CardRegistration.module.css";
-import { TextField, Button, Box, Typography, Modal, Pagination, Grid } from '@mui/material';
+import { TextField, Button, Box, Typography, Modal, Pagination, Grid, MenuItem } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 function _CardRegistration() {
@@ -23,6 +23,7 @@ function _CardRegistration() {
     cardType: '',
     cardStats: ''
   });
+  const [sortOrder, setSortOrder] = useState('name');
 
   useEffect(() => {
     const cardsRef = db
@@ -45,6 +46,43 @@ function _CardRegistration() {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    let cardsRef = db
+      .collection('cardsDataBase')
+      .doc(auth.currentUser.uid)
+      .collection('userCardList');
+
+    // ソート順の設定
+    switch (sortOrder) {
+      case 'date':
+        cardsRef = cardsRef.orderBy('createdAt', 'desc');
+        break;
+      case 'name':
+      default:
+        cardsRef = cardsRef.orderBy('cardName', 'asc');
+        break;
+    }
+
+    const unsubscribe = cardsRef.onSnapshot(async (querySnapshot) => {
+      const _cards = querySnapshot.docs.map((doc) => {
+        return {
+          cardId: doc.id,
+          ...doc.data(),
+        };
+      });
+      setCards(_cards);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [sortOrder]); // sortOrderの変更を監視
+
+  // ソート順変更のハンドラー
+  const handleSortChange = (event) => {
+    setSortOrder(event.target.value);
+  };
 
   const convertNewlinesToBr = (text) => {
     return text.split('\n').map((line, index) => (
@@ -205,6 +243,20 @@ function _CardRegistration() {
             onChange={handleSearchChange('cardStats')}
             className={styles.searchBar}
           />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextField
+            select
+            fullWidth
+            variant="outlined"
+            label="並び順"
+            value={sortOrder}
+            onChange={handleSortChange}
+            className={styles.sortSelect}
+          >
+            <MenuItem value="name">名前順</MenuItem>
+            <MenuItem value="date">作成日時順</MenuItem>
+          </TextField>
         </Grid>
       </Grid>
       <ul className={styles.cardList}>{cardListItems}</ul>
