@@ -2,19 +2,40 @@ import React, { useState } from 'react';
 import styles from "@/styles/HandCard.module.css";
 import CardDetails from './CardDetails';
 
-const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
+const HandCard = ({ 
+  card, 
+  addFieldCard, 
+  onRightClick,
+  addToTrash,
+  isOpponent 
+}) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showOrientation, setShowOrientation] = useState(false);
+  const [showContextMenu, setShowContextMenu] = useState(false);
 
   const handleContextMenu = (e) => {
     e.preventDefault();
-    if (onRightClick) {
-      onRightClick(card);
+    if (!isOpponent) {
+      setShowContextMenu(true);
     }
   };
 
+  const handleOptionClick = (action) => {
+    switch(action) {
+      case 'returnToDeck':
+        onRightClick(card);
+        break;
+      case 'addToTrash':
+        addToTrash(card);
+        break;
+      case 'cancel':
+        break;
+    }
+    setShowContextMenu(false);
+  };
+
   const handleClick = (e) => {
-    if (!isOpponent && !showOrientation) {
+    if (!isOpponent && !showOrientation && !showContextMenu) {
       setShowOrientation(true);
     }
   };
@@ -27,7 +48,7 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
   };
 
   const handleCancel = (e) => {
-    e.stopPropagation(); // イベントの伝播を停止
+    e.stopPropagation();
     setShowOrientation(false);
   };
 
@@ -36,9 +57,9 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
       className={`${styles.card} ${isOpponent ? styles.opponentCard : ''}`}
       draggable={!isOpponent}
       onClick={handleClick}
-      onContextMenu={isOpponent ? null : handleContextMenu}
+      onContextMenu={handleContextMenu}
       onMouseEnter={() => setShowDetails(true)}
-      onMouseLeave={() => setShowDetails(false)}
+      onMouseLeave={() => {setShowDetails(false);}}
     >
       {isOpponent ? (
         <div className={styles.cardBack}></div>
@@ -51,7 +72,14 @@ const HandCard = ({ card, addFieldCard, onRightClick, isOpponent }) => {
           {showDetails && (
             <div className={styles.detailsWrapper}>
               <CardDetails card={card} />
-              {showOrientation && (
+              {showContextMenu && (
+                <div className={styles.contextMenu} onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => handleOptionClick('returnToDeck')}>デッキに戻す</button>
+                  <button onClick={() => handleOptionClick('addToTrash')}>捨て札に置く</button>
+                  <button onClick={() => handleOptionClick('cancel')}>キャンセル</button>
+                </div>
+              )}
+              {!showContextMenu && showOrientation && (
                 <div className={styles.orientationChoice} onClick={(e) => e.stopPropagation()}>
                   <button onClick={() => handleOrientation(true, true)}>縦向き(表)</button>
                   <button onClick={() => handleOrientation(true, false)}>縦向き(裏)</button>

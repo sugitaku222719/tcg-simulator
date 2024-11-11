@@ -38,3 +38,29 @@
   top: 280px;
   left: -95px;
 }
+
+.contextMenu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  top: 150px;
+  left: 100px;
+}
+
+.contextMenu button {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.contextMenu button:hover {
+  background-color: #f0f0f0;
+}
