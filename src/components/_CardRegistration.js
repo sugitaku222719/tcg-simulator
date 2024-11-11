@@ -26,28 +26,6 @@ function _CardRegistration() {
   const [sortOrder, setSortOrder] = useState('name');
 
   useEffect(() => {
-    const cardsRef = db
-      .collection('cardsDataBase')
-      .doc(auth.currentUser.uid)
-      .collection('userCardList')
-      .orderBy("cardName", "asc");
-
-    const unsubscribe = cardsRef.onSnapshot(async (querySnapshot) => {
-      const _cards = querySnapshot.docs.map((doc) => {
-        return {
-          cardId: doc.id,
-          ...doc.data(),
-        };
-      });
-      setCards(_cards);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
     let cardsRef = db
       .collection('cardsDataBase')
       .doc(auth.currentUser.uid)
