@@ -21,7 +21,6 @@ import { styled } from '@mui/material/styles';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/Firebase';
 import SignIn from './SignIn';
-import styles from "@/styles/_Header.module.css"
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   background: 'linear-gradient(45deg, #1a237e 30%, #283593 90%)',
