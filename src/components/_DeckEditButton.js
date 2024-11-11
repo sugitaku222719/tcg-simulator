@@ -9,7 +9,7 @@ function _DeckEditButton({ deckCards, deckDocId }) {
   const router = useRouter();
 
   const deckEditButton = async () => {
-    if (!deckDocId) {  // deckDocIDをdeckDocIdに変更
+    if (!deckDocId) {  
       alert("デッキ名が指定されていません");
       return;
     }
