@@ -18,3 +18,5 @@ https://tcg-simulator-2dfd2.web.app/
 ・google アカウントのパスワード：TCG@test01
 
 # 利用方法
+
+## カード登録ページ
