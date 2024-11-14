@@ -178,9 +178,9 @@ hostUserId は、ホストの uid である。
 | isFaceUp     | Boolean   | 表向きか否か     | true                                  |
 | isVertical   | Boolean   | 表向きか否か     | true                                  |
 
-## 9-2-3 usersDataBase
+## 9-3 usersDataBase
 
-### 9-3 usersDataBase/{uid}/rooms/hostRooms
+### 9-3-1 usersDataBase/{uid}/rooms/hostRooms
 
 各ユーザーがホスト・ゲストとして所属している対戦部屋の情報が保存されている。  
 /guestRooms も同様の形式で保存されている。  
