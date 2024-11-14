@@ -1,12 +1,12 @@
-# アプリケーション名
+# 1. アプリケーション名
 
 TCG-Simulator
 
-# アプリケーション概要
+# 2. アプリケーション概要
 
 Web 上でオリジナルのカードゲームが遊べる
 
-# URL
+# 3. URL
 
 https://tcg-simulator-2dfd2.web.app/
 
