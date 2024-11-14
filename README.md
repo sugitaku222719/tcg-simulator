@@ -269,4 +269,6 @@ usersDataBase/
 
 # 製作期間
 
-6 週間
+firebase、React.js、Next.js の基礎的な勉強：2 週間  
+開発期間： 4 週間  
+計：6 週間
