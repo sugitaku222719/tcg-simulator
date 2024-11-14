@@ -257,7 +257,7 @@ hostUserId は、ホストの uid である。
 2. データベースとを介したやり取りが早い
 3. MUI によるモダンな UI
 
-# 改善点
+# 13. 改善点
 
 データベースの構造を、usersDataBase と cardsDataBase とを纏めて、  
 usersDataBase/  
@@ -267,7 +267,7 @@ usersDataBase/
  　　　　 └roomList/  
 というような形にする。
 
-# 製作期間
+# 14. 製作期間
 
 firebase、React.js、Next.js の基礎的な勉強：2 週間  
 開発期間： 4 週間  
