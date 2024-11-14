@@ -1,6 +1,6 @@
 # 1. アプリケーション名
 
-TCG-Simulator
+TCG-SIMULATOR
 
 # 2. アプリケーション概要
 
