@@ -164,19 +164,20 @@ hostUserId は、ホストの uid である。
 {cards : [ {キー:バリュー,キー:バリュー,...} , {} , {} , ...]}という配列形式で保存されている。  
 以下のテーブルは、{キー:バリュー,キー:バリュー,...}の内容である。
 
-| Field        | Type      | Description      | Sample                                |
-| ------------ | --------- | ---------------- | ------------------------------------- |
-| createdAt    | Timestamp | 作成日時         | 1987-12-01 00:00:00                   |
-| cardName     | string    | カード名         | 火を吐くドラゴン                      |
-| cardText     | string    | テキスト         | 場に出たとき相手のカードに 3 ダメージ |
-| cardType     | string    | タイプ           | 炎                                    |
-| cardStats    | string    | スタッツ         | 5/5/5                                 |
-| cardImage    | string    | 画像のファイル名 | sample.png                            |
-| cardImageUrl | string    | ストレージの url | https://xxx...                        |
-| uuid         | string    | ユニークな id    | 01234567-89ab-cdef-0123-456789abcdef  |
-| position     | map       | フィールドの位置 | { row : 3,col : 3 }                   |
-| isFaceUp     | Boolean   | 表向きか否か     | true                                  |
-| isVertical   | Boolean   | 縦向きか否か     | true                                  |
+| Field        | Type      | Description                     | Sample                                |
+| ------------ | --------- | ------------------------------- | ------------------------------------- |
+| cardDocId    | string    | userCardList における cardDocId | 0123456789abcdefghij                  |
+| createdAt    | Timestamp | 作成日時                        | 1987-12-01 00:00:00                   |
+| cardName     | string    | カード名                        | 火を吐くドラゴン                      |
+| cardText     | string    | テキスト                        | 場に出たとき相手のカードに 3 ダメージ |
+| cardType     | string    | タイプ                          | 炎                                    |
+| cardStats    | string    | スタッツ                        | 5/5/5                                 |
+| cardImage    | string    | 画像のファイル名                | sample.png                            |
+| cardImageUrl | string    | ストレージの url                | https://xxx...                        |
+| uuid         | string    | ユニークな id                   | 01234567-89ab-cdef-0123-456789abcdef  |
+| position     | map       | フィールドの位置                | { row : 3,col : 3 }                   |
+| isFaceUp     | Boolean   | 表向きか否か                    | true                                  |
+| isVertical   | Boolean   | 縦向きか否か                    | true                                  |
 
 ## 9-3 usersDataBase
 
