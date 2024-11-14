@@ -259,12 +259,12 @@ hostUserId は、ホストの uid である。
 
 # 改善点
 
-データベースの構造を、usersDataBase と cardsDataBase とを纏めて、
+データベースの構造を、usersDataBase と cardsDataBase とを纏めて、  
 usersDataBase/  
- └{uid}/  
- ┣cardList  
- ┣deckList  
- └roomList
+　　　 └{uid}/  
+ 　　　　 ┣cardList  
+ 　　　　 ┣deckList  
+ 　　　　 └roomList
 というような形にする。
 
 # 製作期間
