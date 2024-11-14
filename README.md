@@ -176,7 +176,7 @@ hostUserId は、ホストの uid である。
 | uuid         | string    | ユニークな id    | 01234567-89ab-cdef-0123-456789abcdef  |
 | position     | map       | フィールドの位置 | { row : 3,col : 3 }                   |
 | isFaceUp     | Boolean   | 表向きか否か     | true                                  |
-| isVertical   | Boolean   | 表向きか否か     | true                                  |
+| isVertical   | Boolean   | 縦向きか否か     | true                                  |
 
 ## 9-3 usersDataBase
 
