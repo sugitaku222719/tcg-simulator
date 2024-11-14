@@ -100,13 +100,13 @@ https://tcg-simulator-2dfd2.web.app/
 
 # 9. データベース設計
 
-## cardsDataBase
+## 9-1 cardsDataBase
 
-### cardsDataBase/{uid}/userCardList/{cardDocId}
+### 9-1-1 cardsDataBase/{uid}/userCardList/{cardDocId}
 
-ユーザーが登録したカード情報を保存する  
-uid は FirebaseAuthentication の uid と同等  
-cardDocId は 自動で生成されるユニークな id
+ユーザーが登録したカード情報が保存されている。  
+uid は FirebaseAuthentication の uid と同等である。  
+cardDocId は 自動で生成されるユニークな id である。
 
 | Field        | Type      | Description      | Sample                                |
 | ------------ | --------- | ---------------- | ------------------------------------- |
@@ -118,10 +118,10 @@ cardDocId は 自動で生成されるユニークな id
 | cardImage    | string    | 画像のファイル名 | sample.png                            |
 | cardImageUrl | string    | ストレージの url | https://xxx...                        |
 
-### cardsDataBase/{uid}/userDeckList/{deckDocId}
+### 9-1-2 cardsDataBase/{uid}/userDeckList/{deckDocId}
 
-ユーザーが登録したデッキの情報を保存する  
-deckDocId は uuidv4 にてランダムに生成される 16 進数の 32 桁の id
+ユーザーが登録したデッキの情報が保存されている。  
+deckDocId は uuidv4 にてランダムに生成される 16 進数の 32 桁の id である。
 
 | Field     | Type      | Description | Sample                 |
 | --------- | --------- | ----------- | ---------------------- |
@@ -129,7 +129,7 @@ deckDocId は uuidv4 にてランダムに生成される 16 進数の 32 桁の
 | updatedAt | Timestamp | 作成日時    | 1987-12-03 00:00:00    |
 | name      | string    | デッキ名    | 火を吐くドラゴンデッキ |
 
-### cardsDataBase/{uid}/userDeckList/{deckDocId}/cards/{uuid}
+### 9-1-3 cardsDataBase/{uid}/userDeckList/{deckDocId}/cards/{uuid}
 
 ユーザーが登録したデッキの中に入っているカードの情報を保存する  
 uuid は uuidv4 にてランダムに生成される 16 進数の 32 桁の id
@@ -139,9 +139,9 @@ uuid は uuidv4 にてランダムに生成される 16 進数の 32 桁の id
 | cardRef | reference | カードの参照  | cardsDataBase/{uid}/userCardList/{cardDocId} |
 | uuid    | string    | ユニークな id | 01234567-89ab-cdef-0123-456789abcdef         |
 
-## roomsDataBase
+## 9-2roomsDataBase
 
-### roomsDataBase/{roomId}
+### 9-2-1 roomsDataBase/{roomId}
 
 対戦部屋の情報が保存されている。  
 roomId は"host の uid"-"guest の uid"で記述される。
@@ -156,12 +156,12 @@ roomId は"host の uid"-"guest の uid"で記述される。
 | hostSideDeckDocId  | string    | ホストのサイドデッキの deckDocId | 01234567-89ab-cdef-0123-456789abcdef |
 | guestSideDeckDocId | string    | ゲストのサイドデッキの deckDocId | 01234567-89ab-cdef-0123-456789abcdef |
 
-### roomsDataBase/{roomId}/{hostUserId}/deck
+### 9-2-2 roomsDataBase/{roomId}/{hostUserId}/deck
 
-デッキ、フィールド、手札、サイドデッキ、捨て札にどのカードがあるのかという情報が保存されている  
-hostUserId は、ホストの uid である  
-/{guestUserId}/deck や、/deck、/field、/hand、/sideDeck、/trash は全て同様の構造で保存されている  
-{cards : [ {キー:バリュー,キー:バリュー,...} , {} , {} , ...]}という配列形式で保存されている  
+デッキ、フィールド、手札、サイドデッキ、捨て札にどのカードがあるのかという情報が保存されている。  
+hostUserId は、ホストの uid である。  
+/{guestUserId}/deck や、/deck、/field、/hand、/sideDeck、/trash は全て同様の構造で保存されている。  
+{cards : [ {キー:バリュー,キー:バリュー,...} , {} , {} , ...]}という配列形式で保存されている。  
 以下のテーブルは、{キー:バリュー,キー:バリュー,...}の内容である。
 
 | Field        | Type      | Description      | Sample                                |
@@ -178,13 +178,13 @@ hostUserId は、ホストの uid である
 | isFaceUp     | Boolean   | 表向きか否か     | true                                  |
 | isVertical   | Boolean   | 表向きか否か     | true                                  |
 
-## usersDataBase
+## 9-2-3 usersDataBase
 
-### usersDataBase/{uid}/rooms/hostRooms
+### 9-3 usersDataBase/{uid}/rooms/hostRooms
 
-各ユーザーがホスト・ゲストとして所属している対戦部屋の情報が保存されている  
-/guestRooms も同様の形式で保存されている  
-{roomId : {キー:バリュー,キー:バリュー,...}}というマップ形式で保存されている  
+各ユーザーがホスト・ゲストとして所属している対戦部屋の情報が保存されている。  
+/guestRooms も同様の形式で保存されている。  
+{roomId : {キー:バリュー,キー:バリュー,...}}というマップ形式で保存されている。  
 以下のテーブルは、{キー:バリュー,キー:バリュー,...}の内容である。
 
 | Field              | Type      | Description                      | Sample                               |
