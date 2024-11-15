@@ -223,7 +223,7 @@ hostUserId は、ホストの uid である。
 | cardImage    | string    | 画像のファイル名                | sample.png                            |
 | cardImageUrl | string    | ストレージの url                | https://xxx...                        |
 | uuid         | string    | ユニークな id                   | 01234567-89ab-cdef-0123-456789abcdef  |
-| position     | map       | フィールドの位置                | { row : 3,col : 3 }                   |
+| position     | map       | フィールドの位置                | { row : 3 , col : 3 }                 |
 | isFaceUp     | Boolean   | 表向きか否か                    | true                                  |
 | isVertical   | Boolean   | 縦向きか否か                    | true                                  |
 
